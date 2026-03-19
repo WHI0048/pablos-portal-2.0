@@ -405,15 +405,17 @@ body {
 
 function showView(name) {
   document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-  document.getElementById("view-" + name).classList.add("active");
+  const view = document.getElementById("view-" + name);
+  if (view) view.classList.add("active");
   document.querySelectorAll(".nav-btn").forEach(b =>
     b.classList.toggle("active", b.dataset.view === name)
   );
 }
 
-document.querySelectorAll("[data-view]").forEach(btn => {
+document.querySelectorAll(".nav-btn, .menu-btn").forEach(btn => {
   btn.addEventListener("click", () => {
-    showView(btn.dataset.view);
+    const target = btn.dataset.view;
+    if (target) showView(target);
   });
 });
 
