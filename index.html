@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Pablo's Portal 2.0 — Hyper Neon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html, body {
+  height: 100%;
+  background:
+    radial-gradient(circle at 0% 0%, #00ffff 0, transparent 55%),
+    radial-gradient(circle at 100% 100%, #ff00ff 0, transparent 55%),
+    #050510;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow: hidden;
+  color: #f5f7ff;
+}
+body {
+  animation: hueShift 18s linear infinite;
+}
+@keyframes hueShift {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+/* NAVBAR */
+.navbar {
+  height: 56px;
+  background: rgba(5,5,20,0.9);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+  box-shadow: 0 0 24px rgba(0,0,0,0.6);
+}
+.nav-title {
+  font-size: 16px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-right: auto;
+  text-shadow: 0 0 12px cyan, 0 0 24px magenta;
+}
+.nav-btn {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: radial-gradient(circle at 0 0, rgba(0,255,255,0.4), transparent 60%),
+              rgba(20,20,40,0.9);
+  cursor: pointer;
+  color: #f5f7ff;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.nav-btn.active {
+  background: radial-gradient(circle at 100% 100%, rgba(255,0,255,0.4), transparent 60%),
+              rgba(40,40,80,0.95);
+}
+
+/* VIEWS */
+.view {
+  position: absolute;
+  inset: 56px 0 0 0;
+  display: none;
+}
+.view.active {
+  display: block;
+}
+
+/* MENU */
+.menu-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(0,255,255,0.5), transparent 60%),
+    radial-gradient(circle at 80% 100%, rgba(255,0,200,0.5), transparent 60%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,0,0.4), transparent 60%),
+    #050510;
+  animation: menuPulse 10s ease-in-out infinite alternate;
+}
+@keyframes menuPulse {
+  0% { transform: scale(1); filter: blur(0px); opacity: 0.8; }
+  100% { transform: scale(1.08); filter: blur(4px); opacity: 1; }
+}
+.menu-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+.menu-title {
+  padding: 16px 28px;
+  border-radius: 24px;
+  background: rgba(10,10,30,0.9);
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 0 40px rgba(0,255,255,0.9),
+    0 0 80px rgba(255,0,128,0.9),
+    0 0 140px rgba(0,255,255,1);
+  text-align: center;
+}
+.menu-title-main {
+  font-size: 24px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+.menu-title-sub {
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+.menu-btn {
+  min-width: 220px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(20,20,40,0.95);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 0 30px rgba(0,255,255,0.9),
+    0 0 60px rgba(255,0,128,0.9),
+    0 0 120px rgba(0,255,255,1);
+}
+.menu-btn:hover {
+  background: rgba(30,30,60,0.98);
+}
+
+/* SANDBOX */
+.sandbox-wrapper {
+  display: flex;
+  height: 100%;
+}
+.tools {
+  width: 290px;
+  background: rgba(5,5,20,0.9);
+  backdrop-filter: blur(18px);
+  border-right: 1px solid rgba(255,255,255,0.18);
+  padding: 10px;
+  overflow-y: auto;
+}
+.tool-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  opacity: 0.8;
+  margin: 8px 0 4px;
+}
+.tool-btn {
+  padding: 6px 10px;
+  margin: 3px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(30,30,60,0.9);
+  cursor: pointer;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.tool-btn.active {
+  background: rgba(255,255,255,0.25);
+}
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 10px;
+}
+.slider-row span {
+  font-size: 11px;
+  opacity: 0.8;
+}
+#brushSlider {
+  width: 100%;
+}
+.sandbox-canvas-box {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.sandbox-frame {
+  position: relative;
+  padding: 12px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(0,255,255,0.25), transparent 60%),
+    radial-gradient(circle at 100% 100%, rgba(255,0,255,0.25), transparent 60%),
+    rgba(5,5,20,0.9);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.18),
+    0 0 40px rgba(0,255,255,1),
+    0 0 80px rgba(255,0,128,1),
+    0 0 140px rgba(0,255,255,1);
+  overflow: hidden;
+}
+.sandbox-frame::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background:
+    conic-gradient(from 0deg,
+      rgba(0,255,255,0.7),
+      rgba(255,0,255,0.7),
+      rgba(255,255,0,0.7),
+      rgba(0,255,255,0.7));
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  animation: frameSpin 10s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+@keyframes frameSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+#sandboxCanvas {
+  image-rendering: pixelated;
+  background: black;
+  width: 95vw;
+  height: 80vh;
+  display: block;
+  position: relative;
+  z-index: 10;
+}
+
+/* SNAKE */
+.snake-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.snake-frame {
+  position: relative;
+  padding: 12px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(0,255,255,0.25), transparent 60%),
+    radial-gradient(circle at 100% 100%, rgba(255,0,255,0.25), transparent 60%),
+    rgba(5,5,20,0.9);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.18),
+    0 0 40px rgba(0,255,255,1),
+    0 0 80px rgba(255,0,128,1),
+    0 0 140px rgba(0,255,255,1);
+  overflow: hidden;
+}
+.snake-frame::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background:
+    conic-gradient(from 0deg,
+      rgba(0,255,255,0.7),
+      rgba(255,0,255,0.7),
+      rgba(255,255,0,0.7),
+      rgba(0,255,255,0.7));
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  animation: frameSpin 10s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+#snakeCanvas {
+  background: #050515;
+  image-rendering: pixelated;
+  width: 95vw;
+  height: 80vh;
+  display: block;
+  position: relative;
+  z-index: 10;
+}
+.snake-overlay {
+  position: absolute;
+  inset: 56px 0 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  font-size: 18px;
+  text-shadow: 0 0 12px cyan, 0 0 24px magenta;
+  z-index: 5;
+}
+
+/* CREDITS */
+.credits-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 18px;
+  text-shadow: 0 0 12px cyan, 0 0 24px magenta;
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="nav-title">Pablo's Portal 2.0</div>
+  <button class="nav-btn active" data-view="menu">Menu</button>
+  <button class="nav-btn" data-view="sandbox">Sandbox</button>
+  <button class="nav-btn" data-view="snake">Neon Snake</button>
+  <button class="nav-btn" data-view="credits">Credits</button>
+</div>
+
+<!-- MENU VIEW -->
+<div class="view active" id="view-menu">
+  <div class="menu-bg"></div>
+  <div class="menu-center">
+    <div class="menu-title">
+      <div class="menu-title-main">Pablo's Portal 2.0</div>
+      <div class="menu-title-sub">Hyper‑Neon Physics Playground</div>
+    </div>
+    <button class="menu-btn" data-view="sandbox">Sandbox</button>
+    <button class="menu-btn" data-view="snake">Neon Snake</button>
+    <button class="menu-btn" data-view="credits">Credits</button>
+  </div>
+</div>
+
+<!-- SANDBOX VIEW -->
+<div class="view" id="view-sandbox">
+  <div class="sandbox-wrapper">
+    <div class="tools">
+      <div class="tool-section-title">Solids</div>
+      <button class="tool-btn" data-material="sand">Sand</button>
+      <button class="tool-btn" data-material="stone">Stone</button>
+      <button class="tool-btn" data-material="wood">Wood</button>
+      <button class="tool-btn" data-material="metal">Metal</button>
+      <button class="tool-btn" data-material="slime">Slime</button>
+      <button class="tool-btn" data-material="mirror">Mirror</button>
+
+      <div class="tool-section-title">Liquids</div>
+      <button class="tool-btn" data-material="water">Water</button>
+      <button class="tool-btn" data-material="gasoline">Gasoline</button>
+      <button class="tool-btn" data-material="acid">Acid</button>
+      <button class="tool-btn" data-material="lava">Lava</button>
+
+      <div class="tool-section-title">Gases</div>
+      <button class="tool-btn" data-material="smoke">Smoke</button>
+      <button class="tool-btn" data-material="steam">Steam</button>
+      <button class="tool-btn" data-material="poison_gas">Poison Gas</button>
+      <button class="tool-btn" data-material="explosive_gas">Explosive Gas</button>
+      <button class="tool-btn" data-material="propane">Propane</button>
+      <button class="tool-btn" data-material="sleep_gas">Sleep Gas</button>
+
+      <div class="tool-section-title">Special</div>
+      <button class="tool-btn" data-material="fire">Fire</button>
+      <button class="tool-btn" id="lighterTool">Lighter</button>
+      <button class="tool-btn" data-material="eraser">Eraser</button>
+
+      <div class="tool-section-title">Brush Size</div>
+      <div class="slider-row">
+        <span>1</span>
+        <input type="range" id="brushSlider" min="1" max="12" value="4" />
+        <span>12</span>
+      </div>
+
+      <div class="tool-section-title">Ruler</div>
+      <button class="tool-btn" id="rulerToggle">Ruler Mode</button>
+
+      <div class="tool-section-title">World</div>
+      <button class="tool-btn" id="clearWorld">Clear</button>
+      <button class="tool-btn" id="randomWorld">Random</button>
+      <button class="tool-btn" id="togglePause">Pause</button>
+    </div>
+
+    <div class="sandbox-canvas-box">
+      <div class="sandbox-frame">
+        <canvas id="sandboxCanvas"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SNAKE VIEW -->
+<div class="view" id="view-snake">
+  <div class="snake-center">
+    <div class="snake-frame">
+      <canvas id="snakeCanvas"></canvas>
+    </div>
+  </div>
+  <div class="snake-overlay" id="snakeOverlay">Press SPACE to Start</div>
+</div>
+
+<!-- CREDITS VIEW -->
+<div class="view" id="view-credits">
+  <div class="credits-center">
+    Designed by Rebecca — Hyper Neon Edition
+  </div>
+</div>
+
+<script>
+/* VIEW SWITCHING */
+function showView(name) {
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  const view = document.getElementById("view-" + name);
+  if (view) view.classList.add("active");
+  document.querySelectorAll(".nav-btn").forEach(b =>
+    b.classList.toggle("active", b.dataset.view === name)
+  );
+  if (name === "snake") {
+    snCanvas.focus();
+  }
+}
+
+document.querySelectorAll(".nav-btn, .menu-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const target = btn.dataset.view;
+    if (target) showView(target);
+  });
+});
+
+/* SANDBOX ENGINE */
+const sbCanvas = document.getElementById("sandboxCanvas");
+const sbCtx = sbCanvas.getContext("2d");
+let sbW = 500;
+let sbH = 300;
+sbCanvas.width = sbW;
+sbCanvas.height = sbH;
+
+const EMPTY=0,
+      SAND=1,
+      WATER=2,
+      STONE=3,
+      FIRE=4,
+      WOOD=5,
+      METAL=6,
+      SLIME=7,
+      MIRROR=8,
+      GASOLINE=9,
+      ACID=10,
+      LAVA=11,
+      SMOKE=12,
+      STEAM=13,
+      POISON_GAS=14,
+      EXPLOSIVE_GAS=15,
+      PROPANE=16,
+      SLEEP_GAS=17;
+
+let grid = new Array(sbW*sbH).fill(0);
+let fireLife = new Array(sbW*sbH).fill(0);
+let tempGrid = new Array(sbW*sbH).fill(0);
+
+let currentMaterial=SAND;
+let brush=4;
+let paused=false;
+
+let rulerMode = false;
+let rulerStart = null;
+let rulerEnd = null;
+let isRulerDragging = false;
+let lighterMode = false;
+
+function idx(x,y){return y*sbW+x;}
+function inBounds(x,y){return x>=0&&x<sbW&&y>=0&&y<sbH;}
+
+function initGround(){
+  for(let y=sbH-10;y<sbH;y++){
+    for(let x=0;x<sbW;x++){
+      grid[idx(x,y)]=STONE;
+    }
+  }
+}
+initGround();
+
+function isLiquid(m){
+  return m===WATER||m===GASOLINE||m===ACID||m===LAVA||m===SLIME;
+}
+function isGas(m){
+  return m===SMOKE||m===STEAM||m===POISON_GAS||m===EXPLOSIVE_GAS||m===PROPANE||m===SLEEP_GAS;
+}
+function isSolid(m){
+  return m===SAND||m===STONE||m===WOOD||m===METAL||m===MIRROR;
+}
+function isFlammable(m){
+  return m===WOOD||m===SLIME||m===GASOLINE||m===POISON_GAS||m===EXPLOSIVE_GAS||m===PROPANE;
+}
+function isExplosive(m){
+  return m===EXPLOSIVE_GAS||m===PROPANE||m===GASOLINE;
+}
+
+function materialColor(m){
+  if(m===SAND)return [255,220,120];
+  if(m===WATER)return [80,180,255];
+  if(m===STONE)return [180,190,210];
+  if(m===FIRE)return [255,120,40];
+  if(m===WOOD)return [180,120,60];
+  if(m===METAL)return [180,200,230];
+  if(m===SLIME)return [120,255,120];
+  if(m===MIRROR)return [220,240,255];
+  if(m===GASOLINE)return [255,200,80];
+  if(m===ACID)return [120,255,80];
+  if(m===LAVA)return [255,80,40];
+  if(m===SMOKE)return [120,120,120];
+  if(m===STEAM)return [200,220,255];
+  if(m===POISON_GAS)return [160,255,120];
+  if(m===EXPLOSIVE_GAS)return [255,160,80];
+  if(m===PROPANE)return [200,200,255];
+  if(m===SLEEP_GAS)return [200,160,255];
+  return [0,0,0];
+}
+
+function explodeAt(cx,cy,radius){
+  for(let y=cy-radius;y<=cy+radius;y++){
+    for(let x=cx-radius;x<=cx+radius;x++){
+      if(!inBounds(x,y))continue;
+      let d=(x-cx)*(x-cx)+(y-cy)*(y-cy);
+      if(d<=radius*radius){
+        let i=idx(x,y);
+        grid[i]=FIRE;
+        fireLife[i]=10+Math.random()*30;
+      }
+    }
+  }
+}
+
+function stepSandbox(){
+  if(paused)return;
+  tempGrid.set(grid);
+
+  for(let y=sbH-1;y>=0;y--){
+    for(let x=0;x<sbW;x++){
+      let i=idx(x,y);
+      let m=tempGrid[i];
+      if(m===EMPTY)continue;
+
+      /* FIRE */
+      if(m===FIRE){
+        fireLife[i]--;
+        if(fireLife[i]<=0){
+          grid[i]=EMPTY;
+          continue;
+        }
+        [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dx,dy])=>{
+          let nx=x+dx,ny=y+dy;
+          if(!inBounds(nx,ny))return;
+          let ni=idx(nx,ny);
+          let nm=tempGrid[ni];
+          if(isFlammable(nm) && Math.random()<0.2){
+            grid[ni]=FIRE;
+            fireLife[ni]=20+Math.random()*30;
+          }
+          if(isExplosive(nm) && Math.random()<0.15){
+            explodeAt(nx,ny,24); // E4 extreme radius
+          }
+          if(nm===GASOLINE && Math.random()<0.25){
+            grid[ni]=FIRE;
+            fireLife[ni]=20+Math.random()*30;
+          }
+        });
+        continue;
+      }
+
+      /* LAVA */
+      if(m===LAVA){
+        [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dx,dy])=>{
+          let nx=x+dx,ny=y+dy;
+          if(!inBounds(nx,ny))return;
+          let ni=idx(nx,ny);
+          let nm=tempGrid[ni];
+          if(nm===WATER){
+            grid[ni]=STEAM;
+          }else if(isSolid(nm) && nm!==STONE && Math.random()<0.2){
+            grid[ni]=LAVA;
+          }
+        });
+      }
+
+      /* ACID */
+      if(m===ACID){
+        [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dx,dy])=>{
+          let nx=x+dx,ny=y+dy;
+          if(!inBounds(nx,ny))return;
+          let ni=idx(nx,ny);
+          let nm=tempGrid[ni];
+          if(nm!==EMPTY && nm!==ACID && Math.random()<0.12){
+            grid[ni]=ACID;
+          }
+        });
+      }
+
+      /* GASES */
+      if(isGas(m)){
+        let ny=y-1;
+        if(ny>=0){
+          let above=idx(x,ny);
+          if(grid[above]===EMPTY){
+            grid[above]=m;grid[i]=EMPTY;
+            continue;
+          }else{
+            let dir=Math.random()<0.5?-1:1;
+            let nx=x+dir;
+            if(inBounds(nx,ny) && grid[idx(nx,ny)]===EMPTY){
+              grid[idx(nx,ny)]=m;grid[i]=EMPTY;
+              continue;
+            }
+          }
+        }
+        continue;
+      }
+
+      /* LIQUIDS */
+      if(isLiquid(m)){
+        let ny=y+1;
+        if(ny<sbH){
+          let below=idx(x,ny);
+          if(grid[below]===EMPTY){
+            grid[below]=m;grid[i]=EMPTY;
+            continue;
+          }else{
+            let dir=Math.random()<0.5?-1:1;
+            let nx=x+dir;
+            if(inBounds(nx,y) && grid[idx(nx,y)]===EMPTY){
+              grid[idx(nx,y)]=m;grid[i]=EMPTY;
+              continue;
+            }
+          }
+        }
+        continue;
+      }
+
+      /* SAND / SLIME */
+      if(m===SAND || m===SLIME){
+        let ny=y+1;
+        if(ny<sbH){
+          let below=idx(x,ny);
+          if(grid[below]===EMPTY || isLiquid(grid[below])){
+            [grid[i],grid[below]]=[grid[below],grid[i]];
+          }else{
+            let dir=Math.random()<0.5?-1:1;
+            let nx=x+dir;
+            if(inBounds(nx,ny)){
+              let ni=idx(nx,ny);
+              if(grid[ni]===EMPTY || isLiquid(grid[ni])){
+                [grid[i],grid[ni]]=[grid[ni],grid[i]];
+              }
+            }
+          }
+        }
+        continue;
+      }
+
+      /* SOLIDS stay */
+    }
+  }
+}
+
+function renderSandbox(){
+  let img=sbCtx.createImageData(sbW,sbH);
+  for(let i=0;i<grid.length;i++){
+    let m=grid[i];
+    let p=i*4;
+    let c=materialColor(m);
+    img.data[p]=c[0];
+    img.data[p+1]=c[1];
+    img.data[p+2]=c[2];
+    img.data[p+3]=255;
+  }
+  sbCtx.putImageData(img,0,0);
+
+  // Ruler overlay
+  if(rulerMode && rulerStart && rulerEnd){
+    sbCtx.save();
+    sbCtx.strokeStyle="rgba(0,255,255,0.9)";
+    sbCtx.lineWidth=1;
+    sbCtx.beginPath();
+    sbCtx.moveTo(rulerStart.x+0.5,rulerStart.y+0.5);
+    sbCtx.lineTo(rulerEnd.x+0.5,rulerEnd.y+0.5);
+    sbCtx.stroke();
+    sbCtx.restore();
+  }
+}
+
+let drawing=false;
+
+function canvasToGrid(e){
+  let r=sbCanvas.getBoundingClientRect();
+  let x=Math.floor((e.clientX-r.left)/r.width*sbW);
+  let y=Math.floor((e.clientY-r.top)/r.height*sbH);
+  return {x,y};
+}
+
+function paintCircle(cx,cy,mat){
+  for(let dy=-brush;dy<=brush;dy++){
+    for(let dx=-brush;dx<=brush;dx++){
+      let nx=cx+dx,ny=cy+dy;
+      if(inBounds(nx,ny)&&dx*dx+dy*dy<=brush*brush){
+        let i=idx(nx,ny);
+        if(mat===FIRE){
+          grid[i]=FIRE;fireLife[i]=30;
+        }else{
+          grid[i]=mat;
+        }
+      }
+    }
+  }
+}
+
+function drawRulerLine(start,end){
+  let dx=end.x-start.x;
+  let dy=end.y-start.y;
+  let length=Math.sqrt(dx*dx+dy*dy);
+  if(length===0)return;
+  let steps=Math.ceil(length*2);
+  for(let i=0;i<=steps;i++){
+    let t=i/steps;
+    let x=Math.round(start.x+dx*t);
+    let y=Math.round(start.y+dy*t);
+    if(inBounds(x,y)){
+      grid[idx(x,y)]=STONE;
+    }
+  }
+}
+
+sbCanvas.addEventListener("mousedown",e=>{
+  const {x,y}=canvasToGrid(e);
+  if(rulerMode){
+    rulerStart={x,y};
+    rulerEnd={x,y};
+    isRulerDragging=true;
+    return;
+  }
+  drawing=true;
+  if(lighterMode){
+    grid[idx(x,y)]=FIRE;
+    fireLife[idx(x,y)]=40;
+  }else if(currentMaterial==="eraser"){
+    paintCircle(x,y,EMPTY);
+  }else{
+    paintCircle(x,y,currentMaterial);
+  }
+});
+sbCanvas.addEventListener("mousemove",e=>{
+  const {x,y}=canvasToGrid(e);
+  if(rulerMode && isRulerDragging){
+    rulerEnd={x,y};
+    return;
+  }
+  if(!drawing)return;
+  if(lighterMode){
+    grid[idx(x,y)]=FIRE;
+    fireLife[idx(x,y)]=40;
+  }else if(currentMaterial==="eraser"){
+    paintCircle(x,y,EMPTY);
+  }else{
+    paintCircle(x,y,currentMaterial);
+  }
+});
+window.addEventListener("mouseup",()=>{
+  if(rulerMode && isRulerDragging && rulerStart && rulerEnd){
+    drawRulerLine(rulerStart,rulerEnd);
+  }
+  drawing=false;
+  isRulerDragging=false;
+});
+
+document.querySelectorAll(".tool-btn[data-material]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".tool-btn[data-material]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const mat=btn.dataset.material;
+    if(mat==="sand")currentMaterial=SAND;
+    else if(mat==="stone")currentMaterial=STONE;
+    else if(mat==="wood")currentMaterial=WOOD;
+    else if(mat==="metal")currentMaterial=METAL;
+    else if(mat==="slime")currentMaterial=SLIME;
+    else if(mat==="mirror")currentMaterial=MIRROR;
+    else if(mat==="water")currentMaterial=WATER;
+    else if(mat==="gasoline")currentMaterial=GASOLINE;
+    else if(mat==="acid")currentMaterial=ACID;
+    else if(mat==="lava")currentMaterial=LAVA;
+    else if(mat==="smoke")currentMaterial=SMOKE;
+    else if(mat==="steam")currentMaterial=STEAM;
+    else if(mat==="poison_gas")currentMaterial=POISON_GAS;
+    else if(mat==="explosive_gas")currentMaterial=EXPLOSIVE_GAS;
+    else if(mat==="propane")currentMaterial=PROPANE;
+    else if(mat==="sleep_gas")currentMaterial=SLEEP_GAS;
+    else if(mat==="fire")currentMaterial=FIRE;
+    else if(mat==="eraser")currentMaterial="eraser";
+    lighterMode=false;
+    document.getElementById("lighterTool").classList.remove("active");
+  });
+});
+
+document.getElementById("brushSlider").addEventListener("input",e=>{
+  brush=parseInt(e.target.value,10);
+});
+
+document.getElementById("rulerToggle").addEventListener("click",()=>{
+  rulerMode=!rulerMode;
+  document.getElementById("rulerToggle").classList.toggle("active",rulerMode);
+  if(!rulerMode){
+    rulerStart=null;
+    rulerEnd=null;
+  }
+});
+
+document.getElementById("lighterTool").addEventListener("click",()=>{
+  lighterMode=!lighterMode;
+  document.getElementById("lighterTool").classList.toggle("active",lighterMode);
+});
+
+document.getElementById("clearWorld").addEventListener("click",()=>{
+  grid.fill(EMPTY);
+  fireLife.fill(0);
+  initGround();
+});
+
+document.getElementById("randomWorld").addEventListener("click",()=>{
+  grid.fill(EMPTY);
+  fireLife.fill(0);
+  initGround();
+  for(let i=0;i<sbW*sbH*0.05;i++){
+    let x=Math.floor(Math.random()*sbW);
+    let y=Math.floor(Math.random()*(sbH-20));
+    let r=Math.random();
+    let mat=SAND;
+    if(r<0.2)mat=WATER;
+    else if(r<0.35)mat=GASOLINE;
+    else if(r<0.45)mat=ACID;
+    else if(r<0.55)mat=LAVA;
+    else if(r<0.65)mat=SMOKE;
+    else if(r<0.75)mat=EXPLOSIVE_GAS;
+    else if(r<0.85)mat=PROPANE;
+    else if(r<0.9)mat=SLIME;
+    else mat=SAND;
+    grid[idx(x,y)]=mat;
+  }
+});
+
+document.getElementById("togglePause").addEventListener("click",()=>{
+  paused=!paused;
+  document.getElementById("togglePause").classList.toggle("active",paused);
+});
+
+/* SNAKE GAME */
+const snCanvas=document.getElementById("snakeCanvas");
+const snCtx=snCanvas.getContext("2d");
+const GRID_W=48;
+const GRID_H=30;
+snCanvas.width=GRID_W;
+snCanvas.height=GRID_H;
+
+let snake=[{x:10,y:15},{x:9,y:15},{x:8,y:15}];
+let dir={x:1,y:0};
+let nextDir={x:1,y:0};
+let food={x:20,y:15};
+let snakeRunning=false;
+let snakeGameOver=false;
+let snakeSpeed=8; // steps per second
+let snakeAccumulator=0;
+let lastTime=performance.now();
+let score=0;
+
+function placeFood(){
+  while(true){
+    let x=Math.floor(Math.random()*GRID_W);
+    let y=Math.floor(Math.random()*GRID_H);
+    if(!snake.some(s=>s.x===x&&s.y===y)){
+      food={x,y};
+      break;
+    }
+  }
+}
+
+function resetSnake(){
+  snake=[{x:10,y:15},{x:9,y:15},{x:8,y:15}];
+  dir={x:1,y:0};
+  nextDir={x:1,y:0};
+  placeFood();
+  snakeRunning=false;
+  snakeGameOver=false;
+  score=0;
+  document.getElementById("snakeOverlay").textContent="Press SPACE to Start";
+}
+
+resetSnake();
+
+window.addEventListener("keydown",e=>{
+  if(document.getElementById("view-snake").classList.contains("active")){
+    if(e.code==="Space"){
+      if(snakeGameOver){
+        resetSnake();
+      }
+      snakeRunning=true;
+      document.getElementById("snakeOverlay").textContent="";
+    }
+    if(e.key==="ArrowUp"||e.key==="w"){
+      if(dir.y!==1)nextDir={x:0,y:-1};
+    }else if(e.key==="ArrowDown"||e.key==="s"){
+      if(dir.y!==-1)nextDir={x:0,y:1};
+    }else if(e.key==="ArrowLeft"||e.key==="a"){
+      if(dir.x!==1)nextDir={x:-1,y:0};
+    }else if(e.key==="ArrowRight"||e.key==="d"){
+      if(dir.x!==-1)nextDir={x:1,y:0};
+    }
+  }
+});
+
+function stepSnake(dt){
+  if(!snakeRunning||snakeGameOver)return;
+  snakeAccumulator+=dt;
+  const stepInterval=1000/snakeSpeed;
+  while(snakeAccumulator>=stepInterval){
+    snakeAccumulator-=stepInterval;
+    dir=nextDir;
+    let head=snake[0];
+    let nx=head.x+dir.x;
+    let ny=head.y+dir.y;
+
+    // wrap-around (S1)
+    if(nx<0)nx=GRID_W-1;
+    if(nx>=GRID_W)nx=0;
+    if(ny<0)ny=GRID_H-1;
+    if(ny>=GRID_H)ny=0;
+
+    if(snake.some(s=>s.x===nx&&s.y===ny)){
+      snakeGameOver=true;
+      snakeRunning=false;
+      document.getElementById("snakeOverlay").textContent="Game Over — Press SPACE";
+      return;
+    }
+
+    snake.unshift({x:nx,y:ny});
+    if(nx===food.x && ny===food.y){
+      score++;
+      placeFood();
+    }else{
+      snake.pop();
+    }
+  }
+}
+
+function renderSnake(){
+  const w=snCanvas.width;
+  const h=snCanvas.height;
+  const scaleX=snCanvas.clientWidth/GRID_W || 1;
+  const scaleY=snCanvas.clientHeight/GRID_H || 1;
+  snCtx.clearRect(0,0,w,h);
+
+  // background grid glow
+  for(let y=0;y<GRID_H;y++){
+    for(let x=0;x<GRID_W;x++){
+      snCtx.fillStyle="rgba(10,10,30,0.9)";
+      snCtx.fillRect(x,y,1,1);
+    }
+  }
+
+  // food
+  snCtx.fillStyle="rgba(255,80,160,1)";
+  snCtx.fillRect(food.x,food.y,1,1);
+
+  // snake
+  for(let i=0;i<snake.length;i++){
+    let s=snake[i];
+    let t=i/snake.length;
+    let r=0+Math.floor(255*(1-t));
+    let g=255;
+    let b=255;
+    snCtx.fillStyle=`rgba(${r},${g},${b},1)`;
+    snCtx.fillRect(s.x,s.y,1,1);
+  }
+
+  // score (top-left)
+  snCtx.fillStyle="rgba(0,255,255,1)";
+  snCtx.font="0.8px system-ui";
+  snCtx.fillText("Score: "+score,1,2);
+}
+
+/* MAIN LOOP (60 FPS target) */
+function loop(now){
+  const dt=now-lastTime;
+  lastTime=now;
+
+  stepSandbox();
+  renderSandbox();
+
+  stepSnake(dt);
+  renderSnake();
+
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
