@@ -11,12 +11,11 @@
   --panel-border: rgba(255, 255, 255, 0.12);
   --text-main: #f5f7ff;
   --text-soft: #a8b2ff;
-  --danger: #ff3366;
   --accent: #4dffdf;
-  --grid-line: rgba(255, 255, 255, 0.04);
-  --shadow-strong: 0 0 40px rgba(0, 255, 255, 0.6);
-  --shadow-soft: 0 0 25px rgba(0, 0, 0, 0.9);
+  --danger: #ff3366;
 }
+
+/* Reset & base */
 
 *,
 *::before,
@@ -37,6 +36,7 @@ body {
 }
 
 /* Hyper‑neon global RGB hue rotation */
+
 body.hyper-neon {
   animation: hyperHue 8s linear infinite;
 }
@@ -53,18 +53,253 @@ body.hyper-neon {
   }
 }
 
-/* Layout */
+/* App shell */
 
 .app-shell {
-  display: grid;
-  grid-template-columns: 280px minmax(0, 1fr) 320px;
-  grid-template-rows: auto minmax(0, 1fr);
-  grid-template-areas:
-    "header header header"
-    "left   center right";
-  gap: 14px;
-  padding: 14px;
+  display: flex;
+  flex-direction: column;
   height: 100vh;
+  padding: 12px;
+  gap: 10px;
+}
+
+/* Top navigation */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-radius: 18px;
+  background: radial-gradient(circle at top left, rgba(0, 255, 255, 0.18), transparent 55%),
+              radial-gradient(circle at bottom right, rgba(255, 0, 200, 0.18), transparent 55%),
+              rgba(5, 10, 25, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 40px rgba(0, 255, 255, 0.5),
+    0 0 80px rgba(255, 0, 128, 0.6);
+  backdrop-filter: blur(20px) saturate(200%);
+}
+
+.app-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.app-title-main {
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow:
+    0 0 12px rgba(0, 255, 255, 0.9),
+    0 0 24px rgba(255, 0, 128, 0.9);
+}
+
+.app-title-sub {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-soft);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-btn {
+  position: relative;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 60%),
+              rgba(10, 15, 40, 0.9);
+  color: var(--text-main);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 18px rgba(0, 255, 255, 0.5),
+    0 0 30px rgba(255, 0, 128, 0.5);
+  transition:
+    transform 0.12s ease-out,
+    box-shadow 0.12s ease-out,
+    background 0.12s ease-out,
+    border-color 0.12s ease-out;
+}
+
+.nav-btn:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 26px rgba(0, 255, 255, 0.9),
+    0 0 40px rgba(255, 0, 128, 0.9);
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.16), transparent 60%),
+              rgba(10, 15, 40, 0.95);
+}
+
+.nav-btn.active {
+  border-color: rgba(255, 255, 255, 0.7);
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.22), transparent 60%),
+              rgba(15, 25, 60, 0.98);
+}
+
+/* Main content area */
+
+.app-main {
+  flex: 1;
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* Views */
+
+.view {
+  position: absolute;
+  inset: 0;
+  display: none;
+}
+
+.view.active {
+  display: flex;
+}
+
+/* Poster menu (M3 + P2) */
+
+.view-menu {
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+/* Abstract RGB energy background */
+
+.menu-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(0, 255, 255, 0.4), transparent 60%),
+    radial-gradient(circle at 80% 100%, rgba(255, 0, 200, 0.4), transparent 60%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 0, 0.3), transparent 60%),
+    #050510;
+  filter: blur(0);
+  animation: energyPulse 10s ease-in-out infinite alternate;
+}
+
+@keyframes energyPulse {
+  0% {
+    transform: scale(1);
+    filter: blur(0px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.08);
+    filter: blur(4px);
+    opacity: 1;
+  }
+}
+
+.menu-foreground {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.menu-title {
+  padding: 18px 32px;
+  border-radius: 24px;
+  background: radial-gradient(circle at top left, rgba(0, 255, 255, 0.25), transparent 60%),
+              radial-gradient(circle at bottom right, rgba(255, 0, 200, 0.25), transparent 60%),
+              rgba(5, 10, 25, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 40px rgba(0, 255, 255, 0.8),
+    0 0 80px rgba(255, 0, 128, 0.8);
+  backdrop-filter: blur(20px) saturate(200%);
+  text-align: center;
+}
+
+.menu-title-main {
+  font-size: 26px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 800;
+  text-shadow:
+    0 0 16px rgba(0, 255, 255, 1),
+    0 0 32px rgba(255, 0, 128, 1);
+}
+
+.menu-title-sub {
+  margin-top: 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-soft);
+}
+
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menu-btn {
+  min-width: 220px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.12), transparent 60%),
+              rgba(10, 15, 40, 0.95);
+  color: #ffffff;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  outline: none;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 30px rgba(0, 255, 255, 0.9),
+    0 0 60px rgba(255, 0, 128, 0.9);
+  transition:
+    transform 0.12s ease-out,
+    box-shadow 0.12s ease-out,
+    background 0.12s ease-out,
+    border-color 0.12s ease-out;
+}
+
+.menu-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 0 40px rgba(0, 255, 255, 1),
+    0 0 80px rgba(255, 0, 128, 1);
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.2), transparent 60%),
+              rgba(15, 20, 50, 0.98);
+}
+
+/* Sandbox view layout */
+
+.view-sandbox {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px;
 }
 
 /* Panels */
@@ -79,13 +314,11 @@ body.hyper-neon {
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.02),
     0 0 35px rgba(0, 255, 255, 0.35),
-    0 0 65px rgba(255, 0, 128, 0.35),
-    var(--shadow-soft);
+    0 0 65px rgba(255, 0, 128, 0.35);
   overflow: hidden;
   backdrop-filter: blur(18px) saturate(180%);
 }
 
-/* Cyber‑glass edge glow */
 .panel::before {
   content: "";
   position: absolute;
@@ -117,79 +350,16 @@ body.hyper-neon {
   }
 }
 
-/* Header */
-
-.app-header {
-  grid-area: header;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 18px;
-  border-radius: 18px;
-  background: radial-gradient(circle at top left, rgba(0, 255, 255, 0.18), transparent 55%),
-              radial-gradient(circle at bottom right, rgba(255, 0, 200, 0.18), transparent 55%),
-              rgba(5, 10, 25, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 0 40px rgba(0, 255, 255, 0.5),
-    0 0 80px rgba(255, 0, 128, 0.6);
-  backdrop-filter: blur(20px) saturate(200%);
-}
-
-.app-title {
+.panel-inner {
+  position: relative;
+  z-index: 1;
+  padding: 10px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 2px;
 }
 
-.app-title-main {
-  font-size: 20px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: #ffffff;
-  text-shadow:
-    0 0 12px rgba(0, 255, 255, 0.9),
-    0 0 24px rgba(255, 0, 128, 0.9);
-}
-
-.app-title-sub {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--text-soft);
-}
-
-.app-header-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.badge-pill {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #ffffff;
-  background: linear-gradient(120deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 200, 0.2));
-  box-shadow:
-    0 0 12px rgba(0, 255, 255, 0.7),
-    0 0 18px rgba(255, 0, 128, 0.7);
-}
-
-/* Left panel (tools) */
-
-.left-panel {
-  grid-area: left;
-  display: flex;
-  flex-direction: column;
-  padding: 12px 12px 10px;
-  gap: 10px;
-}
+/* Panel headers */
 
 .panel-header {
   display: flex;
@@ -209,6 +379,8 @@ body.hyper-neon {
   font-size: 11px;
   color: rgba(168, 178, 255, 0.8);
 }
+
+/* Tool groups */
 
 .tool-groups {
   display: flex;
@@ -260,31 +432,6 @@ body.hyper-neon {
     border-color 0.12s ease-out;
 }
 
-.neon-btn::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  border: 1px solid transparent;
-  background: conic-gradient(
-    from 0deg,
-    rgba(0, 255, 255, 0.9),
-    rgba(255, 0, 200, 0.9),
-    rgba(255, 255, 0, 0.9),
-    rgba(0, 255, 255, 0.9)
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) padding-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0;
-  filter: blur(1px);
-  pointer-events: none;
-  mix-blend-mode: screen;
-  transition: opacity 0.12s ease-out, filter 0.12s ease-out;
-}
-
 .neon-btn span.dot {
   width: 6px;
   height: 6px;
@@ -305,25 +452,17 @@ body.hyper-neon {
               rgba(10, 15, 40, 0.95);
 }
 
-.neon-btn:hover::before {
-  opacity: 0.9;
-  filter: blur(1.6px);
-}
-
 .neon-btn.active {
   border-color: rgba(255, 255, 255, 0.7);
   background: radial-gradient(circle at top, rgba(255, 255, 255, 0.22), transparent 60%),
               rgba(15, 25, 60, 0.98);
 }
 
-/* Center panel (sandbox) */
+/* Sandbox canvas */
 
-.center-panel {
-  grid-area: center;
+.sandbox-panel {
   display: flex;
   flex-direction: column;
-  padding: 10px;
-  gap: 8px;
 }
 
 .canvas-wrapper {
@@ -338,16 +477,9 @@ body.hyper-neon {
     0 0 0 1px rgba(255, 255, 255, 0.06),
     0 0 40px rgba(0, 255, 255, 0.9),
     0 0 80px rgba(255, 0, 128, 0.9);
+  margin-top: 8px;
 }
 
-#sandboxCanvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-  image-rendering: pixelated;
-}
-
-/* Canvas neon aura */
 .canvas-wrapper::before {
   content: "";
   position: absolute;
@@ -373,32 +505,42 @@ body.hyper-neon {
   }
 }
 
-/* Right panel (Neon Snake) */
-
-.right-panel {
-  grid-area: right;
-  display: flex;
-  flex-direction: column;
-  padding: 12px 12px 10px;
-  gap: 10px;
+#sandboxCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
 }
 
-.snake-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+/* Info footer */
 
-.snake-title {
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--text-soft);
-}
-
-.snake-status {
+.info-footer {
   font-size: 11px;
   color: rgba(168, 178, 255, 0.9);
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.badge-soft {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(10, 15, 40, 0.9);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+/* Snake view */
+
+.view-snake {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-rows: minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px;
 }
 
 .snake-canvas-wrapper {
@@ -413,16 +555,15 @@ body.hyper-neon {
     0 0 0 1px rgba(255, 255, 255, 0.06),
     0 0 35px rgba(0, 255, 255, 0.9),
     0 0 65px rgba(255, 0, 128, 0.9);
+  margin-top: 8px;
 }
 
 #snakeCanvas {
   width: 100%;
-  height: 260px;
+  height: 100%;
   display: block;
   image-rendering: pixelated;
 }
-
-/* Snake overlay text */
 
 .snake-overlay {
   position: absolute;
@@ -452,149 +593,231 @@ body.hyper-neon {
   color: rgba(200, 210, 255, 0.9);
 }
 
-/* Info footer */
+/* Credits view */
 
-.info-footer {
-  font-size: 11px;
-  color: rgba(168, 178, 255, 0.9);
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
+.view-credits {
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
 }
 
-/* Small badges */
-
-.badge-soft {
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(10, 15, 40, 0.9);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
+.credits-panel {
+  max-width: 480px;
+  width: 100%;
 }
 
 /* Responsive */
 
-@media (max-width: 1100px) {
-  .app-shell {
-    grid-template-columns: 260px minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr) auto;
-    grid-template-areas:
-      "header header"
-      "left   center"
-      "right  right";
+@media (max-width: 1000px) {
+  .view-sandbox {
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+  .view-snake {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
   }
 }
 
 @media (max-width: 800px) {
-  .app-shell {
+  .view-sandbox {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto auto auto;
-    grid-template-areas:
-      "header"
-      "center"
-      "left"
-      "right";
+    grid-template-rows: auto minmax(0, 1fr);
   }
 }
 </style>
 </head>
 <body class="hyper-neon">
 <div class="app-shell">
-  <!-- HEADER -->
+  <!-- HEADER / NAV -->
   <header class="app-header">
     <div class="app-title">
       <div class="app-title-main">Pablo's Portal 2.0</div>
       <div class="app-title-sub">Physics Sandbox · Neon Snake · Hyper‑Neon Cyber‑Glass</div>
     </div>
-    <div class="app-header-right">
-      <div class="badge-pill">Hyper‑Neon Engine G3</div>
-      <div class="badge-pill">Extreme Cyber‑Arcade</div>
+    <div class="nav-buttons">
+      <button class="nav-btn active" data-view-target="menuView">Menu</button>
+      <button class="nav-btn" data-view-target="sandboxView">Sandbox</button>
+      <button class="nav-btn" data-view-target="snakeView">Neon Snake</button>
     </div>
   </header>
 
-  <!-- LEFT: TOOLS -->
-  <aside class="panel left-panel">
-    <div class="panel-header">
-      <div>
-        <div class="panel-title">Sandbox Tools</div>
-        <div class="panel-subtitle">Materials · Tools · World Control</div>
-      </div>
-    </div>
-
-    <div class="tool-groups">
-      <div>
-        <div class="tool-group-label">Materials</div>
-        <div class="button-row" id="materialButtons">
-          <button class="neon-btn" data-material="sand"><span class="dot"></span>Sand</button>
-          <button class="neon-btn" data-material="water"><span class="dot"></span>Water</button>
-          <button class="neon-btn" data-material="stone"><span class="dot"></span>Stone</button>
-          <button class="neon-btn" data-material="fire"><span class="dot"></span>Fire</button>
-          <button class="neon-btn" data-material="eraser"><span class="dot"></span>Eraser</button>
+  <!-- MAIN -->
+  <main class="app-main">
+    <!-- MENU VIEW -->
+    <section class="view view-menu active" id="menuView">
+      <div class="menu-bg"></div>
+      <div class="menu-foreground">
+        <div class="menu-title">
+          <div class="menu-title-main">Pablo's Portal 2.0</div>
+          <div class="menu-title-sub">Hyper‑Neon Physics Playground</div>
+        </div>
+        <div class="menu-buttons">
+          <button class="menu-btn" data-view-target="sandboxView">Sandbox</button>
+          <button class="menu-btn" data-view-target="snakeView">Neon Snake</button>
+          <button class="menu-btn" data-view-target="creditsView">Credits</button>
         </div>
       </div>
+    </section>
 
-      <div>
-        <div class="tool-group-label">Brush</div>
-        <div class="button-row" id="brushButtons">
-          <button class="neon-btn" data-size="1"><span class="dot"></span>Tiny</button>
-          <button class="neon-btn" data-size="2"><span class="dot"></span>Small</button>
-          <button class="neon-btn" data-size="4"><span class="dot"></span>Medium</button>
-          <button class="neon-btn" data-size="6"><span class="dot"></span>Large</button>
+    <!-- SANDBOX VIEW -->
+    <section class="view view-sandbox" id="sandboxView">
+      <!-- LEFT: TOOLS -->
+      <aside class="panel">
+        <div class="panel-inner">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Sandbox Tools</div>
+              <div class="panel-subtitle">Materials · Brush · World</div>
+            </div>
+          </div>
+
+          <div class="tool-groups">
+            <div>
+              <div class="tool-group-label">Materials</div>
+              <div class="button-row" id="materialButtons">
+                <button class="neon-btn" data-material="sand"><span class="dot"></span>Sand</button>
+                <button class="neon-btn" data-material="water"><span class="dot"></span>Water</button>
+                <button class="neon-btn" data-material="stone"><span class="dot"></span>Stone</button>
+                <button class="neon-btn" data-material="fire"><span class="dot"></span>Fire</button>
+                <button class="neon-btn" data-material="eraser"><span class="dot"></span>Eraser</button>
+              </div>
+            </div>
+
+            <div>
+              <div class="tool-group-label">Brush</div>
+              <div class="button-row" id="brushButtons">
+                <button class="neon-btn" data-size="1"><span class="dot"></span>Tiny</button>
+                <button class="neon-btn" data-size="2"><span class="dot"></span>Small</button>
+                <button class="neon-btn" data-size="4"><span class="dot"></span>Medium</button>
+                <button class="neon-btn" data-size="6"><span class="dot"></span>Large</button>
+              </div>
+            </div>
+
+            <div>
+              <div class="tool-group-label">World</div>
+              <div class="button-row">
+                <button class="neon-btn" id="clearWorld"><span class="dot"></span>Clear</button>
+                <button class="neon-btn" id="randomWorld"><span class="dot"></span>Random Fill</button>
+                <button class="neon-btn" id="togglePause"><span class="dot"></span>Pause</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-footer" style="margin-top:auto;">
+            <div class="badge-soft">Click & drag to draw</div>
+            <div class="badge-soft">Sandbox Tick: 60 FPS</div>
+          </div>
         </div>
-      </div>
+      </aside>
 
-      <div>
-        <div class="tool-group-label">World</div>
-        <div class="button-row">
-          <button class="neon-btn" id="clearWorld"><span class="dot"></span>Clear</button>
-          <button class="neon-btn" id="randomWorld"><span class="dot"></span>Random Fill</button>
-          <button class="neon-btn" id="togglePause"><span class="dot"></span>Pause</button>
+      <!-- RIGHT: CANVAS -->
+      <section class="panel sandbox-panel">
+        <div class="panel-inner">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Physics Sandbox</div>
+              <div class="panel-subtitle">Falling sand · liquids · fire · lower ground</div>
+            </div>
+          </div>
+          <div class="canvas-wrapper">
+            <canvas id="sandboxCanvas"></canvas>
+          </div>
+          <div class="info-footer">
+            <div class="badge-soft">Ground lowered</div>
+            <div class="badge-soft">Materials: Sand · Water · Stone · Fire</div>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </section>
 
-    <div class="info-footer" style="margin-top:auto;">
-      <div class="badge-soft">Click & drag to draw</div>
-      <div class="badge-soft">Sandbox Tick: 60 FPS</div>
-    </div>
-  </aside>
+    <!-- SNAKE VIEW -->
+    <section class="view view-snake" id="snakeView">
+      <!-- LEFT: CANVAS -->
+      <section class="panel">
+        <div class="panel-inner">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Neon Snake</div>
+              <div class="panel-subtitle">Rounded squares · wrap‑around walls</div>
+            </div>
+            <div class="panel-subtitle" id="snakeScoreLabel">Score: 0</div>
+          </div>
+          <div class="snake-canvas-wrapper">
+            <canvas id="snakeCanvas"></canvas>
+            <div class="snake-overlay" id="snakeOverlay">
+              <div class="snake-overlay-title">Press Space to Start</div>
+              <div class="snake-overlay-sub">Use Arrow Keys or WASD · Wrap‑around walls</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <!-- CENTER: SANDBOX -->
-  <main class="panel center-panel">
-    <div class="panel-header">
-      <div>
-        <div class="panel-title">Physics Sandbox</div>
-        <div class="panel-subtitle">Cell‑based falling sand · liquids · fire</div>
-      </div>
-    </div>
-    <div class="canvas-wrapper">
-      <canvas id="sandboxCanvas"></canvas>
-    </div>
+      <!-- RIGHT: INFO -->
+      <aside class="panel">
+        <div class="panel-inner">
+          <div class="panel-header">
+            <div class="panel-title">Snake Info</div>
+          </div>
+          <div style="font-size:12px;color:rgba(200,210,255,0.9);line-height:1.5;">
+            <p><strong>Controls:</strong> Arrow keys or WASD to move. Space to start or resume.</p>
+            <p><strong>Walls:</strong> Hitting a wall warps you to the opposite side (no death).</p>
+            <p><strong>Visuals:</strong> Snake head and body are rounded squares. Fruit is a rounded square with no glow.</p>
+            <p><strong>Goal:</strong> Eat as many fruits as you can without colliding with yourself.</p>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- CREDITS VIEW -->
+    <section class="view view-credits" id="creditsView">
+      <section class="panel credits-panel">
+        <div class="panel-inner">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Credits</div>
+              <div class="panel-subtitle">Pablo's Portal 2.0 — Hyper‑Neon Edition</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:rgba(200,210,255,0.9);line-height:1.6;margin-top:6px;">
+            <p><strong>Design & Vision:</strong> Rebecca</p>
+            <p><strong>Concept:</strong> A hyper‑neon physics playground with a built‑in arcade — Pablo's Portal.</p>
+            <p><strong>Features:</strong> Falling sand sandbox, liquids, fire, neon snake mini‑game, cyber‑glass UI, RGB hyper‑neon engine.</p>
+            <p><strong>Special:</strong> Menu poster with abstract RGB energy, wrap‑around snake walls, rounded‑square snake and fruit.</p>
+          </div>
+        </div>
+      </section>
+    </section>
   </main>
-
-  <!-- RIGHT: NEON SNAKE -->
-  <aside class="panel right-panel">
-    <div class="snake-header">
-      <div class="snake-title">Neon Snake</div>
-      <div class="snake-status" id="snakeScoreLabel">Score: 0</div>
-    </div>
-    <div class="snake-canvas-wrapper">
-      <canvas id="snakeCanvas"></canvas>
-      <div class="snake-overlay" id="snakeOverlay">
-        <div class="snake-overlay-title">Press Space to Start</div>
-        <div class="snake-overlay-sub">Use Arrow Keys or WASD to move · Hyper‑Neon Speed</div>
-      </div>
-    </div>
-    <div class="info-footer">
-      <div class="badge-soft">Snake Tick: Fast</div>
-      <div class="badge-soft">Walls: Solid</div>
-    </div>
-  </aside>
 </div>
 
 <script>
+/* ===========================
+   VIEW NAVIGATION
+   =========================== */
+
+const views = {
+  menuView: document.getElementById("menuView"),
+  sandboxView: document.getElementById("sandboxView"),
+  snakeView: document.getElementById("snakeView"),
+  creditsView: document.getElementById("creditsView")
+};
+
+function showView(id) {
+  Object.values(views).forEach((v) => v.classList.remove("active"));
+  if (views[id]) views[id].classList.add("active");
+
+  document.querySelectorAll(".nav-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.getAttribute("data-view-target") === id);
+  });
+}
+
+document.querySelectorAll("[data-view-target]").forEach((el) => {
+  el.addEventListener("click", () => {
+    const target = el.getAttribute("data-view-target");
+    showView(target);
+  });
+});
+
 /* ===========================
    SANDBOX CONFIG
    =========================== */
@@ -604,7 +827,7 @@ const sbCtx = sandboxCanvas.getContext("2d", { alpha: false });
 
 let sbWidth = 220;
 let sbHeight = 140;
-const cellSize = 4; // visual pixels per cell
+const cellSize = 4;
 
 function resizeSandboxCanvas() {
   const wrapper = sandboxCanvas.parentElement;
@@ -658,12 +881,24 @@ function inBounds(x, y) {
   return x >= 0 && x < sbWidth && y >= 0 && y < sbHeight;
 }
 
+/* Initialize lower ground (stone near bottom) */
+
+function initGround() {
+  const groundHeight = 8; // number of rows of ground at bottom
+  for (let y = sbHeight - groundHeight; y < sbHeight; y++) {
+    for (let x = 0; x < sbWidth; x++) {
+      grid[idx(x, y)] = MATERIAL.STONE;
+      fireLife[idx(x, y)] = 0;
+    }
+  }
+}
+initGround();
+
 /* Sandbox simulation */
 
 function stepSandbox() {
   if (sandboxPaused) return;
 
-  // Process from bottom up for falling behavior
   for (let y = sbHeight - 1; y >= 0; y--) {
     for (let x = 0; x < sbWidth; x++) {
       const i = idx(x, y);
@@ -677,7 +912,6 @@ function stepSandbox() {
             grid[below] = MATERIAL.SAND;
             grid[i] = tmp;
           } else {
-            // try diagonals
             const dir = Math.random() < 0.5 ? -1 : 1;
             const nx = x + dir;
             if (nx >= 0 && nx < sbWidth) {
@@ -698,7 +932,6 @@ function stepSandbox() {
             grid[below] = MATERIAL.WATER;
             grid[i] = MATERIAL.EMPTY;
           } else {
-            // flow sideways
             const dir = Math.random() < 0.5 ? -1 : 1;
             const nx = x + dir;
             if (nx >= 0 && nx < sbWidth) {
@@ -711,14 +944,12 @@ function stepSandbox() {
           }
         }
       } else if (m === MATERIAL.FIRE) {
-        // Fire spreads and then dies
         const life = fireLife[i];
         if (life <= 0) {
           grid[i] = MATERIAL.EMPTY;
           fireLife[i] = 0;
         } else {
           fireLife[i] = life - 1;
-          // ignite neighbors
           const dirs = [
             [0, 1],
             [0, -1],
@@ -821,7 +1052,6 @@ materialButtons.forEach((btn) => {
     else if (mat === "eraser") currentMaterial = MATERIAL.EMPTY;
   });
 });
-// default
 materialButtons[0].classList.add("active");
 
 const brushButtons = document.querySelectorAll("#brushButtons .neon-btn");
@@ -832,17 +1062,25 @@ brushButtons.forEach((btn) => {
     brushRadius = parseInt(btn.getAttribute("data-size"), 10);
   });
 });
-brushButtons[2].classList.add("active"); // medium default
+brushButtons[2].classList.add("active");
 
 /* World controls */
 
 document.getElementById("clearWorld").addEventListener("click", () => {
   grid.fill(MATERIAL.EMPTY);
   fireLife.fill(0);
+  initGround();
 });
 
 document.getElementById("randomWorld").addEventListener("click", () => {
   for (let i = 0; i < grid.length; i++) {
+    const y = Math.floor(i / sbWidth);
+    const groundHeight = 8;
+    if (y >= sbHeight - groundHeight) {
+      grid[i] = MATERIAL.STONE;
+      fireLife[i] = 0;
+      continue;
+    }
     const r = Math.random();
     if (r < 0.05) grid[i] = MATERIAL.STONE;
     else if (r < 0.15) grid[i] = MATERIAL.SAND;
@@ -871,12 +1109,18 @@ let snakeCellSize = 16;
 function resizeSnakeCanvas() {
   const wrapper = snakeCanvas.parentElement;
   const w = wrapper.clientWidth;
-  const targetWidth = w;
-  const targetHeight = snakeRows * (targetWidth / snakeCols);
+  const h = wrapper.clientHeight;
+  const aspect = snakeCols / snakeRows;
+  let drawW = w;
+  let drawH = w / aspect;
+  if (drawH > h) {
+    drawH = h;
+    drawW = h * aspect;
+  }
   snakeCanvas.width = snakeCols * snakeCellSize;
   snakeCanvas.height = snakeRows * snakeCellSize;
-  snakeCanvas.style.width = targetWidth + "px";
-  snakeCanvas.style.height = targetHeight + "px";
+  snakeCanvas.style.width = drawW + "px";
+  snakeCanvas.style.height = drawH + "px";
 }
 window.addEventListener("resize", resizeSnakeCanvas);
 resizeSnakeCanvas();
@@ -887,7 +1131,7 @@ let snakePendingDir = { x: 1, y: 0 };
 let snakeFood = { x: 10, y: 8 };
 let snakeAlive = false;
 let snakeScore = 0;
-let snakeTickMs = 80; // fast
+let snakeTickMs = 80;
 let lastSnakeTime = 0;
 
 const snakeOverlay = document.getElementById("snakeOverlay");
@@ -930,21 +1174,18 @@ function stepSnake(timestamp) {
   lastSnakeTime = timestamp;
   if (!snakeAlive) return;
 
-  // apply pending dir
   snakeDir = { ...snakePendingDir };
 
   const head = snake[0];
-  const nx = head.x + snakeDir.x;
-  const ny = head.y + snakeDir.y;
+  let nx = head.x + snakeDir.x;
+  let ny = head.y + snakeDir.y;
 
-  // collision with walls
-  if (nx < 0 || nx >= snakeCols || ny < 0 || ny >= snakeRows) {
-    snakeAlive = false;
-    snakeOverlay.style.display = "flex";
-    return;
-  }
+  // Wrap‑around walls instead of death
+  if (nx < 0) nx = snakeCols - 1;
+  else if (nx >= snakeCols) nx = 0;
+  if (ny < 0) ny = snakeRows - 1;
+  else if (ny >= snakeRows) ny = 0;
 
-  // collision with self
   if (snake.some((s) => s.x === nx && s.y === ny)) {
     snakeAlive = false;
     snakeOverlay.style.display = "flex";
@@ -954,7 +1195,6 @@ function stepSnake(timestamp) {
   const newHead = { x: nx, y: ny };
   snake.unshift(newHead);
 
-  // food
   if (nx === snakeFood.x && ny === snakeFood.y) {
     snakeScore += 1;
     updateSnakeScoreLabel();
@@ -962,6 +1202,21 @@ function stepSnake(timestamp) {
   } else {
     snake.pop();
   }
+}
+
+function drawRoundedRect(ctx, x, y, w, h, r) {
+  const radius = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + w - radius, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+  ctx.lineTo(x + w, y + h - radius);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+  ctx.lineTo(x + radius, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
 }
 
 function renderSnake() {
@@ -977,22 +1232,11 @@ function renderSnake() {
     }
   }
 
-  // food glow
-  const fx = snakeFood.x * snakeCellSize + snakeCellSize / 2;
-  const fy = snakeFood.y * snakeCellSize + snakeCellSize / 2;
-  const grad = snCtx.createRadialGradient(fx, fy, 2, fx, fy, snakeCellSize * 1.2);
-  grad.addColorStop(0, "rgba(255,255,255,1)");
-  grad.addColorStop(0.3, "rgba(0,255,255,0.9)");
-  grad.addColorStop(1, "rgba(0,255,255,0)");
-  snCtx.fillStyle = grad;
-  snCtx.beginPath();
-  snCtx.arc(fx, fy, snakeCellSize * 1.2, 0, Math.PI * 2);
-  snCtx.fill();
-
-  // food core
-  snCtx.fillStyle = "#ffffff";
-  snCtx.beginPath();
-  snCtx.arc(fx, fy, snakeCellSize * 0.35, 0, Math.PI * 2);
+  // fruit: rounded square, no glow
+  const fx = snakeFood.x * snakeCellSize;
+  const fy = snakeFood.y * snakeCellSize;
+  snCtx.fillStyle = "#ffdd55";
+  drawRoundedRect(snCtx, fx + 3, fy + 3, snakeCellSize - 6, snakeCellSize - 6, 4);
   snCtx.fill();
 
   // snake body
@@ -1011,12 +1255,8 @@ function renderSnake() {
     }
 
     snCtx.fillStyle = g;
-    snCtx.fillRect(px + 2, py + 2, snakeCellSize - 4, snakeCellSize - 4);
-
-    // glow
-    snCtx.strokeStyle = "rgba(0,255,255,0.9)";
-    snCtx.lineWidth = 2;
-    snCtx.strokeRect(px + 2, py + 2, snakeCellSize - 4, snakeCellSize - 4);
+    drawRoundedRect(snCtx, px + 2, py + 2, snakeCellSize - 4, snakeCellSize - 4, 5);
+    snCtx.fill();
   });
 }
 
@@ -1052,7 +1292,6 @@ window.addEventListener("keydown", (e) => {
     return;
   }
 
-  // prevent reversing directly
   if (dx === -snakeDir.x && dy === -snakeDir.y) return;
   snakePendingDir = { x: dx, y: dy };
 });
