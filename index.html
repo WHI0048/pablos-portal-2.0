@@ -136,14 +136,14 @@ html, body {
   height: 100%;
 }
 .tools {
-  width: 260px;
+  width: 280px;
   background: rgba(10,10,30,0.9);
   border-right: 1px solid rgba(255,255,255,0.18);
   padding: 10px;
   overflow-y: auto;
 }
 .tool-section-title {
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
   opacity: 0.8;
@@ -156,12 +156,25 @@ html, body {
   border: 1px solid rgba(255,255,255,0.3);
   background: rgba(30,30,60,0.9);
   cursor: pointer;
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .tool-btn.active {
   background: rgba(255,255,255,0.2);
+}
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 10px;
+}
+.slider-row span {
+  font-size: 11px;
+  opacity: 0.8;
+}
+#brushSlider {
+  width: 100%;
 }
 .sandbox-canvas-box {
   flex: 1;
@@ -173,9 +186,21 @@ html, body {
     radial-gradient(circle at bottom, rgba(255,0,128,0.2), transparent 60%),
     #050510;
 }
+.sandbox-frame {
+  position: relative;
+  padding: 10px;
+  border-radius: 18px;
+  background: radial-gradient(circle at top, rgba(0,255,255,0.15), transparent 60%);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.12),
+    0 0 40px rgba(0,255,255,0.6),
+    0 0 80px rgba(255,0,128,0.6);
+}
 #sandboxCanvas {
   image-rendering: pixelated;
   background: black;
+  width: min(90vw, 90vh * (500/300));
+  height: auto;
 }
 
 /* SNAKE */
@@ -190,9 +215,21 @@ html, body {
     radial-gradient(circle at bottom, rgba(255,0,128,0.2), transparent 60%),
     #050510;
 }
+.snake-frame {
+  position: relative;
+  padding: 10px;
+  border-radius: 18px;
+  background: radial-gradient(circle at top, rgba(0,255,255,0.15), transparent 60%);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.12),
+    0 0 40px rgba(0,255,255,0.6),
+    0 0 80px rgba(255,0,128,0.6);
+}
 #snakeCanvas {
   background: #050515;
   image-rendering: pixelated;
+  width: min(90vw, 90vh * (48/30));
+  height: auto;
 }
 .snake-overlay {
   position: absolute;
@@ -245,18 +282,39 @@ html, body {
 <div class="view" id="view-sandbox">
   <div class="sandbox-wrapper">
     <div class="tools">
-      <div class="tool-section-title">Materials</div>
+      <div class="tool-section-title">Solids</div>
       <button class="tool-btn" data-material="sand">Sand</button>
-      <button class="tool-btn" data-material="water">Water</button>
       <button class="tool-btn" data-material="stone">Stone</button>
+      <button class="tool-btn" data-material="wood">Wood</button>
+      <button class="tool-btn" data-material="metal">Metal</button>
+      <button class="tool-btn" data-material="slime">Slime</button>
+      <button class="tool-btn" data-material="mirror">Mirror</button>
+
+      <div class="tool-section-title">Liquids</div>
+      <button class="tool-btn" data-material="water">Water</button>
+      <button class="tool-btn" data-material="gasoline">Gasoline</button>
+      <button class="tool-btn" data-material="acid">Acid</button>
+      <button class="tool-btn" data-material="lava">Lava</button>
+
+      <div class="tool-section-title">Gases</div>
+      <button class="tool-btn" data-material="smoke">Smoke</button>
+      <button class="tool-btn" data-material="steam">Steam</button>
+      <button class="tool-btn" data-material="poison_gas">Poison Gas</button>
+      <button class="tool-btn" data-material="explosive_gas">Explosive Gas</button>
+      <button class="tool-btn" data-material="propane">Propane</button>
+      <button class="tool-btn" data-material="sleep_gas">Sleep Gas</button>
+
+      <div class="tool-section-title">Special</div>
       <button class="tool-btn" data-material="fire">Fire</button>
+      <button class="tool-btn" id="lighterTool">Lighter</button>
       <button class="tool-btn" data-material="eraser">Eraser</button>
 
       <div class="tool-section-title">Brush Size</div>
-      <button class="tool-btn" data-size="1">Tiny</button>
-      <button class="tool-btn" data-size="2">Small</button>
-      <button class="tool-btn" data-size="4">Medium</button>
-      <button class="tool-btn" data-size="6">Large</button>
+      <div class="slider-row">
+        <span>1</span>
+        <input type="range" id="brushSlider" min="1" max="12" value="4" />
+        <span>12</span>
+      </div>
 
       <div class="tool-section-title">Ruler</div>
       <button class="tool-btn" id="rulerToggle">Ruler Mode</button>
@@ -267,7 +325,9 @@ html, body {
       <button class="tool-btn" id="togglePause">Pause</button>
     </div>
     <div class="sandbox-canvas-box">
-      <canvas id="sandboxCanvas"></canvas>
+      <div class="sandbox-frame">
+        <canvas id="sandboxCanvas"></canvas>
+      </div>
     </div>
   </div>
 </div>
@@ -275,7 +335,9 @@ html, body {
 <!-- SNAKE VIEW -->
 <div class="view" id="view-snake">
   <div class="snake-center">
-    <canvas id="snakeCanvas"></canvas>
+    <div class="snake-frame">
+      <canvas id="snakeCanvas"></canvas>
+    </div>
   </div>
   <div class="snake-overlay" id="snakeOverlay">Press SPACE to Start</div>
 </div>
@@ -308,29 +370,49 @@ document.querySelectorAll("[data-view]").forEach(btn => {
 
 const sbCanvas = document.getElementById("sandboxCanvas");
 const sbCtx = sbCanvas.getContext("2d");
-let sbW = 220;
-let sbH = 140;
+let sbW = 500;
+let sbH = 300;
 sbCanvas.width = sbW;
 sbCanvas.height = sbH;
 
-const EMPTY=0,SAND=1,WATER=2,STONE=3,FIRE=4;
+const EMPTY=0,
+      SAND=1,
+      WATER=2,
+      STONE=3,
+      FIRE=4,
+      WOOD=5,
+      METAL=6,
+      SLIME=7,
+      MIRROR=8,
+      GASOLINE=9,
+      ACID=10,
+      LAVA=11,
+      SMOKE=12,
+      STEAM=13,
+      POISON_GAS=14,
+      EXPLOSIVE_GAS=15,
+      PROPANE=16,
+      SLEEP_GAS=17;
+
 let grid = new Array(sbW*sbH).fill(0);
 let fireLife = new Array(sbW*sbH).fill(0);
+let tempGrid = new Array(sbW*sbH).fill(0);
 
 let currentMaterial=SAND;
-let brush=3;
+let brush=4;
 let paused=false;
 
 let rulerMode = false;
 let rulerStart = null;
 let rulerEnd = null;
 let isRulerDragging = false;
+let lighterMode = false;
 
 function idx(x,y){return y*sbW+x;}
 function inBounds(x,y){return x>=0&&x<sbW&&y>=0&&y<sbH;}
 
 function initGround(){
-  for(let y=sbH-8;y<sbH;y++){
+  for(let y=sbH-10;y<sbH;y++){
     for(let x=0;x<sbW;x++){
       grid[idx(x,y)]=STONE;
     }
@@ -338,62 +420,20 @@ function initGround(){
 }
 initGround();
 
-function stepSandbox(){
-  if(paused)return;
-  for(let y=sbH-1;y>=0;y--){
-    for(let x=0;x<sbW;x++){
-      let i=idx(x,y),m=grid[i];
-      if(m===SAND){
-        let ny=y+1;
-        if(ny<sbH){
-          let below=idx(x,ny);
-          if(grid[below]===EMPTY||grid[below]===WATER){
-            [grid[i],grid[below]]=[grid[below],grid[i]];
-          }else{
-            let dir=Math.random()<0.5?-1:1;
-            let nx=x+dir;
-            if(inBounds(nx,ny)){
-              let ni=idx(nx,ny);
-              if(grid[ni]===EMPTY||grid[ni]===WATER){
-                [grid[i],grid[ni]]=[grid[ni],grid[i]];
-              }
-            }
-          }
-        }
-      }
-      if(m===WATER){
-        let ny=y+1;
-        if(ny<sbH){
-          let below=idx(x,ny);
-          if(grid[below]===EMPTY){
-            grid[below]=WATER;grid[i]=EMPTY;
-          }else{
-            let dir=Math.random()<0.5?-1:1;
-            let nx=x+dir;
-            if(inBounds(nx,y)&&grid[idx(nx,y)]===EMPTY){
-              grid[idx(nx,y)]=WATER;grid[i]=EMPTY;
-            }
-          }
-        }
-      }
-      if(m===FIRE){
-        fireLife[i]--;
-        if(fireLife[i]<=0){grid[i]=EMPTY;continue;}
-        [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dx,dy])=>{
-          let nx=x+dx,ny=y+dy;
-          if(inBounds(nx,ny)){
-            let ni=idx(nx,ny);
-            if(grid[ni]===SAND||grid[ni]===WATER){
-              if(Math.random()<0.08){
-                grid[ni]=FIRE;
-                fireLife[ni]=20+Math.random()*20;
-              }
-            }
-          }
-        });
-      }
-    }
-  }
+function isLiquid(m){
+  return m===WATER||m===GASOLINE||m===ACID||m===LAVA||m===SLIME;
+}
+function isGas(m){
+  return m===SMOKE||m===STEAM||m===POISON_GAS||m===EXPLOSIVE_GAS||m===PROPANE||m===SLEEP_GAS;
+}
+function isSolid(m){
+  return m===SAND||m===STONE||m===WOOD||m===METAL||m===MIRROR;
+}
+function isFlammable(m){
+  return m===WOOD||m===SLIME||m===GASOLINE||m===POISON_GAS||m===EXPLOSIVE_GAS||m===PROPANE;
+}
+function isExplosive(m){
+  return m===EXPLOSIVE_GAS||m===PROPANE||m===GASOLINE;
 }
 
 function materialColor(m){
@@ -401,7 +441,167 @@ function materialColor(m){
   if(m===WATER)return [80,180,255];
   if(m===STONE)return [180,190,210];
   if(m===FIRE)return [255,120,40];
+  if(m===WOOD)return [180,120,60];
+  if(m===METAL)return [180,200,230];
+  if(m===SLIME)return [120,255,120];
+  if(m===MIRROR)return [220,240,255];
+  if(m===GASOLINE)return [255,200,80];
+  if(m===ACID)return [120,255,80];
+  if(m===LAVA)return [255,80,40];
+  if(m===SMOKE)return [120,120,120];
+  if(m===STEAM)return [200,220,255];
+  if(m===POISON_GAS)return [160,255,120];
+  if(m===EXPLOSIVE_GAS)return [255,160,80];
+  if(m===PROPANE)return [200,200,255];
+  if(m===SLEEP_GAS)return [200,160,255];
   return [0,0,0];
+}
+
+function explodeAt(cx,cy,radius){
+  for(let y=cy-radius;y<=cy+radius;y++){
+    for(let x=cx-radius;x<=cx+radius;x++){
+      if(!inBounds(x,y))continue;
+      let d=(x-cx)*(x-cx)+(y-cy)*(y-cy);
+      if(d<=radius*radius){
+        let i=idx(x,y);
+        grid[i]=FIRE;
+        fireLife[i]=10+Math.random()*20;
+      }
+    }
+  }
+}
+
+function stepSandbox(){
+  if(paused)return;
+  tempGrid.set(grid);
+
+  for(let y=sbH-1;y>=0;y--){
+    for(let x=0;x<sbW;x++){
+      let i=idx(x,y);
+      let m=tempGrid[i];
+      if(m===EMPTY)continue;
+
+      // FIRE
+      if(m===FIRE){
+        fireLife[i]--;
+        if(fireLife[i]<=0){
+          grid[i]=EMPTY;
+          continue;
+        }
+        [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dx,dy])=>{
+          let nx=x+dx,ny=y+dy;
+          if(!inBounds(nx,ny))return;
+          let ni=idx(nx,ny);
+          let nm=tempGrid[ni];
+          if(isFlammable(nm) && Math.random()<0.15){
+            grid[ni]=FIRE;
+            fireLife[ni]=20+Math.random()*30;
+          }
+          if(isExplosive(nm) && Math.random()<0.1){
+            explodeAt(nx,ny,6);
+          }
+          if(nm===GASOLINE && Math.random()<0.2){
+            grid[ni]=FIRE;
+            fireLife[ni]=20+Math.random()*30;
+          }
+        });
+        continue;
+      }
+
+      // LAVA reactions
+      if(m===LAVA){
+        [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dx,dy])=>{
+          let nx=x+dx,ny=y+dy;
+          if(!inBounds(nx,ny))return;
+          let ni=idx(nx,ny);
+          let nm=tempGrid[ni];
+          if(nm===WATER){
+            grid[ni]=STEAM;
+          }else if(isSolid(nm) && nm!==STONE && Math.random()<0.2){
+            grid[ni]=LAVA;
+          }
+        });
+      }
+
+      // ACID reactions
+      if(m===ACID){
+        [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dx,dy])=>{
+          let nx=x+dx,ny=y+dy;
+          if(!inBounds(nx,ny))return;
+          let ni=idx(nx,ny);
+          let nm=tempGrid[ni];
+          if(nm!==EMPTY && nm!==ACID && Math.random()<0.1){
+            grid[ni]=ACID;
+          }
+        });
+      }
+
+      // GASES (rise)
+      if(isGas(m)){
+        let ny=y-1;
+        if(ny>=0){
+          let above=idx(x,ny);
+          if(grid[above]===EMPTY){
+            grid[above]=m;
+            grid[i]=EMPTY;
+            continue;
+          }else{
+            let dir=Math.random()<0.5?-1:1;
+            let nx=x+dir;
+            if(inBounds(nx,ny) && grid[idx(nx,ny)]===EMPTY){
+              grid[idx(nx,ny)]=m;
+              grid[i]=EMPTY;
+              continue;
+            }
+          }
+        }
+        continue;
+      }
+
+      // LIQUIDS (flow)
+      if(isLiquid(m)){
+        let ny=y+1;
+        if(ny<sbH){
+          let below=idx(x,ny);
+          if(grid[below]===EMPTY){
+            grid[below]=m;grid[i]=EMPTY;
+            continue;
+          }else{
+            let dir=Math.random()<0.5?-1:1;
+            let nx=x+dir;
+            if(inBounds(nx,y) && grid[idx(nx,y)]===EMPTY){
+              grid[idx(nx,y)]=m;grid[i]=EMPTY;
+              continue;
+            }
+          }
+        }
+        continue;
+      }
+
+      // SAND / SLIME (falling solids)
+      if(m===SAND || m===SLIME){
+        let ny=y+1;
+        if(ny<sbH){
+          let below=idx(x,ny);
+          if(grid[below]===EMPTY || isLiquid(grid[below])){
+            [grid[i],grid[below]]=[grid[below],grid[i]];
+          }else{
+            let dir=Math.random()<0.5?-1:1;
+            let nx=x+dir;
+            if(inBounds(nx,ny)){
+              let ni=idx(nx,ny);
+              if(grid[ni]===EMPTY || isLiquid(grid[ni])){
+                [grid[i],grid[ni]]=[grid[ni],grid[i]];
+              }
+            }
+          }
+        }
+        continue;
+      }
+
+      // Other solids stay
+    }
+  }
 }
 
 function renderSandbox(){
@@ -427,16 +627,16 @@ function canvasToGrid(e){
   return {x,y};
 }
 
-function paintCircle(cx,cy){
+function paintCircle(cx,cy,mat){
   for(let dy=-brush;dy<=brush;dy++){
     for(let dx=-brush;dx<=brush;dx++){
       let nx=cx+dx,ny=cy+dy;
       if(inBounds(nx,ny)&&dx*dx+dy*dy<=brush*brush){
         let i=idx(nx,ny);
-        if(currentMaterial===FIRE){
+        if(mat===FIRE){
           grid[i]=FIRE;fireLife[i]=30;
         }else{
-          grid[i]=currentMaterial;
+          grid[i]=mat;
         }
       }
     }
@@ -453,7 +653,29 @@ function drawRulerLine(start,end){
     let t=i/steps;
     let x=start.x+dx*t;
     let y=start.y+dy*t;
-    paintCircle(Math.round(x),Math.round(y));
+    paintCircle(Math.round(x),Math.round(y),currentMaterial);
+  }
+}
+
+function useLighterAt(x,y){
+  // 1-in-5 chance to ignite
+  if(Math.random()<0.2){
+    // flame
+    paintCircle(x,y,FIRE);
+  }else{
+    // sparks: try to ignite nearby gases
+    for(let dy=-3;dy<=3;dy++){
+      for(let dx=-3;dx<=3;dx++){
+        let nx=x+dx,ny=y+dy;
+        if(!inBounds(nx,ny))continue;
+        let i=idx(nx,ny);
+        let m=grid[i];
+        if(isGas(m) && Math.random()<0.3){
+          grid[i]=FIRE;
+          fireLife[i]=20+Math.random()*20;
+        }
+      }
+    }
   }
 }
 
@@ -463,9 +685,11 @@ sbCanvas.addEventListener("mousedown",e=>{
     isRulerDragging=true;
     rulerStart=pos;
     rulerEnd=pos;
+  }else if(lighterMode){
+    useLighterAt(pos.x,pos.y);
   }else{
     drawing=true;
-    paintCircle(pos.x,pos.y);
+    paintCircle(pos.x,pos.y,currentMaterial);
   }
 });
 window.addEventListener("mouseup",()=>{
@@ -483,49 +707,92 @@ sbCanvas.addEventListener("mousemove",e=>{
     if(isRulerDragging){
       rulerEnd=pos;
     }
+  }else if(lighterMode){
+    // no drag drawing for lighter
   }else if(drawing){
-    paintCircle(pos.x,pos.y);
+    paintCircle(pos.x,pos.y,currentMaterial);
   }
 });
+
+/* MATERIAL BUTTONS */
 
 document.querySelectorAll("[data-material]").forEach(btn=>{
   btn.addEventListener("click",()=>{
     document.querySelectorAll("[data-material]").forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
+    lighterMode=false;
+    document.getElementById("lighterTool").classList.remove("active");
     let m=btn.dataset.material;
     if(m==="sand")currentMaterial=SAND;
     if(m==="water")currentMaterial=WATER;
     if(m==="stone")currentMaterial=STONE;
     if(m==="fire")currentMaterial=FIRE;
+    if(m==="wood")currentMaterial=WOOD;
+    if(m==="metal")currentMaterial=METAL;
+    if(m==="slime")currentMaterial=SLIME;
+    if(m==="mirror")currentMaterial=MIRROR;
+    if(m==="gasoline")currentMaterial=GASOLINE;
+    if(m==="acid")currentMaterial=ACID;
+    if(m==="lava")currentMaterial=LAVA;
+    if(m==="smoke")currentMaterial=SMOKE;
+    if(m==="steam")currentMaterial=STEAM;
+    if(m==="poison_gas")currentMaterial=POISON_GAS;
+    if(m==="explosive_gas")currentMaterial=EXPLOSIVE_GAS;
+    if(m==="propane")currentMaterial=PROPANE;
+    if(m==="sleep_gas")currentMaterial=SLEEP_GAS;
     if(m==="eraser")currentMaterial=EMPTY;
   });
 });
 document.querySelector('[data-material="sand"]').classList.add("active");
 
-document.querySelectorAll("[data-size]").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    document.querySelectorAll("[data-size]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    brush=parseInt(btn.dataset.size);
-  });
+/* BRUSH SLIDER */
+
+const brushSlider=document.getElementById("brushSlider");
+brushSlider.addEventListener("input",()=>{
+  brush=parseInt(brushSlider.value);
 });
-document.querySelector('[data-size="4"]').classList.add("active");
+
+/* LIGHTER TOOL */
+
+const lighterBtn=document.getElementById("lighterTool");
+lighterBtn.addEventListener("click",()=>{
+  lighterMode=!lighterMode;
+  lighterBtn.classList.toggle("active",lighterMode);
+  if(lighterMode){
+    rulerMode=false;
+    document.getElementById("rulerToggle").classList.remove("active");
+  }
+});
+
+/* RULER TOOL */
 
 const rulerBtn=document.getElementById("rulerToggle");
 rulerBtn.addEventListener("click",()=>{
   rulerMode=!rulerMode;
   rulerBtn.classList.toggle("active",rulerMode);
+  if(rulerMode){
+    lighterMode=false;
+    lighterBtn.classList.remove("active");
+  }
 });
 
-document.getElementById("clearWorld").onclick=()=>{grid.fill(0);fireLife.fill(0);initGround();};
+/* WORLD BUTTONS */
+
+document.getElementById("clearWorld").onclick=()=>{
+  grid.fill(0);fireLife.fill(0);initGround();
+};
 document.getElementById("randomWorld").onclick=()=>{
   for(let i=0;i<grid.length;i++){
     let y=Math.floor(i/sbW);
-    if(y>=sbH-8){grid[i]=STONE;continue;}
+    if(y>=sbH-10){grid[i]=STONE;continue;}
     let r=Math.random();
-    if(r<0.05)grid[i]=STONE;
-    else if(r<0.15)grid[i]=SAND;
-    else if(r<0.22)grid[i]=WATER;
+    if(r<0.03)grid[i]=STONE;
+    else if(r<0.10)grid[i]=SAND;
+    else if(r<0.16)grid[i]=WATER;
+    else if(r<0.18)grid[i]=WOOD;
+    else if(r<0.20)grid[i]=GASOLINE;
+    else if(r<0.22)grid[i]=ACID;
+    else if(r<0.24)grid[i]=LAVA;
     else grid[i]=EMPTY;
   }
 };
@@ -535,19 +802,19 @@ document.getElementById("togglePause").onclick=()=>{paused=!paused;};
 
 const snCanvas=document.getElementById("snakeCanvas");
 const snCtx=snCanvas.getContext("2d");
-snCanvas.width=480;
-snCanvas.height=320;
+let cols=48,rows=30,size=20;
+snCanvas.width=cols*size;
+snCanvas.height=rows*size;
 
-let cols=24,rows=16,size=20;
 let snake=[],dir={x:1,y:0},nextDir={x:1,y:0};
 let food={x:10,y:8};
 let alive=false;
 let overlay=document.getElementById("snakeOverlay");
 let lastSnakeTime=0;
-let snakeTickMs=140; // slowed down
+let snakeTickMs=140;
 
 function resetSnake(){
-  snake=[{x:5,y:8},{x:4,y:8},{x:3,y:8}];
+  snake=[{x:5,y:15},{x:4,y:15},{x:3,y:15}];
   dir={x:1,y:0};
   nextDir={x:1,y:0};
   food=randomFood();
