@@ -2,1966 +2,1077 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Pablo's Portal 2.0</title>
+<title>Pablo's Portal 2.0 — Hyper Neon</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <style>
-  :root {
-    --bg: #000000;
-    --panel: rgba(5, 5, 5, 0.96);
-    --text: #f5f7ff;
-    --danger: #ff4b6b;
-    --radius-lg: 24px;
-    --radius-md: 16px;
-    --blur: 18px;
-    --border-glass: 1px solid rgba(255, 255, 255, 0.12);
-  }
-
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-      "Segoe UI", sans-serif;
-  }
-
-  body {
-    min-height: 100vh;
-    background: #000000;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-
-  @keyframes rgbCycleBorder {
-    0% { border-image-source: linear-gradient(90deg, #ff0000, #00ff00, #0000ff); }
-    33% { border-image-source: linear-gradient(90deg, #00ff00, #0000ff, #ff0000); }
-    66% { border-image-source: linear-gradient(90deg, #0000ff, #ff0000, #00ff00); }
-    100% { border-image-source: linear-gradient(90deg, #ff0000, #00ff00, #0000ff); }
-  }
-
-  @keyframes rgbCycleBg {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
-  .rgb-cycle-btn {
-    background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff0000);
-    background-size: 300% 300%;
-    animation: rgbCycleBg 4s linear infinite;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    color: #ffffff;
-  }
-
-  .portal-shell {
-    width: 100%;
-    max-width: 1320px;
-    min-height: 720px;
-    background: #000000;
-    border-radius: 32px;
-    border-width: 3px;
-    border-style: solid;
-    border-image-slice: 1;
-    animation: rgbCycleBorder 6s linear infinite;
-    padding: 20px 22px;
-    display: grid;
-    grid-template-columns: 270px minmax(0, 1fr);
-    gap: 18px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .portal-shell-inner {
-    position: relative;
-    z-index: 1;
-    display: contents;
-  }
-
-  /* Sidebar / Menu */
-  .sidebar {
-    background: var(--panel);
-    border-radius: 24px;
-    border: var(--border-glass);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
-    padding: 18px 16px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    backdrop-filter: blur(var(--blur));
-  }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 8px 10px;
-    border-radius: 18px;
-    background: #050505;
-  }
-
-  .brand-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
-    box-shadow: 0 0 18px rgba(255, 255, 255, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #050712;
-    font-weight: 800;
-    font-size: 18px;
-  }
-
-  .brand-text-main {
-    font-weight: 650;
-    letter-spacing: 0.04em;
-    font-size: 14px;
-    text-transform: uppercase;
-  }
-
-  .brand-text-sub {
-    font-size: 11px;
-    opacity: 0.7;
-  }
-
-  .nav-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    opacity: 0.6;
-    padding: 0 4px;
-  }
-
-  .nav {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .nav-btn {
-    position: relative;
-    border: none;
-    outline: none;
-    border-radius: 999px;
-    padding: 10px 11px;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    font-size: 13px;
-    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.16s ease;
-  }
-
-  .nav-btn-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .nav-dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
-  }
-
-  .nav-title {
-    font-weight: 550;
-  }
-
-  .nav-tag {
-    font-size: 11px;
-    opacity: 0.7;
-  }
-
-  .nav-btn.active {
-    transform: translateY(-1px);
-    box-shadow: 0 0 22px rgba(255, 255, 255, 0.4);
-    border-color: rgba(255, 255, 255, 0.4);
-  }
-
-  .nav-btn:hover:not(.active) {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
-  }
-
-  .nav-kbd {
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: #050505;
-    opacity: 0.8;
-  }
-
-  .sidebar-footer {
-    margin-top: auto;
-    padding-top: 6px;
-    font-size: 11px;
-    opacity: 0.7;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .sidebar-footer span strong {
-    font-weight: 600;
-  }
-
-  /* Main */
-  .main {
-    background: var(--panel);
-    border-radius: 24px;
-    border: var(--border-glass);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
-    padding: 16px 16px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    backdrop-filter: blur(var(--blur));
-    position: relative;
-    overflow: hidden;
-  }
-
-  .main-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 4px 4px 6px;
-  }
-
-  .main-title-block {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .main-title {
-    font-size: 18px;
-    font-weight: 650;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  .main-subtitle {
-    font-size: 11px;
-    opacity: 0.7;
-  }
-
-  .main-pills {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-  }
-
-  .pill {
-    padding: 3px 8px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: #050505;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .pill-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
-  }
-
-  .main-body {
-    flex: 1;
-    display: grid;
-    grid-template-rows: minmax(0, 1fr);
-    gap: 10px;
-    position: relative;
-  }
-
-  .panel {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(6px);
-    transition: opacity 0.18s ease, transform 0.18s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .panel.active {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-  }
-
-  .panel-top-row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .panel-info {
-    font-size: 12px;
-    opacity: 0.8;
-  }
-
-  .panel-controls {
-    margin-left: auto;
-    display: flex;
-    gap: 6px;
-  }
-
-  .chip {
-    font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: #050505;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .chip-key {
-    font-size: 10px;
-    padding: 1px 5px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: rgba(0, 0, 0, 0.4);
-  }
-
-  .panel-main {
-    flex: 1;
-    display: grid;
-    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
-    gap: 10px;
-  }
-
-  .panel-main-full {
-    flex: 1;
-    display: grid;
-    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-    gap: 10px;
-  }
-
-  .card {
-    background: #050505;
-    border-radius: var(--radius-md);
-    border: var(--border-glass);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.9);
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-  }
-
-  .card-title {
-    font-weight: 550;
-  }
-
-  .card-sub {
-    font-size: 11px;
-    opacity: 0.7;
-  }
-
-  .card-badge-row {
-    display: flex;
-    gap: 6px;
-    font-size: 10px;
-    flex-wrap: wrap;
-  }
-
-  .badge {
-    padding: 2px 6px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: rgba(0, 0, 0, 0.4);
-    opacity: 0.85;
-  }
-
-  canvas {
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: radial-gradient(circle at top, #050712, #020308 60%, #000 100%);
-    display: block;
-  }
-
-  .card-footer {
-    font-size: 11px;
-    opacity: 0.75;
-    display: flex;
-    justify-content: space-between;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  .card-footer span {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .dot-soft,
-  .dot-soft-pink,
-  .dot-soft-green {
-    width: 6px;
-    height: 6px;
-    border-radius: 999px;
-  }
-
-  .dot-soft {
-    background: #35f0ff;
-    box-shadow: 0 0 10px rgba(53, 240, 255, 0.9);
-  }
-
-  .dot-soft-pink {
-    background: #ff3bff;
-    box-shadow: 0 0 10px rgba(255, 59, 255, 0.9);
-  }
-
-  .dot-soft-green {
-    background: #7cff6b;
-    box-shadow: 0 0 10px rgba(124, 255, 107, 0.9);
-  }
-
-  .control-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
-    font-size: 11px;
-  }
-
-  .control-item {
-    padding: 6px 7px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: rgba(0, 0, 0, 0.35);
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .control-label {
-    opacity: 0.8;
-  }
-
-  .control-keys {
-    font-size: 10px;
-    opacity: 0.9;
-  }
-
-  .control-keys span {
-    padding: 1px 5px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    margin-right: 2px;
-  }
-
-  .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-  }
-
-  .slider-row input[type="range"] {
-    flex: 1;
-  }
-
-  input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    height: 4px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.16);
-    outline: none;
-  }
-
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
-    cursor: pointer;
-  }
-
-  input[type="range"]::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
-    cursor: pointer;
-    border: none;
-  }
-
-  .btn-soft {
-    border-radius: 999px;
-    padding: 4px 10px;
-    font-size: 11px;
-    color: var(--text);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
-  }
-
-  .btn-soft:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
-  }
-
-  .btn-soft-danger {
-    border-color: rgba(255, 75, 107, 0.6);
-    color: var(--danger);
-  }
-
-  .btn-soft-tool {
-    font-size: 11px;
-    padding: 4px 10px;
-  }
-
-  .btn-soft-tool.active {
-    box-shadow: 0 0 16px rgba(255, 255, 255, 0.5);
-    border-color: rgba(255, 255, 255, 0.3);
-  }
-
-  .score-row {
-    display: flex;
-    gap: 6px;
-    font-size: 11px;
-    flex-wrap: wrap;
-  }
-
-  .score-pill {
-    padding: 3px 8px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: rgba(0, 0, 0, 0.4);
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .score-label {
-    opacity: 0.8;
-  }
-
-  .score-value {
-    font-weight: 600;
-  }
-
-  /* Matter state selector */
-  .matter-tabs {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 6px;
-    font-size: 11px;
-  }
-
-  .matter-tab {
-    border-radius: 999px;
-    padding: 4px 10px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: rgba(0, 0, 0, 0.4);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .matter-tab.active {
-    box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
-  }
-
-  .matter-pill-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    max-height: 120px;
-    overflow-y: auto;
-    padding-right: 4px;
-  }
-
-  .matter-pill {
-    border-radius: 999px;
-    padding: 4px 10px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: rgba(0, 0, 0, 0.5);
-    font-size: 11px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-
-  .matter-pill-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    box-shadow: 0 0 10px rgba(53, 240, 255, 0.9);
-  }
-
-  .matter-pill.active {
-    box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
-  }
-
-  .matter-backdrop {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
+:root {
+  --bg: #050510;
+  --panel-bg: rgba(5, 10, 25, 0.9);
+  --panel-border: rgba(255, 255, 255, 0.12);
+  --text-main: #f5f7ff;
+  --text-soft: #a8b2ff;
+  --danger: #ff3366;
+  --accent: #4dffdf;
+  --grid-line: rgba(255, 255, 255, 0.04);
+  --shadow-strong: 0 0 40px rgba(0, 255, 255, 0.6);
+  --shadow-soft: 0 0 25px rgba(0, 0, 0, 0.9);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: radial-gradient(circle at top, #1a0033 0, #050510 45%, #000000 100%);
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+  overflow: hidden;
+}
+
+/* Hyper‑neon global RGB hue rotation */
+body.hyper-neon {
+  animation: hyperHue 8s linear infinite;
+}
+
+@keyframes hyperHue {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    filter: hue-rotate(180deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+/* Layout */
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr) 320px;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "header header header"
+    "left   center right";
+  gap: 14px;
+  padding: 14px;
+  height: 100vh;
+}
+
+/* Panels */
+
+.panel {
+  position: relative;
+  background: radial-gradient(circle at top left, rgba(80, 255, 255, 0.12), transparent 55%),
+              radial-gradient(circle at bottom right, rgba(255, 80, 200, 0.12), transparent 55%),
+              var(--panel-bg);
+  border-radius: 18px;
+  border: 1px solid var(--panel-border);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.02),
+    0 0 35px rgba(0, 255, 255, 0.35),
+    0 0 65px rgba(255, 0, 128, 0.35),
+    var(--shadow-soft);
+  overflow: hidden;
+  backdrop-filter: blur(18px) saturate(180%);
+}
+
+/* Cyber‑glass edge glow */
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(120deg, rgba(0, 255, 255, 0.9), rgba(255, 0, 200, 0.9), rgba(255, 255, 0, 0.9))
+    border-box;
+  -webkit-mask:
+    linear-gradient(#000 0 0) padding-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.7;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: panelBorderPulse 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes panelBorderPulse {
+  0% {
     opacity: 0.35;
-    mix-blend-mode: screen;
+    filter: blur(1px);
   }
+  100% {
+    opacity: 0.9;
+    filter: blur(2px);
+  }
+}
 
-  .matter-backdrop.solid {
-    background:
-      radial-gradient(circle at top left, rgba(200, 200, 255, 0.25), transparent 60%),
-      radial-gradient(circle at bottom right, rgba(120, 80, 40, 0.25), transparent 60%);
-  }
+/* Header */
 
-  .matter-backdrop.liquid {
-    background:
-      radial-gradient(circle at top left, rgba(80, 180, 255, 0.3), transparent 60%),
-      radial-gradient(circle at bottom right, rgba(255, 80, 40, 0.3), transparent 60%);
-  }
+.app-header {
+  grid-area: header;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  border-radius: 18px;
+  background: radial-gradient(circle at top left, rgba(0, 255, 255, 0.18), transparent 55%),
+              radial-gradient(circle at bottom right, rgba(255, 0, 200, 0.18), transparent 55%),
+              rgba(5, 10, 25, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 40px rgba(0, 255, 255, 0.5),
+    0 0 80px rgba(255, 0, 128, 0.6);
+  backdrop-filter: blur(20px) saturate(200%);
+}
 
-  .matter-backdrop.gas {
-    background:
-      radial-gradient(circle at top left, rgba(180, 255, 200, 0.3), transparent 60%),
-      radial-gradient(circle at bottom right, rgba(255, 200, 120, 0.3), transparent 60%);
-  }
+.app-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
-  @media (max-width: 980px) {
-    .portal-shell {
-      grid-template-columns: minmax(0, 1fr);
-      min-height: 0;
-    }
-    .sidebar {
-      order: 2;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .nav {
-      flex-direction: row;
-    }
-    .nav-btn {
-      flex: 1;
-    }
-    .sidebar-footer {
-      display: none;
-    }
-  }
+.app-title-main {
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow:
+    0 0 12px rgba(0, 255, 255, 0.9),
+    0 0 24px rgba(255, 0, 128, 0.9);
+}
 
-  @media (max-width: 780px) {
-    .panel-main,
-    .panel-main-full {
-      grid-template-columns: minmax(0, 1fr);
-    }
+.app-title-sub {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-soft);
+}
+
+.app-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badge-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  background: linear-gradient(120deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 200, 0.2));
+  box-shadow:
+    0 0 12px rgba(0, 255, 255, 0.7),
+    0 0 18px rgba(255, 0, 128, 0.7);
+}
+
+/* Left panel (tools) */
+
+.left-panel {
+  grid-area: left;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 12px 10px;
+  gap: 10px;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.panel-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-soft);
+}
+
+.panel-subtitle {
+  font-size: 11px;
+  color: rgba(168, 178, 255, 0.8);
+}
+
+.tool-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.tool-group-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(168, 178, 255, 0.9);
+  margin-bottom: 4px;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Neon buttons */
+
+.neon-btn {
+  position: relative;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 60%),
+              rgba(10, 15, 40, 0.9);
+  color: var(--text-main);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 18px rgba(0, 255, 255, 0.5),
+    0 0 30px rgba(255, 0, 128, 0.5);
+  transition:
+    transform 0.12s ease-out,
+    box-shadow 0.12s ease-out,
+    background 0.12s ease-out,
+    border-color 0.12s ease-out;
+}
+
+.neon-btn::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  background: conic-gradient(
+    from 0deg,
+    rgba(0, 255, 255, 0.9),
+    rgba(255, 0, 200, 0.9),
+    rgba(255, 255, 0, 0.9),
+    rgba(0, 255, 255, 0.9)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) padding-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  filter: blur(1px);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  transition: opacity 0.12s ease-out, filter 0.12s ease-out;
+}
+
+.neon-btn span.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff, #00ffff);
+  box-shadow:
+    0 0 8px rgba(0, 255, 255, 0.9),
+    0 0 14px rgba(0, 255, 255, 0.9);
+}
+
+.neon-btn:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 26px rgba(0, 255, 255, 0.9),
+    0 0 40px rgba(255, 0, 128, 0.9);
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.16), transparent 60%),
+              rgba(10, 15, 40, 0.95);
+}
+
+.neon-btn:hover::before {
+  opacity: 0.9;
+  filter: blur(1.6px);
+}
+
+.neon-btn.active {
+  border-color: rgba(255, 255, 255, 0.7);
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.22), transparent 60%),
+              rgba(15, 25, 60, 0.98);
+}
+
+/* Center panel (sandbox) */
+
+.center-panel {
+  grid-area: center;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 8px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  flex: 1;
+  border-radius: 16px;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(10, 10, 30, 0.9)),
+    radial-gradient(circle at top, rgba(0, 255, 255, 0.2), transparent 60%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 40px rgba(0, 255, 255, 0.9),
+    0 0 80px rgba(255, 0, 128, 0.9);
+}
+
+#sandboxCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+}
+
+/* Canvas neon aura */
+.canvas-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at top, rgba(0, 255, 255, 0.5), transparent 60%),
+    radial-gradient(circle at bottom, rgba(255, 0, 128, 0.5), transparent 60%);
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: canvasAura 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes canvasAura {
+  0% {
+    opacity: 0.35;
+    filter: blur(10px);
   }
+  100% {
+    opacity: 0.9;
+    filter: blur(18px);
+  }
+}
+
+/* Right panel (Neon Snake) */
+
+.right-panel {
+  grid-area: right;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 12px 10px;
+  gap: 10px;
+}
+
+.snake-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.snake-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-soft);
+}
+
+.snake-status {
+  font-size: 11px;
+  color: rgba(168, 178, 255, 0.9);
+}
+
+.snake-canvas-wrapper {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top, rgba(0, 255, 255, 0.25), transparent 60%),
+    radial-gradient(circle at bottom, rgba(255, 0, 128, 0.25), transparent 60%),
+    rgba(5, 10, 25, 0.95);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 35px rgba(0, 255, 255, 0.9),
+    0 0 65px rgba(255, 0, 128, 0.9);
+}
+
+#snakeCanvas {
+  width: 100%;
+  height: 260px;
+  display: block;
+  image-rendering: pixelated;
+}
+
+/* Snake overlay text */
+
+.snake-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+  padding: 10px;
+}
+
+.snake-overlay-title {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+  text-shadow:
+    0 0 12px rgba(0, 255, 255, 0.9),
+    0 0 24px rgba(255, 0, 128, 0.9);
+}
+
+.snake-overlay-sub {
+  margin-top: 6px;
+  font-size: 11px;
+  color: rgba(200, 210, 255, 0.9);
+}
+
+/* Info footer */
+
+.info-footer {
+  font-size: 11px;
+  color: rgba(168, 178, 255, 0.9);
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Small badges */
+
+.badge-soft {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(10, 15, 40, 0.9);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+/* Responsive */
+
+@media (max-width: 1100px) {
+  .app-shell {
+    grid-template-columns: 260px minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "header header"
+      "left   center"
+      "right  right";
+  }
+}
+
+@media (max-width: 800px) {
+  .app-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+      "header"
+      "center"
+      "left"
+      "right";
+  }
+}
 </style>
 </head>
-<body>
-<div class="portal-shell">
-  <div class="portal-shell-inner">
-    <!-- Sidebar / Menu -->
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-icon">P</div>
-        <div>
-          <div class="brand-text-main">Pablo's Portal 2.0</div>
-          <div class="brand-text-sub">Neon Physics &amp; Snake Playground</div>
+<body class="hyper-neon">
+<div class="app-shell">
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="app-title">
+      <div class="app-title-main">Pablo's Portal 2.0</div>
+      <div class="app-title-sub">Physics Sandbox · Neon Snake · Hyper‑Neon Cyber‑Glass</div>
+    </div>
+    <div class="app-header-right">
+      <div class="badge-pill">Hyper‑Neon Engine G3</div>
+      <div class="badge-pill">Extreme Cyber‑Arcade</div>
+    </div>
+  </header>
+
+  <!-- LEFT: TOOLS -->
+  <aside class="panel left-panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Sandbox Tools</div>
+        <div class="panel-subtitle">Materials · Tools · World Control</div>
+      </div>
+    </div>
+
+    <div class="tool-groups">
+      <div>
+        <div class="tool-group-label">Materials</div>
+        <div class="button-row" id="materialButtons">
+          <button class="neon-btn" data-material="sand"><span class="dot"></span>Sand</button>
+          <button class="neon-btn" data-material="water"><span class="dot"></span>Water</button>
+          <button class="neon-btn" data-material="stone"><span class="dot"></span>Stone</button>
+          <button class="neon-btn" data-material="fire"><span class="dot"></span>Fire</button>
+          <button class="neon-btn" data-material="eraser"><span class="dot"></span>Eraser</button>
         </div>
       </div>
 
-      <div class="nav-label">Menu</div>
-      <nav class="nav">
-        <button class="nav-btn rgb-cycle-btn active" data-target="panel-sandbox">
-          <div class="nav-btn-left">
-            <div class="nav-dot"></div>
-            <div>
-              <div class="nav-title">Physics Sandbox</div>
-              <div class="nav-tag">States of matter, lighter, ruler &amp; chain explosions</div>
-            </div>
-          </div>
-          <div class="nav-kbd">1</div>
-        </button>
-        <button class="nav-btn rgb-cycle-btn" data-target="panel-snake">
-          <div class="nav-btn-left">
-            <div class="nav-dot"></div>
-            <div>
-              <div class="nav-title">Neon Snake</div>
-              <div class="nav-tag">Large grid, chunky pixels</div>
-            </div>
-          </div>
-          <div class="nav-kbd">2</div>
-        </button>
-      </nav>
-
-      <div class="sidebar-footer">
-        <span><strong>Tip:</strong> Press 1 or 2 to switch instantly.</span>
-        <span>Sandbox: solids, liquids, gases, lighter &amp; ruler. Snake: bigger pixels, rounded body.</span>
+      <div>
+        <div class="tool-group-label">Brush</div>
+        <div class="button-row" id="brushButtons">
+          <button class="neon-btn" data-size="1"><span class="dot"></span>Tiny</button>
+          <button class="neon-btn" data-size="2"><span class="dot"></span>Small</button>
+          <button class="neon-btn" data-size="4"><span class="dot"></span>Medium</button>
+          <button class="neon-btn" data-size="6"><span class="dot"></span>Large</button>
+        </div>
       </div>
-    </aside>
 
-    <!-- Main -->
-    <main class="main">
-      <header class="main-header">
-        <div class="main-title-block">
-          <div class="main-title">Pablo's Portal 2.0</div>
-          <div class="main-subtitle">Physics sandbox + neon snake, with ruler lines and RGB-cycling UI.</div>
+      <div>
+        <div class="tool-group-label">World</div>
+        <div class="button-row">
+          <button class="neon-btn" id="clearWorld"><span class="dot"></span>Clear</button>
+          <button class="neon-btn" id="randomWorld"><span class="dot"></span>Random Fill</button>
+          <button class="neon-btn" id="togglePause"><span class="dot"></span>Pause</button>
         </div>
-        <div class="main-pills">
-          <div class="pill">
-            <div class="pill-dot"></div>
-            RGB outline
-          </div>
-          <div class="pill">States of matter</div>
-        </div>
-      </header>
+      </div>
+    </div>
 
-      <section class="main-body">
-        <!-- Physics Sandbox Panel -->
-        <section class="panel active" id="panel-sandbox">
-          <div class="panel-top-row">
-            <div class="panel-info">
-              Large neon sandbox with solids, liquids, gases, a lighter that can spark &amp; chain-explode, plus a ruler for perfect lines.
-            </div>
-            <div class="panel-controls">
-              <div class="chip">
-                <span class="chip-key">1</span> Focus Sandbox
-              </div>
-              <div class="chip">
-                <span class="chip-key">C</span> Clear
-              </div>
-            </div>
-          </div>
+    <div class="info-footer" style="margin-top:auto;">
+      <div class="badge-soft">Click & drag to draw</div>
+      <div class="badge-soft">Sandbox Tick: 60 FPS</div>
+    </div>
+  </aside>
 
-          <div class="panel-main">
-            <!-- Sandbox canvas card -->
-            <div class="card" style="position:relative;">
-              <div class="matter-backdrop solid" id="matterBackdrop"></div>
-              <div class="card-header">
-                <div>
-                  <div class="card-title">Physics Sandbox</div>
-                  <div class="card-sub">Large grid, states of matter, lighter &amp; ruler</div>
-                </div>
-                <div class="card-badge-row">
-                  <span class="badge">Solid / Liquid / Gas</span>
-                  <span class="badge">Lighter &amp; explosions</span>
-                  <span class="badge">Ruler lines</span>
-                </div>
-              </div>
-              <canvas id="sandboxCanvas"></canvas>
-              <div class="card-footer">
-                <span><span class="dot-soft"></span> Left click: draw / place flame / ruler line</span>
-                <span><span class="dot-soft-pink"></span> Right click / E: erase</span>
-              </div>
-            </div>
+  <!-- CENTER: SANDBOX -->
+  <main class="panel center-panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Physics Sandbox</div>
+        <div class="panel-subtitle">Cell‑based falling sand · liquids · fire</div>
+      </div>
+    </div>
+    <div class="canvas-wrapper">
+      <canvas id="sandboxCanvas"></canvas>
+    </div>
+  </main>
 
-            <!-- Sandbox controls card -->
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Matter &amp; Tools</div>
-                <div class="card-sub">Choose state, material, brush, gravity, lighter &amp; ruler</div>
-              </div>
-
-              <!-- State tabs -->
-              <div class="matter-tabs">
-                <button class="matter-tab rgb-cycle-btn active" data-state="solid">
-                  <span class="dot-soft"></span> Solid
-                </button>
-                <button class="matter-tab rgb-cycle-btn" data-state="liquid">
-                  <span class="dot-soft-pink"></span> Liquid
-                </button>
-                <button class="matter-tab rgb-cycle-btn" data-state="gas">
-                  <span class="dot-soft-green"></span> Gas
-                </button>
-              </div>
-
-              <!-- Material pills -->
-              <div class="matter-pill-row" id="matterPills"></div>
-
-              <!-- Tools -->
-              <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
-                <button class="btn-soft btn-soft-tool rgb-cycle-btn active" id="toolDrawBtn">
-                  ✏️ Draw
-                </button>
-                <button class="btn-soft btn-soft-tool rgb-cycle-btn" id="toolLighterBtn">
-                  🔥 Lighter
-                </button>
-                <button class="btn-soft btn-soft-tool rgb-cycle-btn" id="toolEraserBtn">
-                  ⌫ Eraser
-                </button>
-                <button class="btn-soft btn-soft-tool rgb-cycle-btn" id="rulerBtn" style="display:none;">
-                  📏 Ruler
-                </button>
-                <button class="btn-soft rgb-cycle-btn" id="lighterStartBtn" style="display:none; margin-left:auto;">
-                  <span class="dot-soft-pink"></span> Start
-                </button>
-              </div>
-
-              <!-- Sliders -->
-              <div style="margin-top:10px;" class="control-grid">
-                <div class="control-item">
-                  <div class="control-label">Brush Size</div>
-                  <div class="slider-row">
-                    <input type="range" id="brushSize" min="1" max="10" value="4" />
-                    <span id="brushSizeLabel">4</span>
-                  </div>
-                </div>
-                <div class="control-item">
-                  <div class="control-label">Gravity Strength</div>
-                  <div class="slider-row">
-                    <input type="range" id="gravityStrength" min="0" max="3" step="0.2" value="1.6" />
-                    <span id="gravityLabel">1.6</span>
-                  </div>
-                </div>
-                <div class="control-item">
-                  <div class="control-label">Gas Drift</div>
-                  <div class="slider-row">
-                    <input type="range" id="gasDrift" min="0" max="3" step="0.2" value="1.2" />
-                    <span id="gasDriftLabel">1.2</span>
-                  </div>
-                </div>
-                <div class="control-item">
-                  <div class="control-label">Particles</div>
-                  <div style="font-size:11px; opacity:0.8;">
-                    <span id="particleCount">0</span> active
-                  </div>
-                </div>
-              </div>
-
-              <div style="margin-top:8px; display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap;">
-                <button class="btn-soft btn-soft-danger rgb-cycle-btn" id="clearSandbox">
-                  <span class="dot-soft-pink"></span> Clear Sandbox
-                </button>
-                <span style="font-size:11px; opacity:0.75;">
-                  Lighter Start: 1 in 5 chance. Fail = sparks. Success = pixel flame that can trigger chain explosions.
-                </span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Neon Snake Panel -->
-        <section class="panel" id="panel-snake">
-          <div class="panel-top-row">
-            <div class="panel-info">
-              Larger neon grid for snake. Chunky rounded pixels, non-glowing head and fruits.
-            </div>
-            <div class="panel-controls">
-              <div class="chip">
-                <span class="chip-key">2</span> Focus Snake
-              </div>
-              <div class="chip">
-                <span class="chip-key">Space</span> Pause / Resume
-              </div>
-            </div>
-          </div>
-
-          <div class="panel-main-full">
-            <div class="card">
-              <div class="card-header">
-                <div>
-                  <div class="card-title">Neon Snake</div>
-                  <div class="card-sub">Bigger pixels, rounded body, non-glowing head &amp; fruits</div>
-                </div>
-                <div class="card-badge-row">
-                  <span class="badge">Large grid</span>
-                  <span class="badge">Chunky cells</span>
-                </div>
-              </div>
-              <canvas id="snakeCanvas"></canvas>
-              <div class="card-footer">
-                <span><span class="dot-soft-green"></span> Arrow keys: move</span>
-                <span><span class="dot-soft-pink"></span> Space: pause / resume</span>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-header">
-                <div class="card-title">Snake Stats &amp; Controls</div>
-                <div class="card-sub">Score, speed, quick reset</div>
-              </div>
-
-              <div class="score-row">
-                <div class="score-pill">
-                  <span class="dot-soft-green"></span>
-                  <span class="score-label">Score</span>
-                  <span class="score-value" id="snakeScore">0</span>
-                </div>
-                <div class="score-pill">
-                  <span class="dot-soft"></span>
-                  <span class="score-label">Best</span>
-                  <span class="score-value" id="snakeBest">0</span>
-                </div>
-                <div class="score-pill">
-                  <span class="dot-soft-pink"></span>
-                  <span class="score-label">Speed</span>
-                  <span class="score-value" id="snakeSpeedLabel">1.0x</span>
-                </div>
-              </div>
-
-              <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px; font-size:11px;">
-                <div class="slider-row">
-                  <span>Base Speed</span>
-                  <input type="range" id="snakeSpeed" min="0.6" max="1.8" step="0.1" value="1.0" />
-                </div>
-
-                <div class="control-grid">
-                  <div class="control-item">
-                    <div class="control-label">Movement</div>
-                    <div class="control-keys">
-                      <span>↑</span><span>↓</span><span>←</span><span>→</span>
-                    </div>
-                  </div>
-                  <div class="control-item">
-                    <div class="control-label">Pause / Resume</div>
-                    <div class="control-keys">
-                      <span>Space</span>
-                    </div>
-                  </div>
-                  <div class="control-item">
-                    <div class="control-label">Reset Game</div>
-                    <div class="control-keys">
-                      <span>R</span>
-                    </div>
-                  </div>
-                  <div class="control-item">
-                    <div class="control-label">Portal Switch</div>
-                    <div class="control-keys">
-                      <span>1</span> Sandbox
-                      <span>2</span> Snake
-                    </div>
-                  </div>
-                </div>
-
-                <div style="display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap; margin-top:4px;">
-                  <button class="btn-soft rgb-cycle-btn" id="snakeResetBtn">
-                    <span class="dot-soft"></span> Reset Snake
-                  </button>
-                  <span style="opacity:0.75;">Each fruit slightly increases speed. The bigger pixels give you a chunky neon feel.</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </section>
-    </main>
-  </div>
+  <!-- RIGHT: NEON SNAKE -->
+  <aside class="panel right-panel">
+    <div class="snake-header">
+      <div class="snake-title">Neon Snake</div>
+      <div class="snake-status" id="snakeScoreLabel">Score: 0</div>
+    </div>
+    <div class="snake-canvas-wrapper">
+      <canvas id="snakeCanvas"></canvas>
+      <div class="snake-overlay" id="snakeOverlay">
+        <div class="snake-overlay-title">Press Space to Start</div>
+        <div class="snake-overlay-sub">Use Arrow Keys or WASD to move · Hyper‑Neon Speed</div>
+      </div>
+    </div>
+    <div class="info-footer">
+      <div class="badge-soft">Snake Tick: Fast</div>
+      <div class="badge-soft">Walls: Solid</div>
+    </div>
+  </aside>
 </div>
 
 <script>
-  // ---------- Layout & Navigation ----------
-  const navButtons = document.querySelectorAll(".nav-btn");
-  const panels = document.querySelectorAll(".panel");
+/* ===========================
+   SANDBOX CONFIG
+   =========================== */
 
-  function activatePanel(id) {
-    panels.forEach(p => p.classList.toggle("active", p.id === id));
-    navButtons.forEach(btn =>
-      btn.classList.toggle("active", btn.dataset.target === id)
-    );
+const sandboxCanvas = document.getElementById("sandboxCanvas");
+const sbCtx = sandboxCanvas.getContext("2d", { alpha: false });
+
+let sbWidth = 220;
+let sbHeight = 140;
+const cellSize = 4; // visual pixels per cell
+
+function resizeSandboxCanvas() {
+  const wrapper = sandboxCanvas.parentElement;
+  const w = wrapper.clientWidth;
+  const h = wrapper.clientHeight;
+  const aspect = sbWidth / sbHeight;
+  let drawW = w;
+  let drawH = w / aspect;
+  if (drawH > h) {
+    drawH = h;
+    drawW = h * aspect;
   }
+  sandboxCanvas.width = sbWidth;
+  sandboxCanvas.height = sbHeight;
+  sandboxCanvas.style.width = drawW + "px";
+  sandboxCanvas.style.height = drawH + "px";
+}
+window.addEventListener("resize", resizeSandboxCanvas);
+resizeSandboxCanvas();
 
-  navButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      activatePanel(btn.dataset.target);
-    });
-  });
+const MATERIAL = {
+  EMPTY: 0,
+  SAND: 1,
+  WATER: 2,
+  STONE: 3,
+  FIRE: 4
+};
 
-  window.addEventListener("keydown", (e) => {
-    if (e.target.tagName === "INPUT") return;
-    if (e.key === "1") activatePanel("panel-sandbox");
-    if (e.key === "2") activatePanel("panel-snake");
-  });
+const materialColors = {
+  [MATERIAL.EMPTY]: [0, 0, 0],
+  [MATERIAL.SAND]: [255, 220, 120],
+  [MATERIAL.WATER]: [80, 180, 255],
+  [MATERIAL.STONE]: [180, 190, 210],
+  [MATERIAL.FIRE]: [255, 120, 40]
+};
 
-  // ---------- Physics Sandbox ----------
-  const sandboxCanvas = document.getElementById("sandboxCanvas");
-  const sandboxCtx = sandboxCanvas.getContext("2d");
-  const brushSizeInput = document.getElementById("brushSize");
-  const brushSizeLabel = document.getElementById("brushSizeLabel");
-  const gravityInput = document.getElementById("gravityStrength");
-  const gravityLabel = document.getElementById("gravityLabel");
-  const gasDriftInput = document.getElementById("gasDrift");
-  const gasDriftLabel = document.getElementById("gasDriftLabel");
-  const clearSandboxBtn = document.getElementById("clearSandbox");
-  const particleCountLabel = document.getElementById("particleCount");
-  const matterTabs = document.querySelectorAll(".matter-tab");
-  const matterPillsContainer = document.getElementById("matterPills");
-  const matterBackdrop = document.getElementById("matterBackdrop");
-  const toolDrawBtn = document.getElementById("toolDrawBtn");
-  const toolLighterBtn = document.getElementById("toolLighterBtn");
-  const toolEraserBtn = document.getElementById("toolEraserBtn");
-  const lighterStartBtn = document.getElementById("lighterStartBtn");
-  const rulerBtn = document.getElementById("rulerBtn");
+let grid = new Array(sbWidth * sbHeight).fill(MATERIAL.EMPTY);
+let fireLife = new Array(sbWidth * sbHeight).fill(0);
 
-  let sandboxWidth, sandboxHeight;
-  let gridCols = 200;   // larger map
-  let gridRows = 130;   // larger map
-  let cellSize;
-  let sandboxGrid;
-  let sandboxParticles = [];
-  let sandboxGravity = parseFloat(gravityInput.value);
-  let gasDrift = parseFloat(gasDriftInput.value);
-  let sandboxBrushSize = parseInt(brushSizeInput.value, 10);
-  let currentState = "solid";
-  let currentMaterialKey = "mirror";
-  let currentTool = "draw"; // draw | lighter | eraser
-  let sandboxMouseDown = false;
-  let sandboxMouseButton = 0;
-  let effects = []; // sparks, flames, explosions
-  let lighterOn = false;
-  let lastPointerGridX = Math.floor(gridCols / 2);
-  let lastPointerGridY = Math.floor(gridRows / 2);
+let currentMaterial = MATERIAL.SAND;
+let brushRadius = 2;
+let sandboxPaused = false;
 
-  // Ruler state
-  let rulerMode = false;
-  let rulerDrawing = false;
-  let rulerStart = null;
-  let rulerEnd = null;
+/* Helpers */
 
-  const MATERIALS = {
-    // SOLIDS
-    mirror:   { id: 1,  name: "Mirror",   state: "solid", color: "#cfd9ff", behavior: "solid", flammable: false, explosive: false },
-    wood:     { id: 2,  name: "Wood",     state: "solid", color: "#c28a4a", behavior: "solid", flammable: true,  explosive: false },
-    metal:    { id: 3,  name: "Metal",    state: "solid", color: "#a0a6b8", behavior: "solid", flammable: false, explosive: false },
-    sand:     { id: 4,  name: "Sand",     state: "solid", color: "#f2d28a", behavior: "solid", flammable: false, explosive: false },
-    slime:    { id: 5,  name: "Slime",    state: "solid", color: "#7cff6b", behavior: "solid", flammable: false, explosive: false },
+function idx(x, y) {
+  return y * sbWidth + x;
+}
 
-    // LIQUIDS
-    poison:   { id: 6,  name: "Poison",   state: "liquid", color: "#7cff6b", behavior: "liquid", flammable: false, explosive: false },
-    gasoline: { id: 7,  name: "Gasoline", state: "liquid", color: "#ffd27a", behavior: "liquid", flammable: true,  explosive: true },
-    water:    { id: 8,  name: "Water",    state: "liquid", color: "#4fc3ff", behavior: "liquid", flammable: false, explosive: false },
-    lava:     { id: 9,  name: "Lava",     state: "liquid", color: "#ff6b3b", behavior: "liquid", flammable: false, explosive: false, hot: true },
-    acid:     { id: 10, name: "Acid",     state: "liquid", color: "#b4ff4f", behavior: "liquid", flammable: false, explosive: false },
+function inBounds(x, y) {
+  return x >= 0 && x < sbWidth && y >= 0 && y < sbHeight;
+}
 
-    // GASES
-    poisonGas: { id: 11, name: "Poison Gas",   state: "gas", color: "#9cff7a", behavior: "gas", flammable: false, explosive: false },
-    propane:   { id: 12, name: "Propane",      state: "gas", color: "#ffc47a", behavior: "gas", flammable: true,  explosive: true },
-    explosiveGas: { id: 13, name: "Explosive Gas", state: "gas", color: "#ff9b7a", behavior: "gas", flammable: true, explosive: true },
-    sleepGas:  { id: 14, name: "Sleep Gas",    state: "gas", color: "#cfa4ff", behavior: "gas", flammable: false, explosive: false }
-  };
+/* Sandbox simulation */
 
-  const MATERIAL_KEYS_BY_STATE = {
-    solid: ["mirror", "wood", "metal", "sand", "slime"],
-    liquid: ["poison", "gasoline", "water", "lava", "acid"],
-    gas: ["poisonGas", "propane", "explosiveGas", "sleepGas"]
-  };
+function stepSandbox() {
+  if (sandboxPaused) return;
 
-  const EXPLOSIVE_KEYS = ["gasoline", "propane", "explosiveGas"];
-
-  function resizeSandbox() {
-    const rect = sandboxCanvas.parentElement.getBoundingClientRect();
-    const maxWidth = rect.width - 4;
-    const maxHeight = rect.height - 60;
-    const scaleX = maxWidth / gridCols;
-    const scaleY = maxHeight / gridRows;
-    cellSize = Math.floor(Math.min(scaleX, scaleY));
-    cellSize = Math.max(cellSize, 3);
-    sandboxWidth = gridCols * cellSize;
-    sandboxHeight = gridRows * cellSize;
-    sandboxCanvas.width = sandboxWidth;
-    sandboxCanvas.height = sandboxHeight;
-  }
-
-  function initSandbox() {
-    sandboxGrid = [];
-    for (let y = 0; y < gridRows; y++) {
-      const row = new Array(gridCols).fill(0);
-      sandboxGrid.push(row);
-    }
-    sandboxParticles = [];
-    effects = [];
-    rulerDrawing = false;
-    rulerStart = null;
-    rulerEnd = null;
-  }
-
-  function addParticle(x, y, matKey) {
-    if (x < 0 || x >= gridCols || y < 0 || y >= gridRows) return;
-    if (sandboxGrid[y][x] !== 0) return;
-    const mat = MATERIALS[matKey];
-    sandboxGrid[y][x] = mat.id;
-    sandboxParticles.push({
-      x, y,
-      matKey,
-      vy: 0,
-      life: 0
-    });
-  }
-
-  function eraseParticle(x, y) {
-    if (x < 0 || x >= gridCols || y < 0 || y >= gridRows) return;
-    if (sandboxGrid[y][x] === 0) return;
-    const id = sandboxGrid[y][x];
-    sandboxGrid[y][x] = 0;
-    sandboxParticles = sandboxParticles.filter(p => !(p.x === x && p.y === y && MATERIALS[p.matKey].id === id));
-  }
-
-  function handleSandboxPointer(clientX, clientY) {
-    const rect = sandboxCanvas.getBoundingClientRect();
-    const cx = clientX - rect.left;
-    const cy = clientY - rect.top;
-    const gx = Math.floor(cx / cellSize);
-    const gy = Math.floor(cy / cellSize);
-    lastPointerGridX = gx;
-    lastPointerGridY = gy;
-
-    if (rulerMode) {
-      // Ruler drawing handled separately
-      return;
-    }
-
-    const r = sandboxBrushSize;
-
-    if (currentTool === "lighter") {
-      if (!lighterOn) {
-        spawnSparkEffect(gx, gy);
-        return;
-      }
-      spawnStaticFlameAt(gx, gy);
-      igniteExplosivesAroundCell(gx, gy);
-      return;
-    }
-
-    for (let dy = -r; dy <= r; dy++) {
-      for (let dx = -r; dx <= r; dx++) {
-        if (dx * dx + dy * dy <= r * r) {
-          const x = gx + dx;
-          const y = gy + dy;
-          if (currentTool === "eraser" || sandboxMouseButton === 2) {
-            eraseParticle(x, y);
+  // Process from bottom up for falling behavior
+  for (let y = sbHeight - 1; y >= 0; y--) {
+    for (let x = 0; x < sbWidth; x++) {
+      const i = idx(x, y);
+      const m = grid[i];
+      if (m === MATERIAL.SAND) {
+        const belowY = y + 1;
+        if (belowY < sbHeight) {
+          const below = idx(x, belowY);
+          if (grid[below] === MATERIAL.EMPTY || grid[below] === MATERIAL.WATER) {
+            const tmp = grid[below];
+            grid[below] = MATERIAL.SAND;
+            grid[i] = tmp;
           } else {
-            addParticle(x, y, currentMaterialKey);
-          }
-        }
-      }
-    }
-  }
-
-  // Ruler line drawing
-  function gridFromClient(clientX, clientY) {
-    const rect = sandboxCanvas.getBoundingClientRect();
-    const cx = clientX - rect.left;
-    const cy = clientY - rect.top;
-    return {
-      gx: Math.floor(cx / cellSize),
-      gy: Math.floor(cy / cellSize)
-    };
-  }
-
-  function drawRulerPreview() {
-    if (!rulerDrawing || !rulerStart || !rulerEnd) return;
-    sandboxCtx.save();
-    sandboxCtx.strokeStyle = "rgba(255,255,255,0.9)";
-    sandboxCtx.lineWidth = 2;
-    sandboxCtx.setLineDash([6, 4]);
-    sandboxCtx.beginPath();
-    sandboxCtx.moveTo(
-      rulerStart.x * cellSize + cellSize / 2,
-      rulerStart.y * cellSize + cellSize / 2
-    );
-    sandboxCtx.lineTo(
-      rulerEnd.x * cellSize + cellSize / 2,
-      rulerEnd.y * cellSize + cellSize / 2
-    );
-    sandboxCtx.stroke();
-    sandboxCtx.restore();
-  }
-
-  function applyRulerLine() {
-    if (!rulerStart || !rulerEnd) return;
-    const x0 = rulerStart.x;
-    const y0 = rulerStart.y;
-    const x1 = rulerEnd.x;
-    const y1 = rulerEnd.y;
-
-    let dx = Math.abs(x1 - x0);
-    let sx = x0 < x1 ? 1 : -1;
-    let dy = -Math.abs(y1 - y0);
-    let sy = y0 < y1 ? 1 : -1;
-    let err = dx + dy;
-    let x = x0;
-    let y = y0;
-
-    while (true) {
-      addParticle(x, y, currentMaterialKey);
-      if (x === x1 && y === y1) break;
-      const e2 = 2 * err;
-      if (e2 >= dy) {
-        err += dy;
-        x += sx;
-      }
-      if (e2 <= dx) {
-        err += dx;
-        y += sy;
-      }
-    }
-  }
-
-  sandboxCanvas.addEventListener("mousedown", (e) => {
-    sandboxMouseDown = true;
-    sandboxMouseButton = e.button;
-
-    if (rulerMode && e.button === 0) {
-      const { gx, gy } = gridFromClient(e.clientX, e.clientY);
-      rulerDrawing = true;
-      rulerStart = { x: gx, y: gy };
-      rulerEnd = { x: gx, y: gy };
-      return;
-    }
-
-    handleSandboxPointer(e.clientX, e.clientY);
-  });
-
-  window.addEventListener("mouseup", (e) => {
-    if (rulerMode && rulerDrawing && e.button === 0) {
-      rulerDrawing = false;
-      applyRulerLine();
-    }
-    sandboxMouseDown = false;
-  });
-
-  sandboxCanvas.addEventListener("mousemove", (e) => {
-    if (!sandboxMouseDown && !rulerDrawing) return;
-
-    if (rulerMode && rulerDrawing) {
-      const { gx, gy } = gridFromClient(e.clientX, e.clientY);
-      rulerEnd = { x: gx, y: gy };
-      return;
-    }
-
-    handleSandboxPointer(e.clientX, e.clientY);
-  });
-
-  sandboxCanvas.addEventListener("contextmenu", (e) => e.preventDefault());
-
-  // Keyboard shortcuts
-  window.addEventListener("keydown", (e) => {
-    if (e.target.tagName === "INPUT") return;
-    if (e.key.toLowerCase() === "e") {
-      setTool("eraser");
-    }
-    if (e.key.toLowerCase() === "c") {
-      initSandbox();
-    }
-  });
-
-  brushSizeInput.addEventListener("input", () => {
-    sandboxBrushSize = parseInt(brushSizeInput.value, 10);
-    brushSizeLabel.textContent = sandboxBrushSize;
-  });
-
-  gravityInput.addEventListener("input", () => {
-    sandboxGravity = parseFloat(gravityInput.value);
-    gravityLabel.textContent = sandboxGravity.toFixed(1);
-  });
-
-  gasDriftInput.addEventListener("input", () => {
-    gasDrift = parseFloat(gasDriftInput.value);
-    gasDriftLabel.textContent = gasDrift.toFixed(1);
-  });
-
-  clearSandboxBtn.addEventListener("click", () => {
-    initSandbox();
-  });
-
-  // Matter UI
-  function renderMatterPills() {
-    matterPillsContainer.innerHTML = "";
-    const keys = MATERIAL_KEYS_BY_STATE[currentState];
-    keys.forEach(key => {
-      const mat = MATERIALS[key];
-      const pill = document.createElement("button");
-      pill.className = "matter-pill" + (key === currentMaterialKey ? " active" : "");
-      pill.dataset.key = key;
-
-      const dot = document.createElement("span");
-      dot.className = "matter-pill-dot";
-      dot.style.background = mat.color;
-      pill.appendChild(dot);
-
-      const label = document.createElement("span");
-      label.textContent = mat.name;
-      pill.appendChild(label);
-
-      matterPillsContainer.appendChild(pill);
-    });
-  }
-
-  matterTabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      matterTabs.forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      currentState = tab.dataset.state;
-      matterBackdrop.className = "matter-backdrop " + currentState;
-      currentMaterialKey = MATERIAL_KEYS_BY_STATE[currentState][0];
-      renderMatterPills();
-    });
-  });
-
-  matterPillsContainer.addEventListener("click", (e) => {
-    const pill = e.target.closest(".matter-pill");
-    if (!pill) return;
-    const key = pill.dataset.key;
-    currentMaterialKey = key;
-    renderMatterPills();
-  });
-
-  function setTool(tool) {
-    currentTool = tool;
-    [toolDrawBtn, toolLighterBtn, toolEraserBtn].forEach(btn => btn.classList.remove("active"));
-    if (tool === "draw") toolDrawBtn.classList.add("active");
-    if (tool === "lighter") toolLighterBtn.classList.add("active");
-    if (tool === "eraser") toolEraserBtn.classList.add("active");
-
-    if (tool === "lighter") {
-      lighterStartBtn.style.display = "inline-flex";
-      rulerBtn.style.display = "none";
-      rulerMode = false;
-      rulerBtn.classList.remove("active");
-    } else if (tool === "draw") {
-      lighterStartBtn.style.display = "none";
-      lighterOn = false;
-      effects = effects.filter(e => e.type !== "flameStatic");
-      rulerBtn.style.display = "inline-flex";
-    } else {
-      lighterStartBtn.style.display = "none";
-      lighterOn = false;
-      effects = effects.filter(e => e.type !== "flameStatic");
-      rulerBtn.style.display = "none";
-      rulerMode = false;
-      rulerBtn.classList.remove("active");
-    }
-  }
-
-  toolDrawBtn.addEventListener("click", () => setTool("draw"));
-  toolLighterBtn.addEventListener("click", () => setTool("lighter"));
-  toolEraserBtn.addEventListener("click", () => setTool("eraser"));
-
-  // Ruler button
-  rulerBtn.addEventListener("click", () => {
-    rulerMode = !rulerMode;
-    rulerBtn.classList.toggle("active", rulerMode);
-    rulerDrawing = false;
-    rulerStart = null;
-    rulerEnd = null;
-  });
-
-  // Lighter Start button logic
-  lighterStartBtn.addEventListener("click", () => {
-    const success = Math.random() < 0.2;
-    const gx = lastPointerGridX;
-    const gy = lastPointerGridY;
-
-    lighterStartBtn.innerHTML = "";
-    if (!success) {
-      lighterOn = false;
-      const dot = document.createElement("span");
-      dot.className = "dot-soft-pink";
-      lighterStartBtn.appendChild(dot);
-      lighterStartBtn.append(" Start");
-      spawnSparkEffect(gx, gy);
-      effects = effects.filter(e => e.type !== "flameStatic");
-      return;
-    }
-
-    lighterOn = true;
-    const dot = document.createElement("span");
-    dot.className = "dot-soft";
-    lighterStartBtn.appendChild(dot);
-    lighterStartBtn.append(" Flame On");
-    spawnStaticFlameAt(gx, gy);
-  });
-
-  // Lighter effects & explosions
-  function spawnSparkEffect(gx, gy) {
-    const px = gx * cellSize + cellSize / 2;
-    const py = gy * cellSize + cellSize / 2;
-    effects.push({
-      type: "spark",
-      x: px,
-      y: py,
-      life: 0,
-      maxLife: 300
-    });
-  }
-
-  function spawnStaticFlameAt(gx, gy) {
-    const px = gx * cellSize + cellSize / 2;
-    const py = gy * cellSize + cellSize / 2;
-    effects = effects.filter(e => e.type !== "flameStatic");
-    effects.push({
-      type: "flameStatic",
-      x: px,
-      y: py,
-      life: 0,
-      maxLife: Infinity
-    });
-  }
-
-  function spawnExplosionEffect(gx, gy) {
-    const px = gx * cellSize + cellSize / 2;
-    const py = gy * cellSize + cellSize / 2;
-    effects.push({
-      type: "explosion",
-      x: px,
-      y: py,
-      life: 0,
-      maxLife: 600
-    });
-  }
-
-  function igniteExplosivesAroundCell(cx, cy) {
-    const visited = new Set();
-    function key(x, y) { return x + "," + y; }
-
-    function isExplosiveCell(x, y) {
-      if (x < 0 || x >= gridCols || y < 0 || y >= gridRows) return false;
-      const id = sandboxGrid[y][x];
-      if (!id) return false;
-      const matKey = Object.keys(MATERIALS).find(k => MATERIALS[k].id === id);
-      if (!matKey) return false;
-      return EXPLOSIVE_KEYS.includes(matKey);
-    }
-
-    function triggerExplosion(x, y, depth) {
-      if (depth > 6) return;
-      const k = key(x, y);
-      if (visited.has(k)) return;
-      visited.add(k);
-
-      if (!isExplosiveCell(x, y)) return;
-
-      sandboxGrid[y][x] = 0;
-      sandboxParticles = sandboxParticles.filter(p => !(p.x === x && p.y === y));
-      spawnExplosionEffect(x, y);
-
-      const radius = 3;
-      for (let dy = -radius; dy <= radius; dy++) {
-        for (let dx = -radius; dx <= radius; dx++) {
-          const nx = x + dx;
-          const ny = y + dy;
-          if (isExplosiveCell(nx, ny)) {
-            triggerExplosion(nx, ny, depth + 1);
-          }
-        }
-      }
-    }
-
-    const radius = 4;
-    for (let dy = -radius; dy <= radius; dy++) {
-      for (let dx = -radius; dx <= radius; dx++) {
-        const x = cx + dx;
-        const y = cy + dy;
-        triggerExplosion(x, y, 0);
-      }
-    }
-  }
-
-  function igniteExplosivesAroundFlameEffect(eff) {
-    const gx = Math.floor(eff.x / cellSize);
-    const gy = Math.floor(eff.y / cellSize);
-    igniteExplosivesAroundCell(gx, gy);
-  }
-
-  function updateSandbox() {
-    const newGrid = [];
-    for (let y = 0; y < gridRows; y++) {
-      newGrid.push(sandboxGrid[y].slice());
-    }
-
-    const shuffled = sandboxParticles.slice();
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-
-    const updatedParticles = [];
-
-    for (const p of shuffled) {
-      let { x, y, matKey, vy, life } = p;
-      const mat = MATERIALS[matKey];
-      if (!mat) continue;
-      if (newGrid[y][x] !== mat.id) continue;
-
-      life += 16;
-
-      let moved = false;
-      const dir = Math.random() < 0.5 ? -1 : 1;
-
-      const tryMove = (nx, ny) => {
-        if (nx < 0 || nx >= gridCols || ny < 0 || ny >= gridRows) return false;
-        if (newGrid[ny][nx] === 0) {
-          newGrid[y][x] = 0;
-          newGrid[ny][nx] = mat.id;
-          x = nx;
-          y = ny;
-          moved = true;
-          return true;
-        }
-        return false;
-      };
-
-      if (mat.behavior === "solid" || mat.behavior === "liquid") {
-        vy += sandboxGravity * 0.1;
-        if (vy > 1.8) vy = 1.8;
-
-        const down = Math.floor(vy >= 1 ? 1 : 0);
-        if (down > 0) {
-          if (!tryMove(x, y + 1)) {
-            if (mat.behavior === "liquid") {
-              if (!tryMove(x + dir, y + 1)) {
-                tryMove(x - dir, y + 1);
-              }
-            } else {
-              if (!tryMove(x + dir, y + 1) && !tryMove(x - dir, y + 1)) {
+            // try diagonals
+            const dir = Math.random() < 0.5 ? -1 : 1;
+            const nx = x + dir;
+            if (nx >= 0 && nx < sbWidth) {
+              const ni = idx(nx, belowY);
+              if (grid[ni] === MATERIAL.EMPTY || grid[ni] === MATERIAL.WATER) {
+                const tmp2 = grid[ni];
+                grid[ni] = MATERIAL.SAND;
+                grid[i] = tmp2;
               }
             }
           }
         }
-
-        if (!moved && mat.behavior === "liquid") {
-          if (!tryMove(x + dir, y)) {
-            tryMove(x - dir, y);
-          }
-        }
-      } else if (mat.behavior === "gas") {
-        vy -= gasDrift * 0.08;
-        if (vy < -1.5) vy = -1.5;
-
-        const up = Math.floor(vy <= -0.2 ? -1 : 0);
-        if (up < 0) {
-          if (!tryMove(x, y - 1)) {
-            if (!tryMove(x + dir, y - 1)) {
-              tryMove(x - dir, y - 1);
+      } else if (m === MATERIAL.WATER) {
+        const belowY = y + 1;
+        if (belowY < sbHeight) {
+          const below = idx(x, belowY);
+          if (grid[below] === MATERIAL.EMPTY) {
+            grid[below] = MATERIAL.WATER;
+            grid[i] = MATERIAL.EMPTY;
+          } else {
+            // flow sideways
+            const dir = Math.random() < 0.5 ? -1 : 1;
+            const nx = x + dir;
+            if (nx >= 0 && nx < sbWidth) {
+              const ni = idx(nx, y);
+              if (grid[ni] === MATERIAL.EMPTY) {
+                grid[ni] = MATERIAL.WATER;
+                grid[i] = MATERIAL.EMPTY;
+              }
             }
           }
         }
-
-        if (!moved) {
-          if (!tryMove(x + dir, y)) {
-            tryMove(x - dir, y);
-          }
-        }
-      }
-
-      updatedParticles.push({ x, y, matKey, vy, life });
-    }
-
-    sandboxParticles = updatedParticles;
-    sandboxGrid = newGrid;
-    particleCountLabel.textContent = sandboxParticles.length;
-  }
-
-  function drawSandbox() {
-    sandboxCtx.clearRect(0, 0, sandboxWidth, sandboxHeight);
-    const imgData = sandboxCtx.createImageData(sandboxWidth, sandboxHeight);
-    const data = imgData.data;
-
-    function setPixel(px, py, r, g, b, a) {
-      if (px < 0 || px >= sandboxWidth || py < 0 || py >= sandboxHeight) return;
-      const idx = (py * sandboxWidth + px) * 4;
-      data[idx] = r;
-      data[idx + 1] = g;
-      data[idx + 2] = b;
-      data[idx + 3] = a;
-    }
-
-    for (let y = 0; y < gridRows; y++) {
-      for (let x = 0; x < gridCols; x++) {
-        const id = sandboxGrid[y][x];
-        if (!id) continue;
-        const matKey = Object.keys(MATERIALS).find(k => MATERIALS[k].id === id);
-        if (!matKey) continue;
-        const mat = MATERIALS[matKey];
-        const col = mat.color;
-        const r = parseInt(col.slice(1, 3), 16);
-        const g = parseInt(col.slice(3, 5), 16);
-        const b = parseInt(col.slice(5, 7), 16);
-
-        for (let py = 0; py < cellSize; py++) {
-          for (let px = 0; px < cellSize; px++) {
-            const gx = x * cellSize + px;
-            const gy = y * cellSize + py;
-            setPixel(gx, gy, r, g, b, 255);
+      } else if (m === MATERIAL.FIRE) {
+        // Fire spreads and then dies
+        const life = fireLife[i];
+        if (life <= 0) {
+          grid[i] = MATERIAL.EMPTY;
+          fireLife[i] = 0;
+        } else {
+          fireLife[i] = life - 1;
+          // ignite neighbors
+          const dirs = [
+            [0, 1],
+            [0, -1],
+            [1, 0],
+            [-1, 0]
+          ];
+          for (const [dx, dy] of dirs) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if (!inBounds(nx, ny)) continue;
+            const ni = idx(nx, ny);
+            if (grid[ni] === MATERIAL.SAND || grid[ni] === MATERIAL.WATER) {
+              if (Math.random() < 0.08) {
+                grid[ni] = MATERIAL.FIRE;
+                fireLife[ni] = 20 + Math.floor(Math.random() * 20);
+              }
+            }
           }
         }
       }
     }
+  }
+}
 
-    sandboxCtx.putImageData(imgData, 0, 0);
+/* Sandbox rendering */
 
-    // Glow border
-    sandboxCtx.save();
-    sandboxCtx.globalCompositeOperation = "lighter";
-    sandboxCtx.shadowBlur = 18;
-    sandboxCtx.shadowColor = "rgba(255,255,255,0.7)";
-    sandboxCtx.strokeStyle = "rgba(255,255,255,0.4)";
-    sandboxCtx.lineWidth = 1;
-    sandboxCtx.strokeRect(2, 2, sandboxWidth - 4, sandboxHeight - 4);
-    sandboxCtx.restore();
-
-    // Effects (sparks, static flame, explosions)
-    const now = performance.now();
-    effects = effects.filter(e => e.life < e.maxLife);
-    for (const eff of effects) {
-      const t = eff.maxLife === Infinity ? 0 : eff.life / eff.maxLife;
-
-      if (eff.type === "spark") {
-        sandboxCtx.save();
-        sandboxCtx.globalCompositeOperation = "lighter";
-        sandboxCtx.strokeStyle = `rgba(255,255,200,${1 - t})`;
-        sandboxCtx.lineWidth = 2;
-        sandboxCtx.beginPath();
-        sandboxCtx.moveTo(eff.x - 4, eff.y);
-        sandboxCtx.lineTo(eff.x + 4, eff.y);
-        sandboxCtx.moveTo(eff.x, eff.y - 4);
-        sandboxCtx.lineTo(eff.x, eff.y + 4);
-        sandboxCtx.stroke();
-        sandboxCtx.restore();
-      } else if (eff.type === "flameStatic") {
-        const baseSize = cellSize * 1.2;
-        const flicker = 1 + Math.sin(now / 70 + eff.x * 0.03) * 0.2;
-        const size = baseSize * flicker;
-
-        sandboxCtx.save();
-        sandboxCtx.globalCompositeOperation = "lighter";
-
-        for (let i = 0; i < 4; i++) {
-          const level = i / 4;
-          const w = size * (1 - level * 0.4);
-          const h = size * 0.4;
-          const px = eff.x - w / 2 + (Math.random() - 0.5) * 2;
-          const py = eff.y - size * 0.6 + i * (h * 0.7);
-
-          let color;
-          if (i === 0) color = "rgba(255,240,210,0.95)";
-          else if (i === 1) color = "rgba(255,190,120,0.9)";
-          else if (i === 2) color = "rgba(255,120,60,0.85)";
-          else color = "rgba(200,60,40,0.7)";
-
-          sandboxCtx.fillStyle = color;
-          sandboxCtx.fillRect(
-            Math.round(px / 2) * 2,
-            Math.round(py / 2) * 2,
-            Math.round(w / 2) * 2,
-            Math.round(h / 2) * 2
-          );
-        }
-
-        sandboxCtx.restore();
-        igniteExplosivesAroundFlameEffect(eff);
-      } else if (eff.type === "explosion") {
-        const radius = cellSize * 4 * (0.3 + t);
-        const inner = radius * 0.4;
-        const grad = sandboxCtx.createRadialGradient(
-          eff.x, eff.y, 0,
-          eff.x, eff.y, radius
-        );
-        grad.addColorStop(0, `rgba(255,255,220,${1 - t})`);
-        grad.addColorStop(0.3, `rgba(255,200,80,${0.9 - t})`);
-        grad.addColorStop(0.7, `rgba(255,80,40,${0.7 - t})`);
-        grad.addColorStop(1, "rgba(0,0,0,0)");
-
-        sandboxCtx.save();
-        sandboxCtx.globalCompositeOperation = "lighter";
-        sandboxCtx.fillStyle = grad;
-        sandboxCtx.beginPath();
-        sandboxCtx.arc(eff.x, eff.y, radius, 0, Math.PI * 2);
-        sandboxCtx.fill();
-
-        sandboxCtx.strokeStyle = `rgba(255,240,220,${0.8 - t})`;
-        sandboxCtx.lineWidth = 2;
-        sandboxCtx.beginPath();
-        sandboxCtx.arc(eff.x, eff.y, inner, 0, Math.PI * 2);
-        sandboxCtx.stroke();
-        sandboxCtx.restore();
-      }
-
-      if (eff.maxLife !== Infinity) {
-        eff.life += 16;
-      }
+function renderSandbox() {
+  const imageData = sbCtx.createImageData(sbWidth, sbHeight);
+  const data = imageData.data;
+  for (let y = 0; y < sbHeight; y++) {
+    for (let x = 0; x < sbWidth; x++) {
+      const i = idx(x, y);
+      const m = grid[i];
+      const [r, g, b] = materialColors[m];
+      const p = i * 4;
+      data[p] = r;
+      data[p + 1] = g;
+      data[p + 2] = b;
+      data[p + 3] = 255;
     }
-
-    // Ruler preview (perfect straight line, non-pixel style)
-    drawRulerPreview();
   }
+  sbCtx.putImageData(imageData, 0, 0);
+}
 
-  function sandboxLoop() {
-    updateSandbox();
-    drawSandbox();
-    requestAnimationFrame(sandboxLoop);
-  }
+/* Drawing */
 
-  // ---------- Neon Snake ----------
-  const snakeCanvas = document.getElementById("snakeCanvas");
-  const snakeCtx = snakeCanvas.getContext("2d");
-  const snakeScoreLabel = document.getElementById("snakeScore");
-  const snakeBestLabel = document.getElementById("snakeBest");
-  const snakeSpeedSlider = document.getElementById("snakeSpeed");
-  const snakeSpeedLabel = document.getElementById("snakeSpeedLabel");
-  const snakeResetBtn = document.getElementById("snakeResetBtn");
+let drawing = false;
 
-  let snakeGridSize = 36; // large map
-  let snakeCellSize;
-  let snakeWidth, snakeHeight;
-  let snake;
-  let snakeDir;
-  let snakeNextDir;
-  let snakeFood;
-  let snakeScore = 0;
-  let snakeBest = 0;
-  let snakeBaseSpeed = parseFloat(snakeSpeedSlider.value);
-  let snakeSpeed = 7;
-  let snakeLastTime = 0;
-  let snakeAccum = 0;
-  let snakePaused = false;
-
-  function resizeSnake() {
-    const rect = snakeCanvas.parentElement.getBoundingClientRect();
-    const maxWidth = rect.width - 4;
-    const maxHeight = rect.height - 60;
-    const scaleX = maxWidth / snakeGridSize;
-    const scaleY = maxHeight / snakeGridSize;
-    snakeCellSize = Math.floor(Math.min(scaleX, scaleY));
-    snakeCellSize = Math.max(snakeCellSize, 18); // bigger pixels
-    snakeWidth = snakeGridSize * snakeCellSize;
-    snakeHeight = snakeGridSize * snakeCellSize;
-    snakeCanvas.width = snakeWidth;
-    snakeCanvas.height = snakeHeight;
-  }
-
-  function resetSnake() {
-    snake = [
-      { x: 10, y: Math.floor(snakeGridSize / 2) },
-      { x: 9, y: Math.floor(snakeGridSize / 2) },
-      { x: 8, y: Math.floor(snakeGridSize / 2) }
-    ];
-    snakeDir = { x: 1, y: 0 };
-    snakeNextDir = { x: 1, y: 0 };
-    snakeScore = 0;
-    snakeSpeed = 7 * snakeBaseSpeed;
-    spawnFood();
-    snakeScoreLabel.textContent = snakeScore;
-    snakeSpeedLabel.textContent = snakeBaseSpeed.toFixed(1) + "x";
-  }
-
-  function spawnFood() {
-    while (true) {
-      const x = Math.floor(Math.random() * snakeGridSize);
-      const y = Math.floor(Math.random() * snakeGridSize);
-      if (!snake.some(seg => seg.x === x && seg.y === y)) {
-        snakeFood = { x, y };
-        break;
+function applyBrush(clientX, clientY) {
+  const rect = sandboxCanvas.getBoundingClientRect();
+  const scaleX = sandboxCanvas.width / rect.width;
+  const scaleY = sandboxCanvas.height / rect.height;
+  const x = Math.floor((clientX - rect.left) * scaleX);
+  const y = Math.floor((clientY - rect.top) * scaleY);
+  for (let dy = -brushRadius; dy <= brushRadius; dy++) {
+    for (let dx = -brushRadius; dx <= brushRadius; dx++) {
+      const nx = x + dx;
+      const ny = y + dy;
+      if (!inBounds(nx, ny)) continue;
+      if (dx * dx + dy * dy > brushRadius * brushRadius) continue;
+      const i = idx(nx, ny);
+      if (currentMaterial === MATERIAL.EMPTY) {
+        grid[i] = MATERIAL.EMPTY;
+        fireLife[i] = 0;
+      } else if (currentMaterial === MATERIAL.FIRE) {
+        grid[i] = MATERIAL.FIRE;
+        fireLife[i] = 25 + Math.floor(Math.random() * 25);
+      } else {
+        grid[i] = currentMaterial;
+        fireLife[i] = 0;
       }
     }
   }
+}
 
-  function updateSnake(dt) {
-    if (snakePaused) return;
-    snakeAccum += dt;
-    const stepTime = 1000 / snakeSpeed;
-    if (snakeAccum < stepTime) return;
-    snakeAccum -= stepTime;
+sandboxCanvas.addEventListener("mousedown", (e) => {
+  drawing = true;
+  applyBrush(e.clientX, e.clientY);
+});
+window.addEventListener("mouseup", () => {
+  drawing = false;
+});
+sandboxCanvas.addEventListener("mousemove", (e) => {
+  if (!drawing) return;
+  applyBrush(e.clientX, e.clientY);
+});
 
-    snakeDir = snakeNextDir;
-    const head = snake[0];
-    const nx = head.x + snakeDir.x;
-    const ny = head.y + snakeDir.y;
+/* Material + brush UI */
 
-    if (nx < 0 || nx >= snakeGridSize || ny < 0 || ny >= snakeGridSize ||
-        snake.some(seg => seg.x === nx && seg.y === ny)) {
-      if (snakeScore > snakeBest) {
-        snakeBest = snakeScore;
-        snakeBestLabel.textContent = snakeBest;
-      }
-      resetSnake();
-      return;
+const materialButtons = document.querySelectorAll("#materialButtons .neon-btn");
+materialButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    materialButtons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    const mat = btn.getAttribute("data-material");
+    if (mat === "sand") currentMaterial = MATERIAL.SAND;
+    else if (mat === "water") currentMaterial = MATERIAL.WATER;
+    else if (mat === "stone") currentMaterial = MATERIAL.STONE;
+    else if (mat === "fire") currentMaterial = MATERIAL.FIRE;
+    else if (mat === "eraser") currentMaterial = MATERIAL.EMPTY;
+  });
+});
+// default
+materialButtons[0].classList.add("active");
+
+const brushButtons = document.querySelectorAll("#brushButtons .neon-btn");
+brushButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    brushButtons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    brushRadius = parseInt(btn.getAttribute("data-size"), 10);
+  });
+});
+brushButtons[2].classList.add("active"); // medium default
+
+/* World controls */
+
+document.getElementById("clearWorld").addEventListener("click", () => {
+  grid.fill(MATERIAL.EMPTY);
+  fireLife.fill(0);
+});
+
+document.getElementById("randomWorld").addEventListener("click", () => {
+  for (let i = 0; i < grid.length; i++) {
+    const r = Math.random();
+    if (r < 0.05) grid[i] = MATERIAL.STONE;
+    else if (r < 0.15) grid[i] = MATERIAL.SAND;
+    else if (r < 0.22) grid[i] = MATERIAL.WATER;
+    else grid[i] = MATERIAL.EMPTY;
+    fireLife[i] = 0;
+  }
+});
+
+document.getElementById("togglePause").addEventListener("click", (e) => {
+  sandboxPaused = !sandboxPaused;
+  e.currentTarget.classList.toggle("active", sandboxPaused);
+});
+
+/* ===========================
+   NEON SNAKE
+   =========================== */
+
+const snakeCanvas = document.getElementById("snakeCanvas");
+const snCtx = snakeCanvas.getContext("2d");
+
+let snakeCols = 24;
+let snakeRows = 16;
+let snakeCellSize = 16;
+
+function resizeSnakeCanvas() {
+  const wrapper = snakeCanvas.parentElement;
+  const w = wrapper.clientWidth;
+  const targetWidth = w;
+  const targetHeight = snakeRows * (targetWidth / snakeCols);
+  snakeCanvas.width = snakeCols * snakeCellSize;
+  snakeCanvas.height = snakeRows * snakeCellSize;
+  snakeCanvas.style.width = targetWidth + "px";
+  snakeCanvas.style.height = targetHeight + "px";
+}
+window.addEventListener("resize", resizeSnakeCanvas);
+resizeSnakeCanvas();
+
+let snake = [];
+let snakeDir = { x: 1, y: 0 };
+let snakePendingDir = { x: 1, y: 0 };
+let snakeFood = { x: 10, y: 8 };
+let snakeAlive = false;
+let snakeScore = 0;
+let snakeTickMs = 80; // fast
+let lastSnakeTime = 0;
+
+const snakeOverlay = document.getElementById("snakeOverlay");
+const snakeScoreLabel = document.getElementById("snakeScoreLabel");
+
+function resetSnake() {
+  snake = [
+    { x: 5, y: 8 },
+    { x: 4, y: 8 },
+    { x: 3, y: 8 }
+  ];
+  snakeDir = { x: 1, y: 0 };
+  snakePendingDir = { x: 1, y: 0 };
+  snakeFood = randomFood();
+  snakeScore = 0;
+  snakeAlive = false;
+  updateSnakeScoreLabel();
+  snakeOverlay.style.display = "flex";
+}
+
+function randomFood() {
+  while (true) {
+    const x = Math.floor(Math.random() * snakeCols);
+    const y = Math.floor(Math.random() * snakeRows);
+    if (!snake.some((s) => s.x === x && s.y === y)) {
+      return { x, y };
     }
+  }
+}
 
-    snake.unshift({ x: nx, y: ny });
+function updateSnakeScoreLabel() {
+  snakeScoreLabel.textContent = "Score: " + snakeScore;
+}
 
-    if (nx === snakeFood.x && ny === snakeFood.y) {
-      snakeScore++;
-      snakeScoreLabel.textContent = snakeScore;
-      snakeSpeed *= 1.03;
-      spawnFood();
+function stepSnake(timestamp) {
+  if (!lastSnakeTime) lastSnakeTime = timestamp;
+  const delta = timestamp - lastSnakeTime;
+  if (delta < snakeTickMs) return;
+
+  lastSnakeTime = timestamp;
+  if (!snakeAlive) return;
+
+  // apply pending dir
+  snakeDir = { ...snakePendingDir };
+
+  const head = snake[0];
+  const nx = head.x + snakeDir.x;
+  const ny = head.y + snakeDir.y;
+
+  // collision with walls
+  if (nx < 0 || nx >= snakeCols || ny < 0 || ny >= snakeRows) {
+    snakeAlive = false;
+    snakeOverlay.style.display = "flex";
+    return;
+  }
+
+  // collision with self
+  if (snake.some((s) => s.x === nx && s.y === ny)) {
+    snakeAlive = false;
+    snakeOverlay.style.display = "flex";
+    return;
+  }
+
+  const newHead = { x: nx, y: ny };
+  snake.unshift(newHead);
+
+  // food
+  if (nx === snakeFood.x && ny === snakeFood.y) {
+    snakeScore += 1;
+    updateSnakeScoreLabel();
+    snakeFood = randomFood();
+  } else {
+    snake.pop();
+  }
+}
+
+function renderSnake() {
+  snCtx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+
+  // background grid
+  for (let y = 0; y < snakeRows; y++) {
+    for (let x = 0; x < snakeCols; x++) {
+      const px = x * snakeCellSize;
+      const py = y * snakeCellSize;
+      snCtx.fillStyle = (x + y) % 2 === 0 ? "rgba(5,10,25,0.9)" : "rgba(10,15,40,0.9)";
+      snCtx.fillRect(px, py, snakeCellSize, snakeCellSize);
+    }
+  }
+
+  // food glow
+  const fx = snakeFood.x * snakeCellSize + snakeCellSize / 2;
+  const fy = snakeFood.y * snakeCellSize + snakeCellSize / 2;
+  const grad = snCtx.createRadialGradient(fx, fy, 2, fx, fy, snakeCellSize * 1.2);
+  grad.addColorStop(0, "rgba(255,255,255,1)");
+  grad.addColorStop(0.3, "rgba(0,255,255,0.9)");
+  grad.addColorStop(1, "rgba(0,255,255,0)");
+  snCtx.fillStyle = grad;
+  snCtx.beginPath();
+  snCtx.arc(fx, fy, snakeCellSize * 1.2, 0, Math.PI * 2);
+  snCtx.fill();
+
+  // food core
+  snCtx.fillStyle = "#ffffff";
+  snCtx.beginPath();
+  snCtx.arc(fx, fy, snakeCellSize * 0.35, 0, Math.PI * 2);
+  snCtx.fill();
+
+  // snake body
+  snake.forEach((segment, index) => {
+    const px = segment.x * snakeCellSize;
+    const py = segment.y * snakeCellSize;
+    const isHead = index === 0;
+
+    const g = snCtx.createLinearGradient(px, py, px + snakeCellSize, py + snakeCellSize);
+    if (isHead) {
+      g.addColorStop(0, "rgba(255,255,255,1)");
+      g.addColorStop(1, "rgba(0,255,255,1)");
     } else {
-      snake.pop();
+      g.addColorStop(0, "rgba(0,255,255,0.9)");
+      g.addColorStop(1, "rgba(255,0,200,0.9)");
     }
+
+    snCtx.fillStyle = g;
+    snCtx.fillRect(px + 2, py + 2, snakeCellSize - 4, snakeCellSize - 4);
+
+    // glow
+    snCtx.strokeStyle = "rgba(0,255,255,0.9)";
+    snCtx.lineWidth = 2;
+    snCtx.strokeRect(px + 2, py + 2, snakeCellSize - 4, snakeCellSize - 4);
+  });
+}
+
+/* Snake input */
+
+window.addEventListener("keydown", (e) => {
+  if (e.code === "Space") {
+    if (!snakeAlive) {
+      snakeAlive = true;
+      snakeOverlay.style.display = "none";
+      lastSnakeTime = performance.now();
+    }
+    e.preventDefault();
+    return;
   }
 
-  function drawSnake() {
-    snakeCtx.clearRect(0, 0, snakeWidth, snakeHeight);
+  let dx = snakeDir.x;
+  let dy = snakeDir.y;
 
-    // Background grid
-    snakeCtx.fillStyle = "#000000";
-    snakeCtx.fillRect(0, 0, snakeWidth, snakeHeight);
-    snakeCtx.strokeStyle = "rgba(255,255,255,0.04)";
-    snakeCtx.lineWidth = 1;
-    snakeCtx.beginPath();
-    for (let i = 0; i <= snakeGridSize; i++) {
-      const p = i * snakeCellSize;
-      snakeCtx.moveTo(p, 0);
-      snakeCtx.lineTo(p, snakeHeight);
-      snakeCtx.moveTo(0, p);
-      snakeCtx.lineTo(snakeWidth, p);
-    }
-    snakeCtx.stroke();
-
-    // Fruits: non-glowing rounded squares
-    const fx = snakeFood.x * snakeCellSize;
-    const fy = snakeFood.y * snakeCellSize;
-    snakeCtx.save();
-    snakeCtx.fillStyle = "#ff3bff";
-    snakeCtx.beginPath();
-    snakeCtx.roundRect(
-      fx + 3,
-      fy + 3,
-      snakeCellSize - 6,
-      snakeCellSize - 6,
-      6
-    );
-    snakeCtx.fill();
-    snakeCtx.restore();
-
-    // Snake body (glow), head (no glow)
-    snakeCtx.save();
-    snakeCtx.shadowBlur = 18;
-    snakeCtx.shadowColor = "rgba(53,240,255,0.9)";
-    for (let i = snake.length - 1; i >= 1; i--) {
-      const seg = snake[i];
-      const px = seg.x * snakeCellSize;
-      const py = seg.y * snakeCellSize;
-      const t = i / (snake.length - 1 || 1);
-      const r = 53 + (124 - 53) * t;
-      const g = 240 + (255 - 240) * t;
-      const b = 255 + (107 - 255) * t;
-      snakeCtx.fillStyle = `rgb(${r|0},${g|0},${b|0})`;
-      snakeCtx.beginPath();
-      snakeCtx.roundRect(
-        px + 3,
-        py + 3,
-        snakeCellSize - 6,
-        snakeCellSize - 6,
-        6
-      );
-      snakeCtx.fill();
-    }
-    snakeCtx.restore();
-
-    // Head: rounded square, no glow
-    const head = snake[0];
-    const hx = head.x * snakeCellSize;
-    const hy = head.y * snakeCellSize;
-    snakeCtx.save();
-    snakeCtx.fillStyle = "#35f0ff";
-    snakeCtx.beginPath();
-    snakeCtx.roundRect(
-      hx + 3,
-      hy + 3,
-      snakeCellSize - 6,
-      snakeCellSize - 6,
-      6
-    );
-    snakeCtx.fill();
-    snakeCtx.restore();
-
-    // Pause overlay
-    if (snakePaused) {
-      snakeCtx.fillStyle = "rgba(0,0,0,0.45)";
-      snakeCtx.fillRect(0, 0, snakeWidth, snakeHeight);
-      snakeCtx.fillStyle = "#ffffff";
-      snakeCtx.font = "bold 18px system-ui";
-      snakeCtx.textAlign = "center";
-      snakeCtx.fillText("Paused", snakeWidth / 2, snakeHeight / 2);
-    }
+  if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") {
+    dx = 0;
+    dy = -1;
+  } else if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
+    dx = 0;
+    dy = 1;
+  } else if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
+    dx = -1;
+    dy = 0;
+  } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+    dx = 1;
+    dy = 0;
+  } else {
+    return;
   }
 
-  window.addEventListener("keydown", (e) => {
-    if (e.target.tagName === "INPUT") return;
-    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-      let dx = 0, dy = 0;
-      if (e.key === "ArrowUp") dy = -1;
-      if (e.key === "ArrowDown") dy = 1;
-      if (e.key === "ArrowLeft") dx = -1;
-      if (e.key === "ArrowRight") dx = 1;
-      if (dx === -snakeDir.x && dy === -snakeDir.y) return;
-      snakeNextDir = { x: dx, y: dy };
-    }
-    if (e.key === " " || e.code === "Space") {
-      snakePaused = !snakePaused;
-    }
-    if (e.key.toLowerCase() === "r") {
-      resetSnake();
-    }
-  });
+  // prevent reversing directly
+  if (dx === -snakeDir.x && dy === -snakeDir.y) return;
+  snakePendingDir = { x: dx, y: dy };
+});
 
-  snakeSpeedSlider.addEventListener("input", () => {
-    snakeBaseSpeed = parseFloat(snakeSpeedSlider.value);
-    snakeSpeed = 7 * snakeBaseSpeed;
-    snakeSpeedLabel.textContent = snakeBaseSpeed.toFixed(1) + "x";
-  });
+/* ===========================
+   MAIN LOOP
+   =========================== */
 
-  snakeResetBtn.addEventListener("click", () => {
-    resetSnake();
-  });
+function loop(timestamp) {
+  stepSandbox();
+  renderSandbox();
 
-  function snakeLoop(timestamp) {
-    const dt = timestamp - snakeLastTime;
-    snakeLastTime = timestamp;
-    updateSnake(dt);
-    drawSnake();
-    requestAnimationFrame(snakeLoop);
-  }
+  stepSnake(timestamp);
+  renderSnake();
 
-  // ---------- Init ----------
-  function initAll() {
-    resizeSandbox();
-    initSandbox();
-    renderMatterPills();
-    sandboxLoop();
+  requestAnimationFrame(loop);
+}
 
-    resizeSnake();
-    resetSnake();
-    requestAnimationFrame(snakeLoop);
-  }
-
-  window.addEventListener("resize", () => {
-    resizeSandbox();
-    resizeSnake();
-  });
-
-  initAll();
+resetSnake();
+requestAnimationFrame(loop);
 </script>
 </body>
 </html>
