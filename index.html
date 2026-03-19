@@ -5,1312 +5,666 @@
 <title>Pablo's Portal 2.0 — Hyper Neon</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <style>
-:root {
-  --bg: #050510;
-  --panel-bg: rgba(5, 10, 25, 0.9);
-  --panel-border: rgba(255, 255, 255, 0.12);
-  --text-main: #f5f7ff;
-  --text-soft: #a8b2ff;
-  --accent: #4dffdf;
-  --danger: #ff3366;
-}
-
-/* Reset & base */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
   height: 100%;
-  background: radial-gradient(circle at top, #1a0033 0, #050510 45%, #000000 100%);
-  color: var(--text-main);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-    "Segoe UI", sans-serif;
+  background: #050510;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   overflow: hidden;
+  color: #f5f7ff;
 }
 
-/* Hyper‑neon global RGB hue rotation */
+/* NAVBAR */
 
-body.hyper-neon {
-  animation: hyperHue 8s linear infinite;
-}
-
-@keyframes hyperHue {
-  0% {
-    filter: hue-rotate(0deg);
-  }
-  50% {
-    filter: hue-rotate(180deg);
-  }
-  100% {
-    filter: hue-rotate(360deg);
-  }
-}
-
-/* App shell */
-
-.app-shell {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  padding: 12px;
-  gap: 10px;
-}
-
-/* Top navigation */
-
-.app-header {
+.navbar {
+  height: 56px;
+  background: rgba(10,10,25,0.9);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.18);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px;
-  border-radius: 18px;
-  background: radial-gradient(circle at top left, rgba(0, 255, 255, 0.18), transparent 55%),
-              radial-gradient(circle at bottom right, rgba(255, 0, 200, 0.18), transparent 55%),
-              rgba(5, 10, 25, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 0 40px rgba(0, 255, 255, 0.5),
-    0 0 80px rgba(255, 0, 128, 0.6);
-  backdrop-filter: blur(20px) saturate(200%);
+  padding: 0 16px;
+  gap: 8px;
+  box-shadow: 0 0 24px rgba(0,0,0,0.6);
 }
-
-.app-title {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.app-title-main {
-  font-size: 20px;
-  letter-spacing: 0.12em;
+.nav-title {
+  font-size: 16px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   font-weight: 700;
-  color: #ffffff;
-  text-shadow:
-    0 0 12px rgba(0, 255, 255, 0.9),
-    0 0 24px rgba(255, 0, 128, 0.9);
+  margin-right: auto;
+  text-shadow: 0 0 12px cyan, 0 0 24px magenta;
 }
-
-.app-title-sub {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--text-soft);
-}
-
-.nav-buttons {
-  display: flex;
-  gap: 8px;
-}
-
 .nav-btn {
-  position: relative;
-  padding: 6px 12px;
+  padding: 7px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 60%),
-              rgba(10, 15, 40, 0.9);
-  color: var(--text-main);
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(20,20,40,0.9);
+  cursor: pointer;
+  color: #f5f7ff;
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  cursor: pointer;
-  outline: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 0 18px rgba(0, 255, 255, 0.5),
-    0 0 30px rgba(255, 0, 128, 0.5);
-  transition:
-    transform 0.12s ease-out,
-    box-shadow 0.12s ease-out,
-    background 0.12s ease-out,
-    border-color 0.12s ease-out;
 }
-
-.nav-btn:hover {
-  transform: translateY(-1px) scale(1.02);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 0 26px rgba(0, 255, 255, 0.9),
-    0 0 40px rgba(255, 0, 128, 0.9);
-  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.16), transparent 60%),
-              rgba(10, 15, 40, 0.95);
-}
-
 .nav-btn.active {
-  border-color: rgba(255, 255, 255, 0.7);
-  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.22), transparent 60%),
-              rgba(15, 25, 60, 0.98);
+  background: rgba(255,255,255,0.2);
 }
 
-/* Main content area */
-
-.app-main {
-  flex: 1;
-  position: relative;
-  border-radius: 18px;
-  overflow: hidden;
-}
-
-/* Views */
+/* VIEWS */
 
 .view {
   position: absolute;
-  inset: 0;
+  inset: 56px 0 0 0;
   display: none;
 }
-
 .view.active {
-  display: flex;
+  display: block;
 }
 
-/* Poster menu (M3 + P2) */
-
-.view-menu {
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
-}
-
-/* Abstract RGB energy background */
+/* MENU */
 
 .menu-bg {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 20% 0%, rgba(0, 255, 255, 0.4), transparent 60%),
-    radial-gradient(circle at 80% 100%, rgba(255, 0, 200, 0.4), transparent 60%),
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 0, 0.3), transparent 60%),
+    radial-gradient(circle at 20% 0%, rgba(0,255,255,0.4), transparent 60%),
+    radial-gradient(circle at 80% 100%, rgba(255,0,200,0.4), transparent 60%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,0,0.3), transparent 60%),
     #050510;
-  filter: blur(0);
-  animation: energyPulse 10s ease-in-out infinite alternate;
+  animation: menuPulse 10s ease-in-out infinite alternate;
 }
-
-@keyframes energyPulse {
-  0% {
-    transform: scale(1);
-    filter: blur(0px);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1.08);
-    filter: blur(4px);
-    opacity: 1;
-  }
+@keyframes menuPulse {
+  0% { transform: scale(1); filter: blur(0px); opacity: 0.8; }
+  100% { transform: scale(1.08); filter: blur(4px); opacity: 1; }
 }
-
-.menu-foreground {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-}
-
-.menu-title {
-  padding: 18px 32px;
-  border-radius: 24px;
-  background: radial-gradient(circle at top left, rgba(0, 255, 255, 0.25), transparent 60%),
-              radial-gradient(circle at bottom right, rgba(255, 0, 200, 0.25), transparent 60%),
-              rgba(5, 10, 25, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.06),
-    0 0 40px rgba(0, 255, 255, 0.8),
-    0 0 80px rgba(255, 0, 128, 0.8);
-  backdrop-filter: blur(20px) saturate(200%);
-  text-align: center;
-}
-
-.menu-title-main {
-  font-size: 26px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  font-weight: 800;
-  text-shadow:
-    0 0 16px rgba(0, 255, 255, 1),
-    0 0 32px rgba(255, 0, 128, 1);
-}
-
-.menu-title-sub {
-  margin-top: 6px;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: var(--text-soft);
-}
-
-.menu-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.menu-btn {
-  min-width: 220px;
-  padding: 10px 18px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.12), transparent 60%),
-              rgba(10, 15, 40, 0.95);
-  color: #ffffff;
-  font-size: 13px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  cursor: pointer;
-  outline: none;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.06),
-    0 0 30px rgba(0, 255, 255, 0.9),
-    0 0 60px rgba(255, 0, 128, 0.9);
-  transition:
-    transform 0.12s ease-out,
-    box-shadow 0.12s ease-out,
-    background 0.12s ease-out,
-    border-color 0.12s ease-out;
-}
-
-.menu-btn:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    0 0 40px rgba(0, 255, 255, 1),
-    0 0 80px rgba(255, 0, 128, 1);
-  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.2), transparent 60%),
-              rgba(15, 20, 50, 0.98);
-}
-
-/* Sandbox view layout */
-
-.view-sandbox {
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr);
-  gap: 10px;
-  padding: 10px;
-}
-
-/* Panels */
-
-.panel {
-  position: relative;
-  background: radial-gradient(circle at top left, rgba(80, 255, 255, 0.12), transparent 55%),
-              radial-gradient(circle at bottom right, rgba(255, 80, 200, 0.12), transparent 55%),
-              var(--panel-bg);
-  border-radius: 18px;
-  border: 1px solid var(--panel-border);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.02),
-    0 0 35px rgba(0, 255, 255, 0.35),
-    0 0 65px rgba(255, 0, 128, 0.35);
-  overflow: hidden;
-  backdrop-filter: blur(18px) saturate(180%);
-}
-
-.panel::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  border: 1px solid transparent;
-  background:
-    linear-gradient(120deg, rgba(0, 255, 255, 0.9), rgba(255, 0, 200, 0.9), rgba(255, 255, 0, 0.9))
-    border-box;
-  -webkit-mask:
-    linear-gradient(#000 0 0) padding-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0.7;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  animation: panelBorderPulse 2.4s ease-in-out infinite alternate;
-}
-
-@keyframes panelBorderPulse {
-  0% {
-    opacity: 0.35;
-    filter: blur(1px);
-  }
-  100% {
-    opacity: 0.9;
-    filter: blur(2px);
-  }
-}
-
-.panel-inner {
-  position: relative;
-  z-index: 1;
-  padding: 10px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Panel headers */
-
-.panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.panel-title {
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--text-soft);
-}
-
-.panel-subtitle {
-  font-size: 11px;
-  color: rgba(168, 178, 255, 0.8);
-}
-
-/* Tool groups */
-
-.tool-groups {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 4px;
-}
-
-.tool-group-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: rgba(168, 178, 255, 0.9);
-  margin-bottom: 4px;
-}
-
-.button-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-/* Neon buttons */
-
-.neon-btn {
-  position: relative;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 60%),
-              rgba(10, 15, 40, 0.9);
-  color: var(--text-main);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  outline: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 0 18px rgba(0, 255, 255, 0.5),
-    0 0 30px rgba(255, 0, 128, 0.5);
-  transition:
-    transform 0.12s ease-out,
-    box-shadow 0.12s ease-out,
-    background 0.12s ease-out,
-    border-color 0.12s ease-out;
-}
-
-.neon-btn span.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #ffffff, #00ffff);
-  box-shadow:
-    0 0 8px rgba(0, 255, 255, 0.9),
-    0 0 14px rgba(0, 255, 255, 0.9);
-}
-
-.neon-btn:hover {
-  transform: translateY(-1px) scale(1.02);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 0 26px rgba(0, 255, 255, 0.9),
-    0 0 40px rgba(255, 0, 128, 0.9);
-  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.16), transparent 60%),
-              rgba(10, 15, 40, 0.95);
-}
-
-.neon-btn.active {
-  border-color: rgba(255, 255, 255, 0.7);
-  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.22), transparent 60%),
-              rgba(15, 25, 60, 0.98);
-}
-
-/* Sandbox canvas */
-
-.sandbox-panel {
-  display: flex;
-  flex-direction: column;
-}
-
-.canvas-wrapper {
-  position: relative;
-  flex: 1;
-  border-radius: 16px;
-  overflow: hidden;
-  background:
-    linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(10, 10, 30, 0.9)),
-    radial-gradient(circle at top, rgba(0, 255, 255, 0.2), transparent 60%);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.06),
-    0 0 40px rgba(0, 255, 255, 0.9),
-    0 0 80px rgba(255, 0, 128, 0.9);
-  margin-top: 8px;
-}
-
-.canvas-wrapper::before {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  border-radius: inherit;
-  background:
-    radial-gradient(circle at top, rgba(0, 255, 255, 0.5), transparent 60%),
-    radial-gradient(circle at bottom, rgba(255, 0, 128, 0.5), transparent 60%);
-  opacity: 0.5;
-  mix-blend-mode: screen;
-  pointer-events: none;
-  animation: canvasAura 2.2s ease-in-out infinite alternate;
-}
-
-@keyframes canvasAura {
-  0% {
-    opacity: 0.35;
-    filter: blur(10px);
-  }
-  100% {
-    opacity: 0.9;
-    filter: blur(18px);
-  }
-}
-
-#sandboxCanvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-  image-rendering: pixelated;
-}
-
-/* Info footer */
-
-.info-footer {
-  font-size: 11px;
-  color: rgba(168, 178, 255, 0.9);
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.badge-soft {
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(10, 15, 40, 0.9);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-}
-
-/* Snake view */
-
-.view-snake {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
-  grid-template-rows: minmax(0, 1fr);
-  gap: 10px;
-  padding: 10px;
-}
-
-.snake-canvas-wrapper {
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at top, rgba(0, 255, 255, 0.25), transparent 60%),
-    radial-gradient(circle at bottom, rgba(255, 0, 128, 0.25), transparent 60%),
-    rgba(5, 10, 25, 0.95);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.06),
-    0 0 35px rgba(0, 255, 255, 0.9),
-    0 0 65px rgba(255, 0, 128, 0.9);
-  margin-top: 8px;
-}
-
-#snakeCanvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-  image-rendering: pixelated;
-}
-
-.snake-overlay {
+.menu-center {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  pointer-events: none;
+  gap: 24px;
+}
+.menu-title {
+  padding: 16px 28px;
+  border-radius: 24px;
+  background: rgba(10,10,30,0.9);
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 0 40px rgba(0,255,255,0.9),
+    0 0 80px rgba(255,0,128,0.9);
   text-align: center;
-  padding: 10px;
 }
-
-.snake-overlay-title {
-  font-size: 14px;
-  text-transform: uppercase;
+.menu-title-main {
+  font-size: 24px;
   letter-spacing: 0.18em;
-  color: #ffffff;
-  text-shadow:
-    0 0 12px rgba(0, 255, 255, 0.9),
-    0 0 24px rgba(255, 0, 128, 0.9);
+  text-transform: uppercase;
+  font-weight: 800;
 }
-
-.snake-overlay-sub {
+.menu-title-sub {
   margin-top: 6px;
   font-size: 11px;
-  color: rgba(200, 210, 255, 0.9);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+.menu-btn {
+  min-width: 220px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(20,20,40,0.95);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 0 30px rgba(0,255,255,0.9),
+    0 0 60px rgba(255,0,128,0.9);
+}
+.menu-btn:hover {
+  background: rgba(30,30,60,0.98);
 }
 
-/* Credits view */
+/* SANDBOX */
 
-.view-credits {
-  align-items: center;
-  justify-content: center;
+.sandbox-wrapper {
+  display: flex;
+  height: 100%;
+}
+.tools {
+  width: 260px;
+  background: rgba(10,10,30,0.9);
+  border-right: 1px solid rgba(255,255,255,0.18);
   padding: 10px;
+  overflow-y: auto;
+}
+.tool-section-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  opacity: 0.8;
+  margin: 8px 0 4px;
+}
+.tool-btn {
+  padding: 6px 10px;
+  margin: 3px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(30,30,60,0.9);
+  cursor: pointer;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.tool-btn.active {
+  background: rgba(255,255,255,0.2);
+}
+.sandbox-canvas-box {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:
+    radial-gradient(circle at top, rgba(0,255,255,0.2), transparent 60%),
+    radial-gradient(circle at bottom, rgba(255,0,128,0.2), transparent 60%),
+    #050510;
+}
+#sandboxCanvas {
+  image-rendering: pixelated;
+  background: black;
 }
 
-.credits-panel {
-  max-width: 480px;
-  width: 100%;
+/* SNAKE */
+
+.snake-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background:
+    radial-gradient(circle at top, rgba(0,255,255,0.2), transparent 60%),
+    radial-gradient(circle at bottom, rgba(255,0,128,0.2), transparent 60%),
+    #050510;
+}
+#snakeCanvas {
+  background: #050515;
+  image-rendering: pixelated;
+}
+.snake-overlay {
+  position: absolute;
+  inset: 56px 0 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  font-size: 18px;
+  text-shadow: 0 0 12px cyan;
 }
 
-/* Responsive */
+/* CREDITS */
 
-@media (max-width: 1000px) {
-  .view-sandbox {
-    grid-template-columns: 240px minmax(0, 1fr);
-  }
-  .view-snake {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) auto;
-  }
-}
-
-@media (max-width: 800px) {
-  .view-sandbox {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr);
-  }
+.credits-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 18px;
+  text-shadow: 0 0 12px cyan;
 }
 </style>
 </head>
-<body class="hyper-neon">
-<div class="app-shell">
-  <!-- HEADER / NAV -->
-  <header class="app-header">
-    <div class="app-title">
-      <div class="app-title-main">Pablo's Portal 2.0</div>
-      <div class="app-title-sub">Physics Sandbox · Neon Snake · Hyper‑Neon Cyber‑Glass</div>
+<body>
+
+<div class="navbar">
+  <div class="nav-title">Pablo's Portal 2.0</div>
+  <button class="nav-btn active" data-view="menu">Menu</button>
+  <button class="nav-btn" data-view="sandbox">Sandbox</button>
+  <button class="nav-btn" data-view="snake">Neon Snake</button>
+  <button class="nav-btn" data-view="credits">Credits</button>
+</div>
+
+<!-- MENU VIEW -->
+<div class="view active" id="view-menu">
+  <div class="menu-bg"></div>
+  <div class="menu-center">
+    <div class="menu-title">
+      <div class="menu-title-main">Pablo's Portal 2.0</div>
+      <div class="menu-title-sub">Hyper‑Neon Physics Playground</div>
     </div>
-    <div class="nav-buttons">
-      <button class="nav-btn active" data-view-target="menuView">Menu</button>
-      <button class="nav-btn" data-view-target="sandboxView">Sandbox</button>
-      <button class="nav-btn" data-view-target="snakeView">Neon Snake</button>
+    <button class="menu-btn" data-view="sandbox">Sandbox</button>
+    <button class="menu-btn" data-view="snake">Neon Snake</button>
+    <button class="menu-btn" data-view="credits">Credits</button>
+  </div>
+</div>
+
+<!-- SANDBOX VIEW -->
+<div class="view" id="view-sandbox">
+  <div class="sandbox-wrapper">
+    <div class="tools">
+      <div class="tool-section-title">Materials</div>
+      <button class="tool-btn" data-material="sand">Sand</button>
+      <button class="tool-btn" data-material="water">Water</button>
+      <button class="tool-btn" data-material="stone">Stone</button>
+      <button class="tool-btn" data-material="fire">Fire</button>
+      <button class="tool-btn" data-material="eraser">Eraser</button>
+
+      <div class="tool-section-title">Brush Size</div>
+      <button class="tool-btn" data-size="1">Tiny</button>
+      <button class="tool-btn" data-size="2">Small</button>
+      <button class="tool-btn" data-size="4">Medium</button>
+      <button class="tool-btn" data-size="6">Large</button>
+
+      <div class="tool-section-title">Ruler</div>
+      <button class="tool-btn" id="rulerToggle">Ruler Mode</button>
+
+      <div class="tool-section-title">World</div>
+      <button class="tool-btn" id="clearWorld">Clear</button>
+      <button class="tool-btn" id="randomWorld">Random</button>
+      <button class="tool-btn" id="togglePause">Pause</button>
     </div>
-  </header>
+    <div class="sandbox-canvas-box">
+      <canvas id="sandboxCanvas"></canvas>
+    </div>
+  </div>
+</div>
 
-  <!-- MAIN -->
-  <main class="app-main">
-    <!-- MENU VIEW -->
-    <section class="view view-menu active" id="menuView">
-      <div class="menu-bg"></div>
-      <div class="menu-foreground">
-        <div class="menu-title">
-          <div class="menu-title-main">Pablo's Portal 2.0</div>
-          <div class="menu-title-sub">Hyper‑Neon Physics Playground</div>
-        </div>
-        <div class="menu-buttons">
-          <button class="menu-btn" data-view-target="sandboxView">Sandbox</button>
-          <button class="menu-btn" data-view-target="snakeView">Neon Snake</button>
-          <button class="menu-btn" data-view-target="creditsView">Credits</button>
-        </div>
-      </div>
-    </section>
+<!-- SNAKE VIEW -->
+<div class="view" id="view-snake">
+  <div class="snake-center">
+    <canvas id="snakeCanvas"></canvas>
+  </div>
+  <div class="snake-overlay" id="snakeOverlay">Press SPACE to Start</div>
+</div>
 
-    <!-- SANDBOX VIEW -->
-    <section class="view view-sandbox" id="sandboxView">
-      <!-- LEFT: TOOLS -->
-      <aside class="panel">
-        <div class="panel-inner">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">Sandbox Tools</div>
-              <div class="panel-subtitle">Materials · Brush · World</div>
-            </div>
-          </div>
-
-          <div class="tool-groups">
-            <div>
-              <div class="tool-group-label">Materials</div>
-              <div class="button-row" id="materialButtons">
-                <button class="neon-btn" data-material="sand"><span class="dot"></span>Sand</button>
-                <button class="neon-btn" data-material="water"><span class="dot"></span>Water</button>
-                <button class="neon-btn" data-material="stone"><span class="dot"></span>Stone</button>
-                <button class="neon-btn" data-material="fire"><span class="dot"></span>Fire</button>
-                <button class="neon-btn" data-material="eraser"><span class="dot"></span>Eraser</button>
-              </div>
-            </div>
-
-            <div>
-              <div class="tool-group-label">Brush</div>
-              <div class="button-row" id="brushButtons">
-                <button class="neon-btn" data-size="1"><span class="dot"></span>Tiny</button>
-                <button class="neon-btn" data-size="2"><span class="dot"></span>Small</button>
-                <button class="neon-btn" data-size="4"><span class="dot"></span>Medium</button>
-                <button class="neon-btn" data-size="6"><span class="dot"></span>Large</button>
-              </div>
-            </div>
-
-            <div>
-              <div class="tool-group-label">World</div>
-              <div class="button-row">
-                <button class="neon-btn" id="clearWorld"><span class="dot"></span>Clear</button>
-                <button class="neon-btn" id="randomWorld"><span class="dot"></span>Random Fill</button>
-                <button class="neon-btn" id="togglePause"><span class="dot"></span>Pause</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="info-footer" style="margin-top:auto;">
-            <div class="badge-soft">Click & drag to draw</div>
-            <div class="badge-soft">Sandbox Tick: 60 FPS</div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- RIGHT: CANVAS -->
-      <section class="panel sandbox-panel">
-        <div class="panel-inner">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">Physics Sandbox</div>
-              <div class="panel-subtitle">Falling sand · liquids · fire · lower ground</div>
-            </div>
-          </div>
-          <div class="canvas-wrapper">
-            <canvas id="sandboxCanvas"></canvas>
-          </div>
-          <div class="info-footer">
-            <div class="badge-soft">Ground lowered</div>
-            <div class="badge-soft">Materials: Sand · Water · Stone · Fire</div>
-          </div>
-        </div>
-      </section>
-    </section>
-
-    <!-- SNAKE VIEW -->
-    <section class="view view-snake" id="snakeView">
-      <!-- LEFT: CANVAS -->
-      <section class="panel">
-        <div class="panel-inner">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">Neon Snake</div>
-              <div class="panel-subtitle">Rounded squares · wrap‑around walls</div>
-            </div>
-            <div class="panel-subtitle" id="snakeScoreLabel">Score: 0</div>
-          </div>
-          <div class="snake-canvas-wrapper">
-            <canvas id="snakeCanvas"></canvas>
-            <div class="snake-overlay" id="snakeOverlay">
-              <div class="snake-overlay-title">Press Space to Start</div>
-              <div class="snake-overlay-sub">Use Arrow Keys or WASD · Wrap‑around walls</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- RIGHT: INFO -->
-      <aside class="panel">
-        <div class="panel-inner">
-          <div class="panel-header">
-            <div class="panel-title">Snake Info</div>
-          </div>
-          <div style="font-size:12px;color:rgba(200,210,255,0.9);line-height:1.5;">
-            <p><strong>Controls:</strong> Arrow keys or WASD to move. Space to start or resume.</p>
-            <p><strong>Walls:</strong> Hitting a wall warps you to the opposite side (no death).</p>
-            <p><strong>Visuals:</strong> Snake head and body are rounded squares. Fruit is a rounded square with no glow.</p>
-            <p><strong>Goal:</strong> Eat as many fruits as you can without colliding with yourself.</p>
-          </div>
-        </div>
-      </aside>
-    </section>
-
-    <!-- CREDITS VIEW -->
-    <section class="view view-credits" id="creditsView">
-      <section class="panel credits-panel">
-        <div class="panel-inner">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">Credits</div>
-              <div class="panel-subtitle">Pablo's Portal 2.0 — Hyper‑Neon Edition</div>
-            </div>
-          </div>
-          <div style="font-size:12px;color:rgba(200,210,255,0.9);line-height:1.6;margin-top:6px;">
-            <p><strong>Design & Vision:</strong> Rebecca</p>
-            <p><strong>Concept:</strong> A hyper‑neon physics playground with a built‑in arcade — Pablo's Portal.</p>
-            <p><strong>Features:</strong> Falling sand sandbox, liquids, fire, neon snake mini‑game, cyber‑glass UI, RGB hyper‑neon engine.</p>
-            <p><strong>Special:</strong> Menu poster with abstract RGB energy, wrap‑around snake walls, rounded‑square snake and fruit.</p>
-          </div>
-        </div>
-      </section>
-    </section>
-  </main>
+<!-- CREDITS VIEW -->
+<div class="view" id="view-credits">
+  <div class="credits-center">
+    Designed by Rebecca — Hyper Neon Edition
+  </div>
 </div>
 
 <script>
-/* ===========================
-   VIEW NAVIGATION
-   =========================== */
+/* VIEW SWITCHING */
 
-const views = {
-  menuView: document.getElementById("menuView"),
-  sandboxView: document.getElementById("sandboxView"),
-  snakeView: document.getElementById("snakeView"),
-  creditsView: document.getElementById("creditsView")
-};
-
-function showView(id) {
-  Object.values(views).forEach((v) => v.classList.remove("active"));
-  if (views[id]) views[id].classList.add("active");
-
-  document.querySelectorAll(".nav-btn").forEach((btn) => {
-    btn.classList.toggle("active", btn.getAttribute("data-view-target") === id);
-  });
+function showView(name) {
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.getElementById("view-" + name).classList.add("active");
+  document.querySelectorAll(".nav-btn").forEach(b =>
+    b.classList.toggle("active", b.dataset.view === name)
+  );
 }
 
-document.querySelectorAll("[data-view-target]").forEach((el) => {
-  el.addEventListener("click", () => {
-    const target = el.getAttribute("data-view-target");
-    showView(target);
+document.querySelectorAll("[data-view]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    showView(btn.dataset.view);
   });
 });
 
-/* ===========================
-   SANDBOX CONFIG
-   =========================== */
+/* SANDBOX ENGINE */
 
-const sandboxCanvas = document.getElementById("sandboxCanvas");
-const sbCtx = sandboxCanvas.getContext("2d", { alpha: false });
+const sbCanvas = document.getElementById("sandboxCanvas");
+const sbCtx = sbCanvas.getContext("2d");
+let sbW = 220;
+let sbH = 140;
+sbCanvas.width = sbW;
+sbCanvas.height = sbH;
 
-let sbWidth = 220;
-let sbHeight = 140;
-const cellSize = 4;
+const EMPTY=0,SAND=1,WATER=2,STONE=3,FIRE=4;
+let grid = new Array(sbW*sbH).fill(0);
+let fireLife = new Array(sbW*sbH).fill(0);
 
-function resizeSandboxCanvas() {
-  const wrapper = sandboxCanvas.parentElement;
-  const w = wrapper.clientWidth;
-  const h = wrapper.clientHeight;
-  const aspect = sbWidth / sbHeight;
-  let drawW = w;
-  let drawH = w / aspect;
-  if (drawH > h) {
-    drawH = h;
-    drawW = h * aspect;
-  }
-  sandboxCanvas.width = sbWidth;
-  sandboxCanvas.height = sbHeight;
-  sandboxCanvas.style.width = drawW + "px";
-  sandboxCanvas.style.height = drawH + "px";
-}
-window.addEventListener("resize", resizeSandboxCanvas);
-resizeSandboxCanvas();
+let currentMaterial=SAND;
+let brush=3;
+let paused=false;
 
-const MATERIAL = {
-  EMPTY: 0,
-  SAND: 1,
-  WATER: 2,
-  STONE: 3,
-  FIRE: 4
-};
+let rulerMode = false;
+let rulerStart = null;
+let rulerEnd = null;
+let isRulerDragging = false;
 
-const materialColors = {
-  [MATERIAL.EMPTY]: [0, 0, 0],
-  [MATERIAL.SAND]: [255, 220, 120],
-  [MATERIAL.WATER]: [80, 180, 255],
-  [MATERIAL.STONE]: [180, 190, 210],
-  [MATERIAL.FIRE]: [255, 120, 40]
-};
+function idx(x,y){return y*sbW+x;}
+function inBounds(x,y){return x>=0&&x<sbW&&y>=0&&y<sbH;}
 
-let grid = new Array(sbWidth * sbHeight).fill(MATERIAL.EMPTY);
-let fireLife = new Array(sbWidth * sbHeight).fill(0);
-
-let currentMaterial = MATERIAL.SAND;
-let brushRadius = 2;
-let sandboxPaused = false;
-
-/* Helpers */
-
-function idx(x, y) {
-  return y * sbWidth + x;
-}
-
-function inBounds(x, y) {
-  return x >= 0 && x < sbWidth && y >= 0 && y < sbHeight;
-}
-
-/* Initialize lower ground (stone near bottom) */
-
-function initGround() {
-  const groundHeight = 8; // number of rows of ground at bottom
-  for (let y = sbHeight - groundHeight; y < sbHeight; y++) {
-    for (let x = 0; x < sbWidth; x++) {
-      grid[idx(x, y)] = MATERIAL.STONE;
-      fireLife[idx(x, y)] = 0;
+function initGround(){
+  for(let y=sbH-8;y<sbH;y++){
+    for(let x=0;x<sbW;x++){
+      grid[idx(x,y)]=STONE;
     }
   }
 }
 initGround();
 
-/* Sandbox simulation */
-
-function stepSandbox() {
-  if (sandboxPaused) return;
-
-  for (let y = sbHeight - 1; y >= 0; y--) {
-    for (let x = 0; x < sbWidth; x++) {
-      const i = idx(x, y);
-      const m = grid[i];
-      if (m === MATERIAL.SAND) {
-        const belowY = y + 1;
-        if (belowY < sbHeight) {
-          const below = idx(x, belowY);
-          if (grid[below] === MATERIAL.EMPTY || grid[below] === MATERIAL.WATER) {
-            const tmp = grid[below];
-            grid[below] = MATERIAL.SAND;
-            grid[i] = tmp;
-          } else {
-            const dir = Math.random() < 0.5 ? -1 : 1;
-            const nx = x + dir;
-            if (nx >= 0 && nx < sbWidth) {
-              const ni = idx(nx, belowY);
-              if (grid[ni] === MATERIAL.EMPTY || grid[ni] === MATERIAL.WATER) {
-                const tmp2 = grid[ni];
-                grid[ni] = MATERIAL.SAND;
-                grid[i] = tmp2;
+function stepSandbox(){
+  if(paused)return;
+  for(let y=sbH-1;y>=0;y--){
+    for(let x=0;x<sbW;x++){
+      let i=idx(x,y),m=grid[i];
+      if(m===SAND){
+        let ny=y+1;
+        if(ny<sbH){
+          let below=idx(x,ny);
+          if(grid[below]===EMPTY||grid[below]===WATER){
+            [grid[i],grid[below]]=[grid[below],grid[i]];
+          }else{
+            let dir=Math.random()<0.5?-1:1;
+            let nx=x+dir;
+            if(inBounds(nx,ny)){
+              let ni=idx(nx,ny);
+              if(grid[ni]===EMPTY||grid[ni]===WATER){
+                [grid[i],grid[ni]]=[grid[ni],grid[i]];
               }
             }
           }
         }
-      } else if (m === MATERIAL.WATER) {
-        const belowY = y + 1;
-        if (belowY < sbHeight) {
-          const below = idx(x, belowY);
-          if (grid[below] === MATERIAL.EMPTY) {
-            grid[below] = MATERIAL.WATER;
-            grid[i] = MATERIAL.EMPTY;
-          } else {
-            const dir = Math.random() < 0.5 ? -1 : 1;
-            const nx = x + dir;
-            if (nx >= 0 && nx < sbWidth) {
-              const ni = idx(nx, y);
-              if (grid[ni] === MATERIAL.EMPTY) {
-                grid[ni] = MATERIAL.WATER;
-                grid[i] = MATERIAL.EMPTY;
-              }
+      }
+      if(m===WATER){
+        let ny=y+1;
+        if(ny<sbH){
+          let below=idx(x,ny);
+          if(grid[below]===EMPTY){
+            grid[below]=WATER;grid[i]=EMPTY;
+          }else{
+            let dir=Math.random()<0.5?-1:1;
+            let nx=x+dir;
+            if(inBounds(nx,y)&&grid[idx(nx,y)]===EMPTY){
+              grid[idx(nx,y)]=WATER;grid[i]=EMPTY;
             }
           }
         }
-      } else if (m === MATERIAL.FIRE) {
-        const life = fireLife[i];
-        if (life <= 0) {
-          grid[i] = MATERIAL.EMPTY;
-          fireLife[i] = 0;
-        } else {
-          fireLife[i] = life - 1;
-          const dirs = [
-            [0, 1],
-            [0, -1],
-            [1, 0],
-            [-1, 0]
-          ];
-          for (const [dx, dy] of dirs) {
-            const nx = x + dx;
-            const ny = y + dy;
-            if (!inBounds(nx, ny)) continue;
-            const ni = idx(nx, ny);
-            if (grid[ni] === MATERIAL.SAND || grid[ni] === MATERIAL.WATER) {
-              if (Math.random() < 0.08) {
-                grid[ni] = MATERIAL.FIRE;
-                fireLife[ni] = 20 + Math.floor(Math.random() * 20);
+      }
+      if(m===FIRE){
+        fireLife[i]--;
+        if(fireLife[i]<=0){grid[i]=EMPTY;continue;}
+        [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dx,dy])=>{
+          let nx=x+dx,ny=y+dy;
+          if(inBounds(nx,ny)){
+            let ni=idx(nx,ny);
+            if(grid[ni]===SAND||grid[ni]===WATER){
+              if(Math.random()<0.08){
+                grid[ni]=FIRE;
+                fireLife[ni]=20+Math.random()*20;
               }
             }
           }
+        });
+      }
+    }
+  }
+}
+
+function materialColor(m){
+  if(m===SAND)return [255,220,120];
+  if(m===WATER)return [80,180,255];
+  if(m===STONE)return [180,190,210];
+  if(m===FIRE)return [255,120,40];
+  return [0,0,0];
+}
+
+function renderSandbox(){
+  let img=sbCtx.createImageData(sbW,sbH);
+  for(let i=0;i<grid.length;i++){
+    let m=grid[i];
+    let p=i*4;
+    let c=materialColor(m);
+    img.data[p]=c[0];
+    img.data[p+1]=c[1];
+    img.data[p+2]=c[2];
+    img.data[p+3]=255;
+  }
+  sbCtx.putImageData(img,0,0);
+}
+
+let drawing=false;
+
+function canvasToGrid(e){
+  let r=sbCanvas.getBoundingClientRect();
+  let x=Math.floor((e.clientX-r.left)/r.width*sbW);
+  let y=Math.floor((e.clientY-r.top)/r.height*sbH);
+  return {x,y};
+}
+
+function paintCircle(cx,cy){
+  for(let dy=-brush;dy<=brush;dy++){
+    for(let dx=-brush;dx<=brush;dx++){
+      let nx=cx+dx,ny=cy+dy;
+      if(inBounds(nx,ny)&&dx*dx+dy*dy<=brush*brush){
+        let i=idx(nx,ny);
+        if(currentMaterial===FIRE){
+          grid[i]=FIRE;fireLife[i]=30;
+        }else{
+          grid[i]=currentMaterial;
         }
       }
     }
   }
 }
 
-/* Sandbox rendering */
-
-function renderSandbox() {
-  const imageData = sbCtx.createImageData(sbWidth, sbHeight);
-  const data = imageData.data;
-  for (let y = 0; y < sbHeight; y++) {
-    for (let x = 0; x < sbWidth; x++) {
-      const i = idx(x, y);
-      const m = grid[i];
-      const [r, g, b] = materialColors[m];
-      const p = i * 4;
-      data[p] = r;
-      data[p + 1] = g;
-      data[p + 2] = b;
-      data[p + 3] = 255;
-    }
-  }
-  sbCtx.putImageData(imageData, 0, 0);
-}
-
-/* Drawing */
-
-let drawing = false;
-
-function applyBrush(clientX, clientY) {
-  const rect = sandboxCanvas.getBoundingClientRect();
-  const scaleX = sandboxCanvas.width / rect.width;
-  const scaleY = sandboxCanvas.height / rect.height;
-  const x = Math.floor((clientX - rect.left) * scaleX);
-  const y = Math.floor((clientY - rect.top) * scaleY);
-  for (let dy = -brushRadius; dy <= brushRadius; dy++) {
-    for (let dx = -brushRadius; dx <= brushRadius; dx++) {
-      const nx = x + dx;
-      const ny = y + dy;
-      if (!inBounds(nx, ny)) continue;
-      if (dx * dx + dy * dy > brushRadius * brushRadius) continue;
-      const i = idx(nx, ny);
-      if (currentMaterial === MATERIAL.EMPTY) {
-        grid[i] = MATERIAL.EMPTY;
-        fireLife[i] = 0;
-      } else if (currentMaterial === MATERIAL.FIRE) {
-        grid[i] = MATERIAL.FIRE;
-        fireLife[i] = 25 + Math.floor(Math.random() * 25);
-      } else {
-        grid[i] = currentMaterial;
-        fireLife[i] = 0;
-      }
-    }
+function drawRulerLine(start,end){
+  let dx=end.x-start.x;
+  let dy=end.y-start.y;
+  let length=Math.sqrt(dx*dx+dy*dy);
+  if(length===0)return;
+  let steps=Math.ceil(length*2);
+  for(let i=0;i<=steps;i++){
+    let t=i/steps;
+    let x=start.x+dx*t;
+    let y=start.y+dy*t;
+    paintCircle(Math.round(x),Math.round(y));
   }
 }
 
-sandboxCanvas.addEventListener("mousedown", (e) => {
-  drawing = true;
-  applyBrush(e.clientX, e.clientY);
+sbCanvas.addEventListener("mousedown",e=>{
+  const pos=canvasToGrid(e);
+  if(rulerMode){
+    isRulerDragging=true;
+    rulerStart=pos;
+    rulerEnd=pos;
+  }else{
+    drawing=true;
+    paintCircle(pos.x,pos.y);
+  }
 });
-window.addEventListener("mouseup", () => {
-  drawing = false;
+window.addEventListener("mouseup",()=>{
+  if(rulerMode && isRulerDragging && rulerStart && rulerEnd){
+    drawRulerLine(rulerStart,rulerEnd);
+  }
+  drawing=false;
+  isRulerDragging=false;
+  rulerStart=null;
+  rulerEnd=null;
 });
-sandboxCanvas.addEventListener("mousemove", (e) => {
-  if (!drawing) return;
-  applyBrush(e.clientX, e.clientY);
+sbCanvas.addEventListener("mousemove",e=>{
+  const pos=canvasToGrid(e);
+  if(rulerMode){
+    if(isRulerDragging){
+      rulerEnd=pos;
+    }
+  }else if(drawing){
+    paintCircle(pos.x,pos.y);
+  }
 });
 
-/* Material + brush UI */
-
-const materialButtons = document.querySelectorAll("#materialButtons .neon-btn");
-materialButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    materialButtons.forEach((b) => b.classList.remove("active"));
+document.querySelectorAll("[data-material]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("[data-material]").forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
-    const mat = btn.getAttribute("data-material");
-    if (mat === "sand") currentMaterial = MATERIAL.SAND;
-    else if (mat === "water") currentMaterial = MATERIAL.WATER;
-    else if (mat === "stone") currentMaterial = MATERIAL.STONE;
-    else if (mat === "fire") currentMaterial = MATERIAL.FIRE;
-    else if (mat === "eraser") currentMaterial = MATERIAL.EMPTY;
+    let m=btn.dataset.material;
+    if(m==="sand")currentMaterial=SAND;
+    if(m==="water")currentMaterial=WATER;
+    if(m==="stone")currentMaterial=STONE;
+    if(m==="fire")currentMaterial=FIRE;
+    if(m==="eraser")currentMaterial=EMPTY;
   });
 });
-materialButtons[0].classList.add("active");
+document.querySelector('[data-material="sand"]').classList.add("active");
 
-const brushButtons = document.querySelectorAll("#brushButtons .neon-btn");
-brushButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    brushButtons.forEach((b) => b.classList.remove("active"));
+document.querySelectorAll("[data-size]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("[data-size]").forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
-    brushRadius = parseInt(btn.getAttribute("data-size"), 10);
+    brush=parseInt(btn.dataset.size);
   });
 });
-brushButtons[2].classList.add("active");
+document.querySelector('[data-size="4"]').classList.add("active");
 
-/* World controls */
-
-document.getElementById("clearWorld").addEventListener("click", () => {
-  grid.fill(MATERIAL.EMPTY);
-  fireLife.fill(0);
-  initGround();
+const rulerBtn=document.getElementById("rulerToggle");
+rulerBtn.addEventListener("click",()=>{
+  rulerMode=!rulerMode;
+  rulerBtn.classList.toggle("active",rulerMode);
 });
 
-document.getElementById("randomWorld").addEventListener("click", () => {
-  for (let i = 0; i < grid.length; i++) {
-    const y = Math.floor(i / sbWidth);
-    const groundHeight = 8;
-    if (y >= sbHeight - groundHeight) {
-      grid[i] = MATERIAL.STONE;
-      fireLife[i] = 0;
-      continue;
-    }
-    const r = Math.random();
-    if (r < 0.05) grid[i] = MATERIAL.STONE;
-    else if (r < 0.15) grid[i] = MATERIAL.SAND;
-    else if (r < 0.22) grid[i] = MATERIAL.WATER;
-    else grid[i] = MATERIAL.EMPTY;
-    fireLife[i] = 0;
+document.getElementById("clearWorld").onclick=()=>{grid.fill(0);fireLife.fill(0);initGround();};
+document.getElementById("randomWorld").onclick=()=>{
+  for(let i=0;i<grid.length;i++){
+    let y=Math.floor(i/sbW);
+    if(y>=sbH-8){grid[i]=STONE;continue;}
+    let r=Math.random();
+    if(r<0.05)grid[i]=STONE;
+    else if(r<0.15)grid[i]=SAND;
+    else if(r<0.22)grid[i]=WATER;
+    else grid[i]=EMPTY;
   }
-});
+};
+document.getElementById("togglePause").onclick=()=>{paused=!paused;};
 
-document.getElementById("togglePause").addEventListener("click", (e) => {
-  sandboxPaused = !sandboxPaused;
-  e.currentTarget.classList.toggle("active", sandboxPaused);
-});
+/* SNAKE ENGINE */
 
-/* ===========================
-   NEON SNAKE
-   =========================== */
+const snCanvas=document.getElementById("snakeCanvas");
+const snCtx=snCanvas.getContext("2d");
+snCanvas.width=480;
+snCanvas.height=320;
 
-const snakeCanvas = document.getElementById("snakeCanvas");
-const snCtx = snakeCanvas.getContext("2d");
+let cols=24,rows=16,size=20;
+let snake=[],dir={x:1,y:0},nextDir={x:1,y:0};
+let food={x:10,y:8};
+let alive=false;
+let overlay=document.getElementById("snakeOverlay");
+let lastSnakeTime=0;
+let snakeTickMs=140; // slowed down
 
-let snakeCols = 24;
-let snakeRows = 16;
-let snakeCellSize = 16;
-
-function resizeSnakeCanvas() {
-  const wrapper = snakeCanvas.parentElement;
-  const w = wrapper.clientWidth;
-  const h = wrapper.clientHeight;
-  const aspect = snakeCols / snakeRows;
-  let drawW = w;
-  let drawH = w / aspect;
-  if (drawH > h) {
-    drawH = h;
-    drawW = h * aspect;
-  }
-  snakeCanvas.width = snakeCols * snakeCellSize;
-  snakeCanvas.height = snakeRows * snakeCellSize;
-  snakeCanvas.style.width = drawW + "px";
-  snakeCanvas.style.height = drawH + "px";
+function resetSnake(){
+  snake=[{x:5,y:8},{x:4,y:8},{x:3,y:8}];
+  dir={x:1,y:0};
+  nextDir={x:1,y:0};
+  food=randomFood();
+  alive=false;
+  overlay.style.display="flex";
 }
-window.addEventListener("resize", resizeSnakeCanvas);
-resizeSnakeCanvas();
+resetSnake();
 
-let snake = [];
-let snakeDir = { x: 1, y: 0 };
-let snakePendingDir = { x: 1, y: 0 };
-let snakeFood = { x: 10, y: 8 };
-let snakeAlive = false;
-let snakeScore = 0;
-let snakeTickMs = 80;
-let lastSnakeTime = 0;
-
-const snakeOverlay = document.getElementById("snakeOverlay");
-const snakeScoreLabel = document.getElementById("snakeScoreLabel");
-
-function resetSnake() {
-  snake = [
-    { x: 5, y: 8 },
-    { x: 4, y: 8 },
-    { x: 3, y: 8 }
-  ];
-  snakeDir = { x: 1, y: 0 };
-  snakePendingDir = { x: 1, y: 0 };
-  snakeFood = randomFood();
-  snakeScore = 0;
-  snakeAlive = false;
-  updateSnakeScoreLabel();
-  snakeOverlay.style.display = "flex";
-}
-
-function randomFood() {
-  while (true) {
-    const x = Math.floor(Math.random() * snakeCols);
-    const y = Math.floor(Math.random() * snakeRows);
-    if (!snake.some((s) => s.x === x && s.y === y)) {
-      return { x, y };
-    }
+function randomFood(){
+  while(true){
+    let x=Math.floor(Math.random()*cols);
+    let y=Math.floor(Math.random()*rows);
+    if(!snake.some(s=>s.x===x&&s.y===y))return{x,y};
   }
 }
 
-function updateSnakeScoreLabel() {
-  snakeScoreLabel.textContent = "Score: " + snakeScore;
-}
+window.addEventListener("keydown",e=>{
+  if(e.code==="Space"){
+    alive=true;
+    overlay.style.display="none";
+    return;
+  }
+  let nd={x:dir.x,y:dir.y};
+  if(e.key==="ArrowUp"||e.key==="w"||e.key==="W")nd={x:0,y:-1};
+  if(e.key==="ArrowDown"||e.key==="s"||e.key==="S")nd={x:0,y:1};
+  if(e.key==="ArrowLeft"||e.key==="a"||e.key==="A")nd={x:-1,y:0};
+  if(e.key==="ArrowRight"||e.key==="d"||e.key==="D")nd={x:1,y:0};
+  if(nd.x===-dir.x&&nd.y===-dir.y)return;
+  nextDir=nd;
+});
 
-function stepSnake(timestamp) {
-  if (!lastSnakeTime) lastSnakeTime = timestamp;
-  const delta = timestamp - lastSnakeTime;
-  if (delta < snakeTickMs) return;
+function stepSnake(timestamp){
+  if(!lastSnakeTime)lastSnakeTime=timestamp;
+  const delta=timestamp-lastSnakeTime;
+  if(delta<snakeTickMs)return;
+  lastSnakeTime=timestamp;
+  if(!alive)return;
 
-  lastSnakeTime = timestamp;
-  if (!snakeAlive) return;
+  dir={...nextDir};
+  let head=snake[0];
+  let nx=head.x+dir.x;
+  let ny=head.y+dir.y;
 
-  snakeDir = { ...snakePendingDir };
+  if(nx<0)nx=cols-1;
+  else if(nx>=cols)nx=0;
+  if(ny<0)ny=rows-1;
+  else if(ny>=rows)ny=0;
 
-  const head = snake[0];
-  let nx = head.x + snakeDir.x;
-  let ny = head.y + snakeDir.y;
-
-  // Wrap‑around walls instead of death
-  if (nx < 0) nx = snakeCols - 1;
-  else if (nx >= snakeCols) nx = 0;
-  if (ny < 0) ny = snakeRows - 1;
-  else if (ny >= snakeRows) ny = 0;
-
-  if (snake.some((s) => s.x === nx && s.y === ny)) {
-    snakeAlive = false;
-    snakeOverlay.style.display = "flex";
+  if(snake.some(s=>s.x===nx&&s.y===ny)){
+    alive=false;
+    overlay.style.display="flex";
     return;
   }
 
-  const newHead = { x: nx, y: ny };
-  snake.unshift(newHead);
-
-  if (nx === snakeFood.x && ny === snakeFood.y) {
-    snakeScore += 1;
-    updateSnakeScoreLabel();
-    snakeFood = randomFood();
-  } else {
+  snake.unshift({x:nx,y:ny});
+  if(nx===food.x&&ny===food.y){
+    food=randomFood();
+  }else{
     snake.pop();
   }
 }
 
-function drawRoundedRect(ctx, x, y, w, h, r) {
-  const radius = Math.min(r, w / 2, h / 2);
+function drawRoundedRect(ctx,x,y,w,h,r){
+  const radius=Math.min(r,w/2,h/2);
   ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(x + w - radius, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
-  ctx.lineTo(x + w, y + h - radius);
-  ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
-  ctx.lineTo(x + radius, y + h);
-  ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.moveTo(x+radius,y);
+  ctx.lineTo(x+w-radius,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+radius);
+  ctx.lineTo(x+w,y+h-radius);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-radius,y+h);
+  ctx.lineTo(x+radius,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-radius);
+  ctx.lineTo(x,y+radius);
+  ctx.quadraticCurveTo(x,y,x+radius,y);
   ctx.closePath();
 }
 
-function renderSnake() {
-  snCtx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-
-  // background grid
-  for (let y = 0; y < snakeRows; y++) {
-    for (let x = 0; x < snakeCols; x++) {
-      const px = x * snakeCellSize;
-      const py = y * snakeCellSize;
-      snCtx.fillStyle = (x + y) % 2 === 0 ? "rgba(5,10,25,0.9)" : "rgba(10,15,40,0.9)";
-      snCtx.fillRect(px, py, snakeCellSize, snakeCellSize);
+function renderSnake(){
+  snCtx.clearRect(0,0,snCanvas.width,snCanvas.height);
+  for(let y=0;y<rows;y++){
+    for(let x=0;x<cols;x++){
+      const px=x*size,py=y*size;
+      snCtx.fillStyle=(x+y)%2===0?"#050515":"#080820";
+      snCtx.fillRect(px,py,size,size);
     }
   }
-
-  // fruit: rounded square, no glow
-  const fx = snakeFood.x * snakeCellSize;
-  const fy = snakeFood.y * snakeCellSize;
-  snCtx.fillStyle = "#ffdd55";
-  drawRoundedRect(snCtx, fx + 3, fy + 3, snakeCellSize - 6, snakeCellSize - 6, 4);
+  const fx=food.x*size,fy=food.y*size;
+  snCtx.fillStyle="#ffdd55";
+  drawRoundedRect(snCtx,fx+3,fy+3,size-6,size-6,4);
   snCtx.fill();
 
-  // snake body
-  snake.forEach((segment, index) => {
-    const px = segment.x * snakeCellSize;
-    const py = segment.y * snakeCellSize;
-    const isHead = index === 0;
-
-    const g = snCtx.createLinearGradient(px, py, px + snakeCellSize, py + snakeCellSize);
-    if (isHead) {
-      g.addColorStop(0, "rgba(255,255,255,1)");
-      g.addColorStop(1, "rgba(0,255,255,1)");
-    } else {
-      g.addColorStop(0, "rgba(0,255,255,0.9)");
-      g.addColorStop(1, "rgba(255,0,200,0.9)");
+  snake.forEach((seg,i)=>{
+    const px=seg.x*size,py=seg.y*size;
+    const isHead=i===0;
+    const g=snCtx.createLinearGradient(px,py,px+size,py+size);
+    if(isHead){
+      g.addColorStop(0,"rgba(255,255,255,1)");
+      g.addColorStop(1,"rgba(0,255,255,1)");
+    }else{
+      g.addColorStop(0,"rgba(0,255,255,0.9)");
+      g.addColorStop(1,"rgba(255,0,200,0.9)");
     }
-
-    snCtx.fillStyle = g;
-    drawRoundedRect(snCtx, px + 2, py + 2, snakeCellSize - 4, snakeCellSize - 4, 5);
+    snCtx.fillStyle=g;
+    drawRoundedRect(snCtx,px+2,py+2,size-4,size-4,5);
     snCtx.fill();
   });
 }
 
-/* Snake input */
+/* MAIN LOOP */
 
-window.addEventListener("keydown", (e) => {
-  if (e.code === "Space") {
-    if (!snakeAlive) {
-      snakeAlive = true;
-      snakeOverlay.style.display = "none";
-      lastSnakeTime = performance.now();
-    }
-    e.preventDefault();
-    return;
-  }
-
-  let dx = snakeDir.x;
-  let dy = snakeDir.y;
-
-  if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") {
-    dx = 0;
-    dy = -1;
-  } else if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
-    dx = 0;
-    dy = 1;
-  } else if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
-    dx = -1;
-    dy = 0;
-  } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
-    dx = 1;
-    dy = 0;
-  } else {
-    return;
-  }
-
-  if (dx === -snakeDir.x && dy === -snakeDir.y) return;
-  snakePendingDir = { x: dx, y: dy };
-});
-
-/* ===========================
-   MAIN LOOP
-   =========================== */
-
-function loop(timestamp) {
+function loop(timestamp){
   stepSandbox();
   renderSandbox();
-
   stepSnake(timestamp);
   renderSnake();
-
   requestAnimationFrame(loop);
 }
-
-resetSnake();
 requestAnimationFrame(loop);
 </script>
 </body>
