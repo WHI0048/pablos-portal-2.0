@@ -224,6 +224,7 @@ body {
   mix-blend-mode: screen;
   animation: frameSpin 16s linear infinite;
   pointer-events: none;
+  z-index: -1;
 }
 @keyframes frameSpin {
   0% { transform: rotate(0deg); }
@@ -235,6 +236,8 @@ body {
   width: min(90vw, 90vh * (500/300));
   height: auto;
   display: block;
+  position: relative;
+  z-index: 10;
 }
 
 /* SNAKE */
@@ -274,6 +277,7 @@ body {
   mix-blend-mode: screen;
   animation: frameSpin 16s linear infinite;
   pointer-events: none;
+  z-index: -1;
 }
 #snakeCanvas {
   background: #050515;
@@ -281,6 +285,8 @@ body {
   width: min(90vw, 90vh * (48/30));
   height: auto;
   display: block;
+  position: relative;
+  z-index: 10;
 }
 .snake-overlay {
   position: absolute;
@@ -291,6 +297,7 @@ body {
   pointer-events: none;
   font-size: 18px;
   text-shadow: 0 0 12px cyan, 0 0 24px magenta;
+  z-index: 5;
 }
 
 /* CREDITS */
@@ -410,6 +417,11 @@ function showView(name) {
   document.querySelectorAll(".nav-btn").forEach(b =>
     b.classList.toggle("active", b.dataset.view === name)
   );
+
+  // focus snake canvas when entering snake view
+  if (name === "snake") {
+    snCanvas.focus();
+  }
 }
 
 document.querySelectorAll(".nav-btn, .menu-btn").forEach(btn => {
@@ -854,6 +866,9 @@ let cols=48,rows=30,size=20;
 snCanvas.width=cols*size;
 snCanvas.height=rows*size;
 
+// make canvas focusable for keyboard
+snCanvas.tabIndex = 0;
+
 let snake=[],dir={x:1,y:0},nextDir={x:1,y:0};
 let food={x:10,y:8};
 let alive=false;
@@ -892,6 +907,13 @@ window.addEventListener("keydown",e=>{
   if(e.key==="ArrowRight"||e.key==="d"||e.key==="D")nd={x:1,y:0};
   if(nd.x===-dir.x&&nd.y===-dir.y)return;
   nextDir=nd;
+});
+
+// ensure canvas gets focus when user clicks anywhere in snake view
+document.addEventListener("click",()=>{
+  if(document.getElementById("view-snake").classList.contains("active")){
+    snCanvas.focus();
+  }
 });
 
 function stepSnake(timestamp){
