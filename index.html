@@ -2,430 +2,362 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Pablo's Portal 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pablo's Portal 2.0 — Neon Shell</title>
 
 <style>
-/* ——— ROOT VARIABLES ——— */
+/* --------------------------------------------------
+   GLOBAL + RGB BACKGROUND
+-------------------------------------------------- */
 :root {
-  --bg: #000000;
-  --panel: rgba(5, 5, 5, 0.96);
-  --text: #f5f7ff;
-  --radius-lg: 24px;
-  --radius-md: 16px;
-  --blur: 18px;
-  --border-glass: 1px solid rgba(255, 255, 255, 0.12);
+  --accent: #00ffff;
+  --accent-2: #ff00ff;
+  --accent-3: #00ff88;
 }
 
-/* ——— GLOBAL ——— */
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
 }
 
 body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #f8fbff;
   min-height: 100vh;
-  background: #000000;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
-/* ——— RGB BORDER ANIMATIONS ——— */
-@keyframes rgbCycleBorder {
-  0% { border-image-source: linear-gradient(90deg, #ff0000, #00ff00, #0000ff); }
-  33% { border-image-source: linear-gradient(90deg, #00ff00, #0000ff, #ff0000); }
-  66% { border-image-source: linear-gradient(90deg, #0000ff, #ff0000, #00ff00); }
-  100% { border-image-source: linear-gradient(90deg, #ff0000, #00ff00, #0000ff); }
-}
-
-@keyframes rgbCycleBg {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.rgb-cycle-btn {
-  background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff0000);
-  background-size: 300% 300%;
-  animation: rgbCycleBg 4s linear infinite;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #ffffff;
-}
-
-/* ——— MAIN SHELL ——— */
-.portal-shell {
-  width: 100%;
-  max-width: 1320px;
-  min-height: 720px;
-  background: #000000;
-  border-radius: 32px;
-  border-width: 3px;
-  border-style: solid;
-  border-image-slice: 1;
-  animation: rgbCycleBorder 6s linear infinite;
-  padding: 20px 22px;
-  display: grid;
-  grid-template-columns: 270px minmax(0, 1fr);
-  gap: 18px;
-  position: relative;
   overflow: hidden;
-}
-
-.portal-shell-inner {
-  position: relative;
-  z-index: 1;
-  display: contents;
-}
-
-/* ——— SIDEBAR ——— */
-.sidebar {
-  background: var(--panel);
-  border-radius: 24px;
-  border: var(--border-glass);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
-  padding: 18px 16px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  backdrop-filter: blur(var(--blur));
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 8px 10px;
-  border-radius: 18px;
-  background: #050505;
-}
-
-.brand-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
-  box-shadow: 0 0 18px rgba(255, 255, 255, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #050712;
-  font-weight: 800;
-  font-size: 18px;
-}
-
-.brand-text-main {
-  font-weight: 650;
-  letter-spacing: 0.04em;
-  font-size: 14px;
-  text-transform: uppercase;
-}
-
-.brand-text-sub {
-  font-size: 11px;
-  opacity: 0.7;
-}
-
-.nav-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  opacity: 0.6;
-  padding: 0 4px;
-}
-
-.nav {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.nav-btn {
-  position: relative;
-  border: none;
-  outline: none;
-  border-radius: 999px;
-  padding: 10px 11px;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  font-size: 13px;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.16s ease;
-}
-
-.nav-btn-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.nav-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
-}
-
-.nav-title {
-  font-weight: 550;
-}
-
-.nav-tag {
-  font-size: 11px;
-  opacity: 0.7;
-}
-
-.nav-btn.active {
-  transform: translateY(-1px);
-  box-shadow: 0 0 22px rgba(255, 255, 255, 0.4);
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-.nav-btn:hover:not(.active) {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
-}
-
-.nav-kbd {
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: #050505;
-  opacity: 0.8;
-}
-
-.sidebar-footer {
-  margin-top: auto;
-  padding-top: 6px;
-  font-size: 11px;
-  opacity: 0.7;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-/* ——— MAIN ——— */
-.main {
-  background: var(--panel);
-  border-radius: 24px;
-  border: var(--border-glass);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
-  padding: 16px 16px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  backdrop-filter: blur(var(--blur));
-  position: relative;
-  overflow: hidden;
-}
-
-.main-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 4px 4px 6px;
-}
-
-.main-title-block {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.main-title {
-  font-size: 18px;
-  font-weight: 650;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.main-subtitle {
-  font-size: 11px;
-  opacity: 0.7;
-}
-
-.main-body {
-  flex: 1;
-  display: grid;
-  grid-template-rows: minmax(0, 1fr);
-  gap: 10px;
+  background: radial-gradient(circle at top, #10152b, #02030a 55%, #000000 100%);
   position: relative;
 }
 
-/* ——— PANELS ——— */
-.panel {
-  position: absolute;
+/* Animated RGB gradient overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -40%;
+  background: conic-gradient(
+    from 0deg,
+    #00ffff,
+    #ff00ff,
+    #00ff88,
+    #00ffff
+  );
+  filter: blur(80px);
+  opacity: 0.35;
+  mix-blend-mode: screen;
+  animation: spinRGB 18s linear infinite;
+  z-index: -2;
+}
+
+@keyframes spinRGB {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Dark glass overlay */
+body::after {
+  content: "";
+  position: fixed;
   inset: 0;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(6px);
-  transition: opacity 0.18s ease, transform 0.18s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  background: radial-gradient(circle at top, rgba(0,0,0,0.4), rgba(0,0,0,0.9));
+  z-index: -1;
 }
 
-.panel.active {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
-/* ——— CARDS ——— */
-.card {
-  background: #050505;
-  border-radius: var(--radius-md);
-  border: var(--border-glass);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.9);
-  padding: 20px;
+/* --------------------------------------------------
+   HEADER
+-------------------------------------------------- */
+header {
+  padding: 14px 24px;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  justify-content: center;
   align-items: center;
-  text-align: center;
+  justify-content: space-between;
+  backdrop-filter: blur(18px);
+  background: linear-gradient(
+    to right,
+    rgba(10, 15, 40, 0.9),
+    rgba(10, 15, 40, 0.6)
+  );
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 0 24px rgba(0,0,0,0.7);
+  position: relative;
+  z-index: 2;
 }
 
-.card-title {
-  font-size: 18px;
+header .title {
+  font-size: 22px;
   font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e9f5ff;
 }
 
-.card-sub {
+header .subtitle {
   font-size: 12px;
   opacity: 0.7;
 }
 
-/* ——— RESPONSIVE ——— */
-@media (max-width: 980px) {
-  .portal-shell {
-    grid-template-columns: minmax(0, 1fr);
-    min-height: 0;
-  }
-  .sidebar {
-    order: 2;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
-  .nav {
-    flex-direction: row;
-  }
-  .nav-btn {
-    flex: 1;
-  }
-  .sidebar-footer {
-    display: none;
-  }
+/* Small RGB pill on the right */
+header .rgb-pill {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: radial-gradient(circle at top left, rgba(0,255,255,0.35), rgba(0,0,0,0.8));
+  box-shadow:
+    0 0 12px rgba(0,255,255,0.7),
+    0 0 24px rgba(255,0,255,0.4);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* --------------------------------------------------
+   LAYOUT
+-------------------------------------------------- */
+#container {
+  display: flex;
+  height: calc(100vh - 60px);
+}
+
+/* --------------------------------------------------
+   SIDEBAR
+-------------------------------------------------- */
+#sidebar {
+  width: 260px;
+  padding: 18px 16px;
+  backdrop-filter: blur(20px);
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 15, 40, 0.9),
+    rgba(10, 15, 40, 0.6)
+  );
+  border-right: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 0 24px rgba(0,0,0,0.7);
+  position: relative;
+  z-index: 1;
+}
+
+#sidebar h2 {
+  margin: 0 0 14px;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  opacity: 0.8;
+}
+
+/* Sidebar glow edge */
+#sidebar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -1px;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,255,255,0.8),
+    rgba(255,0,255,0.8),
+    rgba(0,255,136,0.8)
+  );
+  opacity: 0.7;
+}
+
+/* Tab buttons */
+.tab-button {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: radial-gradient(circle at top left, rgba(255,255,255,0.08), rgba(0,0,0,0.7));
+  color: #e9f5ff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: 0.18s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(0,255,255,0.35),
+    rgba(255,0,255,0.35),
+    rgba(0,255,136,0.35)
+  );
+  opacity: 0;
+  mix-blend-mode: screen;
+  transition: opacity 0.2s ease;
+}
+
+.tab-button:hover::before {
+  opacity: 0.4;
+}
+
+.tab-button.active {
+  border-color: rgba(0,255,255,0.9);
+  box-shadow:
+    0 0 14px rgba(0,255,255,0.8),
+    0 0 26px rgba(255,0,255,0.5);
+  background: radial-gradient(circle at top left, rgba(0,255,255,0.25), rgba(0,0,0,0.8));
+}
+
+/* --------------------------------------------------
+   MAIN AREA
+-------------------------------------------------- */
+#main {
+  flex: 1;
+  padding: 18px 20px;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Soft RGB border around main area */
+#main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow:
+    0 0 18px rgba(0,255,255,0.4),
+    0 0 32px rgba(255,0,255,0.25);
+  pointer-events: none;
+}
+
+/* Panels */
+.panel {
+  display: none;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.25s ease;
+}
+
+.panel.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.panel h2 {
+  margin-top: 0;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  opacity: 0.9;
+}
+
+/* --------------------------------------------------
+   CANVAS CARDS (BLANK BUT NEON)
+-------------------------------------------------- */
+.canvas-card {
+  width: 100%;
+  height: 520px;
+  border-radius: 18px;
+  background: radial-gradient(circle at top, rgba(255,255,255,0.06), rgba(0,0,0,0.9));
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow:
+    0 0 24px rgba(0,255,255,0.35),
+    0 0 40px rgba(255,0,255,0.25);
+  backdrop-filter: blur(16px);
+}
+
+/* --------------------------------------------------
+   SETTINGS TEXT
+-------------------------------------------------- */
+.settings-text {
+  font-size: 14px;
+  max-width: 520px;
+  line-height: 1.6;
+  opacity: 0.85;
 }
 </style>
 </head>
 
 <body>
-<div class="portal-shell">
-<div class="portal-shell-inner">
-
-<!-- ——— SIDEBAR ——— -->
-<aside class="sidebar">
-  <div class="brand">
-    <div class="brand-icon">P</div>
-    <div>
-      <div class="brand-text-main">Pablo's Portal 2.0</div>
-      <div class="brand-text-sub">Neon UI Shell</div>
-    </div>
+<header>
+  <div>
+    <div class="title">Pablo's Portal 2.0</div>
+    <div class="subtitle">Neon UI Shell · All games removed</div>
   </div>
+  <div class="rgb-pill">RGB Neon Active</div>
+</header>
 
-  <div class="nav-label">Menu</div>
+<div id="container">
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <h2>Navigation</h2>
+    <button class="tab-button active" data-tab-target="sandbox">Sandbox</button>
+    <button class="tab-button" data-tab-target="snake">Neon Snake</button>
+    <button class="tab-button" data-tab-target="settings">Settings</button>
+  </aside>
 
-  <nav class="nav">
-    <button class="nav-btn rgb-cycle-btn active" data-target="panel-sandbox">
-      <div class="nav-btn-left">
-        <div class="nav-dot"></div>
-        <div>
-          <div class="nav-title">Physics Sandbox</div>
-          <div class="nav-tag">Coming soon</div>
-        </div>
-      </div>
-      <div class="nav-kbd">1</div>
-    </button>
-
-    <button class="nav-btn rgb-cycle-btn" data-target="panel-snake">
-      <div class="nav-btn-left">
-        <div class="nav-dot"></div>
-        <div>
-          <div class="nav-title">Neon Snake</div>
-          <div class="nav-tag">Coming soon</div>
-        </div>
-      </div>
-      <div class="nav-kbd">2</div>
-    </button>
-  </nav>
-
-  <div class="sidebar-footer">
-    <span><strong>Tip:</strong> Press 1 or 2 to switch instantly.</span>
-  </div>
-</aside>
-
-<!-- ——— MAIN ——— -->
-<main class="main">
-  <header class="main-header">
-    <div class="main-title-block">
-      <div class="main-title">Pablo's Portal 2.0</div>
-      <div class="main-subtitle">Neon cyber‑glass UI shell</div>
-    </div>
-  </header>
-
-  <section class="main-body">
-
-    <!-- ——— SANDBOX PANEL ——— -->
-    <section class="panel active" id="panel-sandbox">
-      <div class="card">
-        <div class="card-title">Physics Sandbox</div>
-        <div class="card-sub">This feature is coming soon.</div>
-      </div>
+  <!-- MAIN -->
+  <main id="main">
+    <!-- Sandbox Panel (canvas visible, blank) -->
+    <section class="panel active" data-tab-panel="sandbox">
+      <h2>Sandbox</h2>
+      <canvas class="canvas-card" id="sandboxCanvas"></canvas>
     </section>
 
-    <!-- ——— SNAKE PANEL ——— -->
-    <section class="panel" id="panel-snake">
-      <div class="card">
-        <div class="card-title">Neon Snake</div>
-        <div class="card-sub">This feature is coming soon.</div>
-      </div>
+    <!-- Snake Panel (canvas visible, blank) -->
+    <section class="panel" data-tab-panel="snake">
+      <h2>Neon Snake</h2>
+      <canvas class="canvas-card" id="snakeCanvas"></canvas>
     </section>
 
-  </section>
-</main>
-
-</div>
+    <!-- Settings Panel -->
+    <section class="panel" data-tab-panel="settings">
+      <h2>Settings</h2>
+      <p class="settings-text">
+        This build of Pablo's Portal 2.0 is a <strong>pure neon UI shell</strong>.
+        All interactive game logic — including the physics sandbox, particles, explosions,
+        ruler, lighter, and Neon Snake — has been fully removed.
+        The canvases remain visible as blank neon stages, ready for future features.
+      </p>
+    </section>
+  </main>
 </div>
 
 <script>
-/* ——— SIMPLE PANEL SWITCHING ——— */
-const navButtons = document.querySelectorAll(".nav-btn");
-const panels = document.querySelectorAll(".panel");
+document.addEventListener('DOMContentLoaded', () => {
+  // TAB SWITCHING
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const panels = document.querySelectorAll('.panel');
 
-function activatePanel(id) {
-  panels.forEach(p => p.classList.toggle("active", p.id === id));
-  navButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.target === id));
-}
+  function activateTab(id) {
+    tabButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tabTarget === id);
+    });
+    panels.forEach(panel => {
+      panel.classList.toggle('active', panel.dataset.tabPanel === id);
+    });
+  }
 
-navButtons.forEach(btn => {
-  btn.addEventListener("click", () => activatePanel(btn.dataset.target));
-});
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.tabTarget;
+      if (id) activateTab(id);
+    });
+  });
 
-window.addEventListener("keydown", (e) => {
-  if (e.key === "1") activatePanel("panel-sandbox");
-  if (e.key === "2") activatePanel("panel-snake");
+  // CANVASES: KEEP VISIBLE BUT BLANK
+  const canvases = document.querySelectorAll('canvas');
+  canvases.forEach(c => {
+    if (!c.width) c.width = c.clientWidth || 960;
+    if (!c.height) c.height = c.clientHeight || 520;
+    // No drawing, no loops, no game logic.
+  });
+
+  // NO GAME LOGIC AT ALL BELOW THIS LINE
 });
 </script>
 
