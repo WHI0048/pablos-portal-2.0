@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Pablo's Portal 2.0</title>
+  <title>Pablo's Portal 3-in-1</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
@@ -34,30 +34,16 @@
     }
 
     @keyframes rgbCycleBorder {
-      0% {
-        border-image-source: linear-gradient(90deg, #ff0000, #00ff00, #0000ff);
-      }
-      33% {
-        border-image-source: linear-gradient(90deg, #00ff00, #0000ff, #ff0000);
-      }
-      66% {
-        border-image-source: linear-gradient(90deg, #0000ff, #ff0000, #00ff00);
-      }
-      100% {
-        border-image-source: linear-gradient(90deg, #ff0000, #00ff00, #0000ff);
-      }
+      0% { border-image-source: linear-gradient(90deg, #ff0000, #00ff00, #0000ff); }
+      33% { border-image-source: linear-gradient(90deg, #00ff00, #0000ff, #ff0000); }
+      66% { border-image-source: linear-gradient(90deg, #0000ff, #ff0000, #00ff00); }
+      100% { border-image-source: linear-gradient(90deg, #ff0000, #00ff00, #0000ff); }
     }
 
     @keyframes rgbCycleBg {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .rgb-cycle-btn {
@@ -199,7 +185,7 @@
       border-color: rgba(255, 255, 255, 0.4);
     }
 
-    .nav-btn:hover:not(.active)) {
+    .nav-btn:hover:not(.active) {
       transform: translateY(-1px);
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
     }
@@ -356,7 +342,8 @@
       background: rgba(0, 0, 0, 0.4);
     }
 
-    .panel-main {
+    .panel-main,
+    .panel-main-full {
       flex: 1;
       display: grid;
       grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
@@ -364,10 +351,7 @@
     }
 
     .panel-main-full {
-      flex: 1;
-      display: grid;
       grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-      gap: 10px;
     }
 
     .card {
@@ -675,6 +659,82 @@
         radial-gradient(circle at bottom right, rgba(255, 200, 120, 0.3), transparent 60%);
     }
 
+    /* Pablo Dash editor */
+
+    .dash-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+      gap: 10px;
+      flex: 1;
+    }
+
+    .dash-editor-grid {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 4px;
+      font-size: 11px;
+    }
+
+    .dash-editor-cell {
+      padding: 6px 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(0, 0, 0, 0.35);
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .dash-editor-cell.active {
+      box-shadow: 0 0 14px rgba(255, 255, 255, 0.4);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .dash-palette-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .dash-palette-item {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(0, 0, 0, 0.5);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .dash-palette-item.active {
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
+    }
+
+    .dash-palette-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+    }
+
+    .dash-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+      font-size: 11px;
+      align-items: center;
+    }
+
+    .dash-status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
     @media (max-width: 980px) {
       .portal-shell {
         grid-template-columns: minmax(0, 1fr);
@@ -704,7 +764,8 @@
 
     @media (max-width: 780px) {
       .panel-main,
-      .panel-main-full {
+      .panel-main-full,
+      .dash-layout {
         grid-template-columns: minmax(0, 1fr);
       }
     }
@@ -719,7 +780,7 @@
           <div class="brand-icon">P</div>
           <div>
             <div class="brand-text-main">Pablo's Portal 2.0</div>
-            <div class="brand-text-sub">Neon Physics &amp; Snake Playground</div>
+            <div class="brand-text-sub">Sandbox, Snake &amp; Pablo Dash</div>
           </div>
         </div>
 
@@ -746,11 +807,22 @@
             </div>
             <div class="nav-kbd">2</div>
           </button>
+
+          <button class="nav-btn rgb-cycle-btn" data-target="panel-dash">
+            <div class="nav-btn-left">
+              <div class="nav-dot"></div>
+              <div>
+                <div class="nav-title">Pablo Dash</div>
+                <div class="nav-tag">Runner + full level editor</div>
+              </div>
+            </div>
+            <div class="nav-kbd">3</div>
+          </button>
         </nav>
 
         <div class="sidebar-footer">
-          <span><strong>Tip:</strong> Press 1 or 2 to switch instantly.</span>
-          <span>Sandbox: solids, liquids, gases, lighter &amp; ruler. Snake: bigger pixels, rounded body.</span>
+          <span><strong>Tip:</strong> Press 1, 2 or 3 to switch instantly.</span>
+          <span>Sandbox: matter &amp; lighter. Snake: chunky neon. Dash: Geometry-style runner + editor.</span>
         </div>
       </aside>
 
@@ -760,7 +832,7 @@
           <div class="main-title-block">
             <div class="main-title">Pablo's Portal 2.0</div>
             <div class="main-subtitle">
-              Physics sandbox + neon snake, with ruler lines and RGB-cycling UI.
+              Physics sandbox, neon snake, and Pablo Dash with a built-in level editor.
             </div>
           </div>
           <div class="main-pills">
@@ -769,6 +841,7 @@
               RGB outline
             </div>
             <div class="pill">States of matter</div>
+            <div class="pill">Dash editor</div>
           </div>
         </header>
 
@@ -1003,6 +1076,7 @@
                       <div class="control-keys">
                         <span>1</span> Sandbox
                         <span>2</span> Snake
+                        <span>3</span> Dash
                       </div>
                     </div>
                   </div>
@@ -1016,6 +1090,130 @@
                       Each fruit slightly increases speed. The bigger pixels give you a chunky neon feel.
                     </span>
                   </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Pablo Dash Panel -->
+          <section class="panel" id="panel-dash">
+            <div class="panel-top-row">
+              <div class="panel-info">
+                Pablo Dash: auto-runner with spikes, blocks, portals &amp; a full grid-based level editor.
+              </div>
+              <div class="panel-controls">
+                <div class="chip">
+                  <span class="chip-key">3</span>
+                  Focus Dash
+                </div>
+                <div class="chip">
+                  <span class="chip-key">Space</span>
+                  Jump / Play / Pause
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-layout">
+              <!-- Dash game canvas -->
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Pablo Dash</div>
+                    <div class="card-sub">Geometry-style runner using your custom level</div>
+                  </div>
+                  <div class="card-badge-row">
+                    <span class="badge">Auto-run</span>
+                    <span class="badge">Jump over spikes</span>
+                    <span class="badge">Editor-powered</span>
+                  </div>
+                </div>
+                <canvas id="dashCanvas"></canvas>
+                <div class="card-footer">
+                  <span>
+                    <span class="dot-soft-green"></span>
+                    Space / Click: jump
+                  </span>
+                  <span>
+                    <span class="dot-soft-pink"></span>
+                    R: restart
+                  </span>
+                </div>
+              </div>
+
+              <!-- Dash editor -->
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title">Level Editor</div>
+                  <div class="card-sub">Paint tiles, set start, test &amp; save</div>
+                </div>
+
+                <div class="dash-palette-row" id="dashPalette">
+                  <button class="dash-palette-item active" data-tile="empty">
+                    <span class="dash-palette-dot" style="background:#111;"></span>
+                    Empty
+                  </button>
+                  <button class="dash-palette-item" data-tile="ground">
+                    <span class="dash-palette-dot" style="background:#35f0ff;"></span>
+                    Ground
+                  </button>
+                  <button class="dash-palette-item" data-tile="spike">
+                    <span class="dash-palette-dot" style="background:#ff3bff;"></span>
+                    Spike
+                  </button>
+                  <button class="dash-palette-item" data-tile="start">
+                    <span class="dash-palette-dot" style="background:#7cff6b;"></span>
+                    Start
+                  </button>
+                  <button class="dash-palette-item" data-tile="goal">
+                    <span class="dash-palette-dot" style="background:#ffd27a;"></span>
+                    Goal
+                  </button>
+                </div>
+
+                <div style="margin-top:8px; font-size:11px; opacity:0.8;">
+                  Click cells to paint. Only one Start and one Goal are used by the runner.
+                </div>
+
+                <div class="dash-editor-grid" id="dashEditorGrid"></div>
+
+                <div class="dash-toolbar">
+                  <button class="btn-soft rgb-cycle-btn" id="dashPlayBtn">
+                    <span class="dot-soft"></span>
+                    Play / Pause
+                  </button>
+                  <button class="btn-soft rgb-cycle-btn" id="dashRestartBtn">
+                    <span class="dot-soft-pink"></span>
+                    Restart
+                  </button>
+                  <button class="btn-soft rgb-cycle-btn" id="dashClearBtn">
+                    <span class="dot-soft-pink"></span>
+                    Clear Level
+                  </button>
+                  <button class="btn-soft rgb-cycle-btn" id="dashFillGroundBtn">
+                    <span class="dot-soft"></span>
+                    Fill Bottom Ground
+                  </button>
+                  <button class="btn-soft rgb-cycle-btn" id="dashSaveBtn">
+                    💾 Save
+                  </button>
+                  <button class="btn-soft rgb-cycle-btn" id="dashLoadBtn">
+                    ⟳ Load
+                  </button>
+                </div>
+
+                <div class="dash-status-row">
+                  <span>
+                    <span class="dot-soft"></span>
+                    <span id="dashStatus">Idle</span>
+                  </span>
+                  <span>
+                    <span class="dot-soft-pink"></span>
+                    Jumps: <span id="dashJumpCount">0</span>
+                  </span>
+                  <span>
+                    <span class="dot-soft-green"></span>
+                    Attempts: <span id="dashAttempts">0</span>
+                  </span>
                 </div>
               </div>
             </div>
@@ -1048,6 +1246,7 @@
       if (e.target.tagName === "INPUT") return;
       if (e.key === "1") activatePanel("panel-sandbox");
       if (e.key === "2") activatePanel("panel-snake");
+      if (e.key === "3") activatePanel("panel-dash");
     });
 
     // ---------- Physics Sandbox ----------
@@ -2147,6 +2346,7 @@
       }
 
       if (e.key === " " || e.code === "Space") {
+        if (document.activeElement === snakeSpeedSlider) return;
         snakePaused = !snakePaused;
       }
 
@@ -2173,22 +2373,513 @@
       requestAnimationFrame(snakeLoop);
     }
 
+    // ---------- Pablo Dash + Level Editor ----------
+
+    const dashCanvas = document.getElementById("dashCanvas");
+    const dashCtx = dashCanvas.getContext("2d");
+
+    const dashPalette = document.getElementById("dashPalette");
+    const dashEditorGrid = document.getElementById("dashEditorGrid");
+    const dashPlayBtn = document.getElementById("dashPlayBtn");
+    const dashRestartBtn = document.getElementById("dashRestartBtn");
+    const dashClearBtn = document.getElementById("dashClearBtn");
+    const dashFillGroundBtn = document.getElementById("dashFillGroundBtn");
+    const dashSaveBtn = document.getElementById("dashSaveBtn");
+    const dashLoadBtn = document.getElementById("dashLoadBtn");
+    const dashStatus = document.getElementById("dashStatus");
+    const dashJumpCountLabel = document.getElementById("dashJumpCount");
+    const dashAttemptsLabel = document.getElementById("dashAttempts");
+
+    let dashCols = 48;
+    let dashRows = 12;
+    let dashCellSize;
+    let dashWidth;
+    let dashHeight;
+
+    const DASH_TILES = ["empty", "ground", "spike", "start", "goal"];
+    let dashCurrentTile = "empty";
+
+    let dashLevel = [];
+    let dashPlayer = null;
+    let dashScrollX = 0;
+    let dashSpeed = 220;
+    let dashGravity = 1200;
+    let dashJumpVel = -420;
+    let dashIsPlaying = false;
+    let dashLastTime = 0;
+    let dashJumpCount = 0;
+    let dashAttempts = 0;
+
+    function resizeDash() {
+      const rect = dashCanvas.parentElement.getBoundingClientRect();
+      const maxWidth = rect.width - 4;
+      const maxHeight = rect.height - 60;
+
+      const scaleX = maxWidth / dashCols;
+      const scaleY = maxHeight / dashRows;
+
+      dashCellSize = Math.floor(Math.min(scaleX, scaleY));
+      dashCellSize = Math.max(dashCellSize, 16);
+
+      dashWidth = dashCols * dashCellSize;
+      dashHeight = dashRows * dashCellSize;
+
+      dashCanvas.width = dashWidth;
+      dashCanvas.height = dashHeight;
+    }
+
+    function initDashLevel() {
+      dashLevel = [];
+      for (let y = 0; y < dashRows; y++) {
+        const row = new Array(dashCols).fill("empty");
+        dashLevel.push(row);
+      }
+      // default: ground on bottom row
+      for (let x = 0; x < dashCols; x++) {
+        dashLevel[dashRows - 1][x] = "ground";
+      }
+      // default start & goal
+      dashLevel[dashRows - 2][2] = "start";
+      dashLevel[dashRows - 2][dashCols - 3] = "goal";
+    }
+
+    function buildDashEditorGrid() {
+      dashEditorGrid.innerHTML = "";
+      for (let y = 0; y < dashRows; y++) {
+        for (let x = 0; x < dashCols; x++) {
+          const cell = document.createElement("div");
+          cell.className = "dash-editor-cell";
+          cell.dataset.x = x;
+          cell.dataset.y = y;
+          dashEditorGrid.appendChild(cell);
+        }
+      }
+      refreshDashEditorGrid();
+    }
+
+    function refreshDashEditorGrid() {
+      const cells = dashEditorGrid.querySelectorAll(".dash-editor-cell");
+      cells.forEach(cell => {
+        const x = parseInt(cell.dataset.x, 10);
+        const y = parseInt(cell.dataset.y, 10);
+        const tile = dashLevel[y][x];
+        cell.classList.remove("active");
+        cell.style.borderColor = "rgba(255,255,255,0.16)";
+        cell.textContent = "";
+        if (tile === "ground") {
+          cell.style.background = "rgba(53,240,255,0.25)";
+          cell.textContent = "▢";
+        } else if (tile === "spike") {
+          cell.style.background = "rgba(255,59,255,0.25)";
+          cell.textContent = "▲";
+        } else if (tile === "start") {
+          cell.style.background = "rgba(124,255,107,0.25)";
+          cell.textContent = "S";
+        } else if (tile === "goal") {
+          cell.style.background = "rgba(255,210,122,0.25)";
+          cell.textContent = "G";
+        } else {
+          cell.style.background = "rgba(0,0,0,0.35)";
+        }
+      });
+    }
+
+    dashPalette.addEventListener("click", e => {
+      const item = e.target.closest(".dash-palette-item");
+      if (!item) return;
+      dashCurrentTile = item.dataset.tile;
+      dashPalette.querySelectorAll(".dash-palette-item").forEach(el =>
+        el.classList.remove("active")
+      );
+      item.classList.add("active");
+    });
+
+    dashEditorGrid.addEventListener("mousedown", e => {
+      const cell = e.target.closest(".dash-editor-cell");
+      if (!cell) return;
+      const x = parseInt(cell.dataset.x, 10);
+      const y = parseInt(cell.dataset.y, 10);
+
+      if (dashCurrentTile === "start" || dashCurrentTile === "goal") {
+        // clear existing of that type
+        for (let yy = 0; yy < dashRows; yy++) {
+          for (let xx = 0; xx < dashCols; xx++) {
+            if (dashLevel[yy][xx] === dashCurrentTile) {
+              dashLevel[yy][xx] = "empty";
+            }
+          }
+        }
+      }
+
+      dashLevel[y][x] = dashCurrentTile;
+      refreshDashEditorGrid();
+    });
+
+    function findDashStart() {
+      for (let y = 0; y < dashRows; y++) {
+        for (let x = 0; x < dashCols; x++) {
+          if (dashLevel[y][x] === "start") {
+            return { x, y };
+          }
+        }
+      }
+      return { x: 2, y: dashRows - 2 };
+    }
+
+    function findDashGoal() {
+      for (let y = 0; y < dashRows; y++) {
+        for (let x = 0; x < dashCols; x++) {
+          if (dashLevel[y][x] === "goal") {
+            return { x, y };
+          }
+        }
+      }
+      return { x: dashCols - 3, y: dashRows - 2 };
+    }
+
+    function resetDashPlayer() {
+      const start = findDashStart();
+      dashPlayer = {
+        x: start.x * dashCellSize + dashCellSize * 0.25,
+        y: start.y * dashCellSize + dashCellSize * 0.25,
+        w: dashCellSize * 0.5,
+        h: dashCellSize * 0.5,
+        vy: 0,
+        onGround: false
+      };
+      dashScrollX = Math.max(0, dashPlayer.x - dashWidth * 0.3);
+      dashJumpCount = 0;
+      dashJumpCountLabel.textContent = dashJumpCount;
+    }
+
+    function dashJump() {
+      if (!dashPlayer) return;
+      if (!dashPlayer.onGround) return;
+      dashPlayer.vy = dashJumpVel;
+      dashPlayer.onGround = false;
+      dashJumpCount++;
+      dashJumpCountLabel.textContent = dashJumpCount;
+    }
+
+    function dashTileAt(px, py) {
+      const gx = Math.floor(px / dashCellSize);
+      const gy = Math.floor(py / dashCellSize);
+      if (gx < 0 || gx >= dashCols || gy < 0 || gy >= dashRows) return "empty";
+      return dashLevel[gy][gx];
+    }
+
+    function dashRectCollidesWithTileType(rect, types) {
+      const samples = 4;
+      for (let i = 0; i <= samples; i++) {
+        const t = i / samples;
+        const px = rect.x + rect.w * t;
+        const pyTop = rect.y;
+        const pyBottom = rect.y + rect.h;
+        const pyMid = rect.y + rect.h * t;
+
+        const points = [
+          { x: px, y: pyTop },
+          { x: px, y: pyBottom },
+          { x: rect.x, y: pyMid },
+          { x: rect.x + rect.w, y: pyMid }
+        ];
+
+        for (const p of points) {
+          const tile = dashTileAt(p.x, p.y);
+          if (types.includes(tile)) return true;
+        }
+      }
+      return false;
+    }
+
+    function updateDash(dt) {
+      if (!dashIsPlaying || !dashPlayer) return;
+
+      const dtSec = dt / 1000;
+
+      dashPlayer.vy += dashGravity * dtSec;
+      dashPlayer.y += dashPlayer.vy * dtSec;
+      dashPlayer.x += dashSpeed * dtSec;
+
+      dashScrollX = Math.max(dashScrollX, dashPlayer.x - dashWidth * 0.3);
+
+      // ground collision
+      const rect = {
+        x: dashPlayer.x,
+        y: dashPlayer.y,
+        w: dashPlayer.w,
+        h: dashPlayer.h
+      };
+
+      dashPlayer.onGround = false;
+
+      // vertical collision with ground
+      if (dashRectCollidesWithTileType(rect, ["ground"])) {
+        // move up until not colliding
+        while (dashRectCollidesWithTileType(rect, ["ground"])) {
+          rect.y -= 1;
+        }
+        dashPlayer.y = rect.y;
+        dashPlayer.vy = 0;
+        dashPlayer.onGround = true;
+      }
+
+      // spike collision
+      if (dashRectCollidesWithTileType(rect, ["spike"])) {
+        dashAttempts++;
+        dashAttemptsLabel.textContent = dashAttempts;
+        dashStatus.textContent = "Hit spike! Restarting...";
+        resetDashPlayer();
+        return;
+      }
+
+      // goal check
+      if (dashRectCollidesWithTileType(rect, ["goal"])) {
+        dashStatus.textContent = "Goal reached! 🎉";
+        dashIsPlaying = false;
+        return;
+      }
+
+      // out of bounds
+      if (dashPlayer.y > dashHeight + 200 || dashPlayer.x > dashCols * dashCellSize + 200) {
+        dashAttempts++;
+        dashAttemptsLabel.textContent = dashAttempts;
+        dashStatus.textContent = "Fell off! Restarting...";
+        resetDashPlayer();
+      }
+    }
+
+    function drawDash() {
+      dashCtx.clearRect(0, 0, dashWidth, dashHeight);
+
+      // background
+      dashCtx.fillStyle = "#000000";
+      dashCtx.fillRect(0, 0, dashWidth, dashHeight);
+
+      // subtle grid
+      dashCtx.strokeStyle = "rgba(255,255,255,0.04)";
+      dashCtx.lineWidth = 1;
+      dashCtx.beginPath();
+      for (let x = 0; x <= dashCols; x++) {
+        const px = x * dashCellSize - dashScrollX;
+        dashCtx.moveTo(px, 0);
+        dashCtx.lineTo(px, dashHeight);
+      }
+      for (let y = 0; y <= dashRows; y++) {
+        const py = y * dashCellSize;
+        dashCtx.moveTo(-dashScrollX, py);
+        dashCtx.lineTo(dashWidth - dashScrollX, py);
+      }
+      dashCtx.stroke();
+
+      // tiles
+      for (let y = 0; y < dashRows; y++) {
+        for (let x = 0; x < dashCols; x++) {
+          const tile = dashLevel[y][x];
+          const px = x * dashCellSize - dashScrollX;
+          const py = y * dashCellSize;
+          if (px + dashCellSize < 0 || px > dashWidth) continue;
+
+          if (tile === "ground") {
+            dashCtx.fillStyle = "#35f0ff";
+            dashCtx.beginPath();
+            dashCtx.roundRect(
+              px + 2,
+              py + 2,
+              dashCellSize - 4,
+              dashCellSize - 4,
+              6
+            );
+            dashCtx.fill();
+          } else if (tile === "spike") {
+            dashCtx.fillStyle = "#ff3bff";
+            dashCtx.beginPath();
+            dashCtx.moveTo(px + dashCellSize * 0.5, py + 4);
+            dashCtx.lineTo(px + dashCellSize - 4, py + dashCellSize - 4);
+            dashCtx.lineTo(px + 4, py + dashCellSize - 4);
+            dashCtx.closePath();
+            dashCtx.fill();
+          } else if (tile === "start") {
+            dashCtx.fillStyle = "#7cff6b";
+            dashCtx.beginPath();
+            dashCtx.roundRect(
+              px + 4,
+              py + 4,
+              dashCellSize - 8,
+              dashCellSize - 8,
+              6
+            );
+            dashCtx.fill();
+          } else if (tile === "goal") {
+            dashCtx.fillStyle = "#ffd27a";
+            dashCtx.beginPath();
+            dashCtx.roundRect(
+              px + 4,
+              py + 4,
+              dashCellSize - 8,
+              dashCellSize - 8,
+              6
+            );
+            dashCtx.fill();
+          }
+        }
+      }
+
+      // player
+      if (dashPlayer) {
+        dashCtx.save();
+        dashCtx.shadowBlur = 18;
+        dashCtx.shadowColor = "rgba(53,240,255,0.9)";
+        dashCtx.fillStyle = "#35f0ff";
+        dashCtx.beginPath();
+        dashCtx.roundRect(
+          dashPlayer.x - dashScrollX,
+          dashPlayer.y,
+          dashPlayer.w,
+          dashPlayer.h,
+          6
+        );
+        dashCtx.fill();
+        dashCtx.restore();
+      }
+
+      // status overlay
+      if (!dashIsPlaying) {
+        dashCtx.fillStyle = "rgba(0,0,0,0.45)";
+        dashCtx.fillRect(0, 0, dashWidth, dashHeight);
+        dashCtx.fillStyle = "#ffffff";
+        dashCtx.font = "bold 16px system-ui";
+        dashCtx.textAlign = "center";
+        dashCtx.fillText("Press Play or Space to run", dashWidth / 2, dashHeight / 2);
+      }
+    }
+
+    function dashLoop(timestamp) {
+      const dt = timestamp - dashLastTime;
+      dashLastTime = timestamp;
+      updateDash(dt);
+      drawDash();
+      requestAnimationFrame(dashLoop);
+    }
+
+    dashPlayBtn.addEventListener("click", () => {
+      dashIsPlaying = !dashIsPlaying;
+      dashStatus.textContent = dashIsPlaying ? "Running..." : "Paused";
+    });
+
+    dashRestartBtn.addEventListener("click", () => {
+      dashAttempts++;
+      dashAttemptsLabel.textContent = dashAttempts;
+      resetDashPlayer();
+      dashIsPlaying = true;
+      dashStatus.textContent = "Running...";
+    });
+
+    dashClearBtn.addEventListener("click", () => {
+      initDashLevel();
+      refreshDashEditorGrid();
+      resetDashPlayer();
+      dashIsPlaying = false;
+      dashStatus.textContent = "Level cleared.";
+    });
+
+    dashFillGroundBtn.addEventListener("click", () => {
+      for (let x = 0; x < dashCols; x++) {
+        dashLevel[dashRows - 1][x] = "ground";
+      }
+      refreshDashEditorGrid();
+    });
+
+    dashSaveBtn.addEventListener("click", () => {
+      try {
+        const data = JSON.stringify(dashLevel);
+        localStorage.setItem("pabloDashLevel", data);
+        dashStatus.textContent = "Level saved.";
+      } catch {
+        dashStatus.textContent = "Save failed.";
+      }
+    });
+
+    dashLoadBtn.addEventListener("click", () => {
+      try {
+        const data = localStorage.getItem("pabloDashLevel");
+        if (!data) {
+          dashStatus.textContent = "No saved level.";
+          return;
+        }
+        const parsed = JSON.parse(data);
+        if (!Array.isArray(parsed) || parsed.length !== dashRows) {
+          dashStatus.textContent = "Invalid level data.";
+          return;
+        }
+        dashLevel = parsed;
+        refreshDashEditorGrid();
+        resetDashPlayer();
+        dashStatus.textContent = "Level loaded.";
+      } catch {
+        dashStatus.textContent = "Load failed.";
+      }
+    });
+
+    dashCanvas.addEventListener("mousedown", () => {
+      if (!dashIsPlaying) {
+        dashIsPlaying = true;
+        dashStatus.textContent = "Running...";
+      } else {
+        dashJump();
+      }
+    });
+
+    window.addEventListener("keydown", e => {
+      if (e.target.tagName === "INPUT") return;
+
+      if (e.key === " " || e.code === "Space") {
+        if (panels[2].classList.contains("active")) {
+          if (!dashIsPlaying) {
+            dashIsPlaying = true;
+            dashStatus.textContent = "Running...";
+          } else {
+            dashJump();
+          }
+          e.preventDefault();
+        }
+      }
+
+      if (e.key.toLowerCase() === "r" && panels[2].classList.contains("active")) {
+        dashAttempts++;
+        dashAttemptsLabel.textContent = dashAttempts;
+        resetDashPlayer();
+        dashIsPlaying = true;
+        dashStatus.textContent = "Running...";
+      }
+    });
+
     // ---------- Init ----------
 
     function initAll() {
+      // Sandbox
       resizeSandbox();
       initSandbox();
       renderMatterPills();
       sandboxLoop();
 
+      // Snake
       resizeSnake();
       resetSnake();
       requestAnimationFrame(snakeLoop);
+
+      // Dash
+      resizeDash();
+      initDashLevel();
+      buildDashEditorGrid();
+      resetDashPlayer();
+      requestAnimationFrame(dashLoop);
     }
 
     window.addEventListener("resize", () => {
       resizeSandbox();
       resizeSnake();
+      resizeDash();
     });
 
     initAll();
