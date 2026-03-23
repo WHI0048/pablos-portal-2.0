@@ -2,364 +2,1365 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<title>Pablo's Portal 3.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Pablo's Portal 2.0 — Neon Shell</title>
-
 <style>
-/* --------------------------------------------------
-   GLOBAL + RGB BACKGROUND
--------------------------------------------------- */
 :root {
-  --accent: #00ffff;
-  --accent-2: #ff00ff;
-  --accent-3: #00ff88;
+  --bg: #050712;
+  --panel-bg: rgba(10, 14, 30, 0.9);
+  --accent: #4af2c5;
+  --accent2: #ff4af2;
+  --accent3: #4ac6ff;
+  --text: #f5f7ff;
+  --muted: #8a8fa8;
+  --border-glow: 0 0 12px rgba(74, 242, 197, 0.7);
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --shadow-soft: 0 24px 60px rgba(0, 0, 0, 0.6);
+  --grid-line: rgba(255, 255, 255, 0.04);
+  --danger: #ff4a6a;
+  --good: #4af27a;
+  --warning: #ffc44a;
+  --font-main: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #f8fbff;
-  min-height: 100vh;
-  overflow: hidden;
-  background: radial-gradient(circle at top, #10152b, #02030a 55%, #000000 100%);
-  position: relative;
+  padding: 0;
+  height: 100%;
+  background: radial-gradient(circle at top, #151b3a 0, #050712 55%, #020308 100%);
+  color: var(--text);
+  font-family: var(--font-main);
 }
 
-/* Animated RGB gradient overlay */
-body::before {
-  content: "";
-  position: fixed;
-  inset: -40%;
+body {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+/* Layout shell */
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: 1400px;
+}
+
+/* RGB border wrapper */
+
+.rgb-frame {
+  position: relative;
+  border-radius: 26px;
+  padding: 2px;
   background: conic-gradient(
     from 0deg,
-    #00ffff,
-    #ff00ff,
-    #00ff88,
-    #00ffff
+    #ff4af2,
+    #4ac6ff,
+    #4af2c5,
+    #ffc44a,
+    #ff4af2
   );
-  filter: blur(80px);
-  opacity: 0.35;
-  mix-blend-mode: screen;
-  animation: spinRGB 18s linear infinite;
-  z-index: -2;
+  animation: rgb-rotate 12s linear infinite;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
 }
 
-@keyframes spinRGB {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+.rgb-inner {
+  border-radius: 24px;
+  background: radial-gradient(circle at top, #151b3a 0, #050712 55%, #020308 100%);
+  padding: 16px;
+  height: 100%;
 }
 
-/* Dark glass overlay */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at top, rgba(0,0,0,0.4), rgba(0,0,0,0.9));
-  z-index: -1;
+@keyframes rgb-rotate {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
 }
 
-/* --------------------------------------------------
-   HEADER
--------------------------------------------------- */
-header {
-  padding: 14px 24px;
+/* Sidebar */
+
+.sidebar {
+  grid-row: 1 / span 2;
+}
+
+.sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  backdrop-filter: blur(18px);
-  background: linear-gradient(
-    to right,
-    rgba(10, 15, 40, 0.9),
-    rgba(10, 15, 40, 0.6)
-  );
-  border-bottom: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 0 24px rgba(0,0,0,0.7);
-  position: relative;
-  z-index: 2;
+  margin-bottom: 18px;
 }
 
-header .title {
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #e9f5ff;
-}
-
-header .subtitle {
-  font-size: 12px;
-  opacity: 0.7;
-}
-
-/* Small RGB pill on the right */
-header .rgb-pill {
-  padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.25);
-  background: radial-gradient(circle at top left, rgba(0,255,255,0.35), rgba(0,0,0,0.8));
-  box-shadow:
-    0 0 12px rgba(0,255,255,0.7),
-    0 0 24px rgba(255,0,255,0.4);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
-/* --------------------------------------------------
-   LAYOUT
--------------------------------------------------- */
-#container {
+.logo-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: radial-gradient(circle at 30% 20%, #ffffff 0, #4af2c5 35%, #151b3a 100%);
+  box-shadow: 0 0 18px rgba(74, 242, 197, 0.7);
   display: flex;
-  height: calc(100vh - 60px);
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+  color: #050712;
 }
 
-/* --------------------------------------------------
-   SIDEBAR
--------------------------------------------------- */
-#sidebar {
-  width: 260px;
-  padding: 18px 16px;
-  backdrop-filter: blur(20px);
-  background: linear-gradient(
-    to bottom,
-    rgba(10, 15, 40, 0.9),
-    rgba(10, 15, 40, 0.6)
-  );
-  border-right: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 0 24px rgba(0,0,0,0.7);
-  position: relative;
-  z-index: 1;
+.logo-text {
+  margin-left: 10px;
 }
 
-#sidebar h2 {
-  margin: 0 0 14px;
-  font-size: 16px;
+.logo-title {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-size: 14px;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
-  opacity: 0.8;
 }
 
-/* Sidebar glow edge */
-#sidebar::after {
+.logo-sub {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.sidebar-header-left {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(74, 242, 197, 0.14), rgba(74, 198, 255, 0.08));
+  border: 1px solid rgba(74, 242, 197, 0.4);
+  color: var(--accent);
+}
+
+/* Nav buttons */
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.nav-btn {
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(
+    135deg,
+    rgba(10, 14, 30, 0.96),
+    rgba(10, 14, 30, 0.86)
+  );
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.08s ease;
+}
+
+.nav-btn::before {
   content: "";
   position: absolute;
-  top: 0;
-  right: -1px;
-  width: 1px;
-  height: 100%;
-  background: linear-gradient(
-    to bottom,
-    rgba(0,255,255,0.8),
-    rgba(255,0,255,0.8),
-    rgba(0,255,136,0.8)
-  );
-  opacity: 0.7;
+  inset: 0;
+  background: radial-gradient(circle at 0 0, rgba(74, 242, 197, 0.18), transparent 55%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
-/* Tab buttons */
-.tab-button {
-  display: block;
-  width: 100%;
-  padding: 10px 12px;
-  margin-bottom: 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: radial-gradient(circle at top left, rgba(255,255,255,0.08), rgba(0,0,0,0.7));
-  color: #e9f5ff;
-  text-align: left;
-  cursor: pointer;
+.nav-btn:hover::before {
+  opacity: 1;
+}
+
+.nav-btn:hover {
+  border-color: rgba(74, 242, 197, 0.7);
+  transform: translateY(-1px);
+}
+
+.nav-btn.active {
+  border-color: rgba(74, 242, 197, 0.9);
+  box-shadow: 0 0 18px rgba(74, 242, 197, 0.45);
+}
+
+.nav-btn-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 20%, #ffffff 0, #4af2c5 40%, #151b3a 100%);
+  box-shadow: 0 0 10px rgba(74, 242, 197, 0.7);
+}
+
+.nav-title {
   font-size: 13px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  transition: 0.18s ease;
+  font-weight: 600;
+}
+
+.nav-tag {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.nav-kbd {
+  font-size: 11px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(5, 7, 18, 0.9);
+  color: var(--muted);
+}
+
+/* Sidebar footer */
+
+.sidebar-footer {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--muted);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 10px 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 14, 30, 0.96),
+    rgba(10, 14, 30, 0.86)
+  );
+}
+
+.sidebar-footer strong {
+  color: var(--accent3);
+}
+
+/* Top bar */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topbar-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.topbar-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.topbar-sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chip {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(5, 7, 18, 0.9);
+  color: var(--muted);
+}
+
+/* Main body */
+
+.main-body {
+  margin-top: 12px;
+  border-radius: var(--radius-lg);
+  background: radial-gradient(circle at top, rgba(74, 242, 197, 0.08), rgba(5, 7, 18, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: var(--shadow-soft);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  min-height: 540px;
+}
+
+/* Panels */
+
+.panel {
+  display: none;
+  height: 100%;
+  flex-direction: column;
+}
+
+.panel.active {
+  display: flex;
+}
+
+.panel-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.panel-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.panel-info {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Sandbox */
+
+.sandbox-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 10px;
+  flex: 1;
+}
+
+.sandbox-canvas-wrap,
+.sandbox-tools {
+  border-radius: var(--radius-md);
+  background: var(--panel-bg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 10px;
   position: relative;
   overflow: hidden;
 }
 
-.tab-button::before {
+.sandbox-canvas-wrap::before,
+.sandbox-tools::before,
+.pdash-editor-wrap::before,
+.pdash-side::before,
+.snake-wrap::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    120deg,
-    rgba(0,255,255,0.35),
-    rgba(255,0,255,0.35),
-    rgba(0,255,136,0.35)
-  );
-  opacity: 0;
-  mix-blend-mode: screen;
-  transition: opacity 0.2s ease;
-}
-
-.tab-button:hover::before {
+  background-image: linear-gradient(
+      to right,
+      var(--grid-line) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 16px 16px;
   opacity: 0.4;
-}
-
-.tab-button.active {
-  border-color: rgba(0,255,255,0.9);
-  box-shadow:
-    0 0 14px rgba(0,255,255,0.8),
-    0 0 26px rgba(255,0,255,0.5);
-  background: radial-gradient(circle at top left, rgba(0,255,255,0.25), rgba(0,0,0,0.8));
-}
-
-/* --------------------------------------------------
-   MAIN AREA
--------------------------------------------------- */
-#main {
-  flex: 1;
-  padding: 18px 20px;
-  overflow-y: auto;
-  position: relative;
-}
-
-/* Soft RGB border around main area */
-#main::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow:
-    0 0 18px rgba(0,255,255,0.4),
-    0 0 32px rgba(255,0,255,0.25);
   pointer-events: none;
 }
 
-/* Panels */
-.panel {
-  display: none;
+.sandbox-canvas-wrap canvas {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top, #151b3a 0, #050712 55%, #020308 100%);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sandbox-tools-inner {
   position: relative;
   z-index: 1;
-  animation: fadeIn 0.25s ease;
 }
 
-.panel.active {
-  display: block;
+.tool-group {
+  margin-bottom: 10px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.panel h2 {
-  margin-top: 0;
-  font-size: 18px;
+.tool-group-title {
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  opacity: 0.9;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 6px;
 }
 
-/* --------------------------------------------------
-   CANVAS CARDS (BLANK BUT NEON)
--------------------------------------------------- */
-.canvas-card {
+.tool-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tool-btn {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(5, 7, 18, 0.9);
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.tool-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(10, 40, 30, 0.9);
+}
+
+/* Snake */
+
+.snake-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 10px;
+  flex: 1;
+}
+
+.snake-wrap,
+.snake-side {
+  border-radius: var(--radius-md);
+  background: var(--panel-bg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.snake-wrap canvas {
   width: 100%;
-  height: 520px;
-  border-radius: 18px;
-  background: radial-gradient(circle at top, rgba(255,255,255,0.06), rgba(0,0,0,0.9));
-  border: 1px solid rgba(255,255,255,0.16);
-  box-shadow:
-    0 0 24px rgba(0,255,255,0.35),
-    0 0 40px rgba(255,0,255,0.25);
-  backdrop-filter: blur(16px);
+  height: 100%;
+  background: radial-gradient(circle at top, #151b3a 0, #050712 55%, #020308 100%);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* --------------------------------------------------
-   SETTINGS TEXT
--------------------------------------------------- */
-.settings-text {
-  font-size: 14px;
-  max-width: 520px;
-  line-height: 1.6;
-  opacity: 0.85;
+.snake-side-inner {
+  position: relative;
+  z-index: 1;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.snake-score {
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+/* Pablo Dash */
+
+.pdash-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 10px;
+  flex: 1;
+}
+
+.pdash-editor-wrap,
+.pdash-side {
+  border-radius: var(--radius-md);
+  background: var(--panel-bg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pdash-editor-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+
+.pdash-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.pdash-toolbar .tool-btn {
+  font-size: 11px;
+}
+
+.pdash-canvas-wrap {
+  flex: 1;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: radial-gradient(circle at top, #151b3a 0, #050712 55%, #020308 100%);
+  overflow: hidden;
+}
+
+.pdash-canvas-wrap canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.pdash-side-inner {
+  position: relative;
+  z-index: 1;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pdash-side-inner h4 {
+  margin: 0 0 6px;
+  font-size: 13px;
+}
+
+.pdash-stat {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+/* Buttons */
+
+.btn-primary {
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(74, 242, 197, 0.7);
+  background: radial-gradient(circle at 0 0, rgba(74, 242, 197, 0.3), rgba(5, 7, 18, 0.96));
+  color: var(--accent);
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.12s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 16px rgba(74, 242, 197, 0.5);
+}
+
+/* Responsive */
+
+@media (max-width: 980px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  .sidebar {
+    grid-row: auto;
+  }
+  .main-body {
+    min-height: 480px;
+  }
+  .sandbox-layout,
+  .snake-layout,
+  .pdash-layout {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
-
 <body>
-<header>
-  <div>
-    <div class="title">Pablo's Portal 2.0</div>
-    <div class="subtitle">Neon UI Shell · All games removed</div>
+<div class="app-shell">
+  <!-- Sidebar -->
+  <div class="rgb-frame sidebar">
+    <div class="rgb-inner">
+      <div class="sidebar-header">
+        <div class="sidebar-header-left">
+          <div class="logo-mark">P</div>
+          <div class="logo-text">
+            <div class="logo-title">Pablo's Portal</div>
+            <div class="logo-sub">Neon Physics Playground</div>
+          </div>
+        </div>
+        <div class="sidebar-tag">v3.0 single-file</div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-btn active" data-target="panel-sandbox">
+          <div class="nav-btn-left">
+            <div class="nav-dot"></div>
+            <div>
+              <div class="nav-title">Physics Sandbox</div>
+              <div class="nav-tag">Falling sand, fire, water, chaos</div>
+            </div>
+          </div>
+          <div class="nav-kbd">1</div>
+        </button>
+
+        <button class="nav-btn" data-target="panel-snake">
+          <div class="nav-btn-left">
+            <div class="nav-dot"></div>
+            <div>
+              <div class="nav-title">Neon Snake</div>
+              <div class="nav-tag">Classic snake, neon grid</div>
+            </div>
+          </div>
+          <div class="nav-kbd">2</div>
+        </button>
+
+        <button class="nav-btn" data-target="panel-pablo-dash" id="pablo-dash">
+          <div class="nav-btn-left">
+            <div class="nav-dot"></div>
+            <div>
+              <div class="nav-title">Pablo Dash</div>
+              <div class="nav-tag">Dash + Level Editor</div>
+            </div>
+          </div>
+          <div class="nav-kbd">3</div>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div><strong>Tip:</strong> Press <strong>1 / 2 / 3</strong> to switch panels instantly.</div>
+        <div>Sandbox: click & drag to paint. Snake: arrows / WASD. Dash: build, then play.</div>
+      </div>
+    </div>
   </div>
-  <div class="rgb-pill">RGB Neon Active</div>
-</header>
 
-<div id="container">
-  <!-- SIDEBAR -->
-  <aside id="sidebar">
-    <h2>Navigation</h2>
-    <button class="tab-button active" data-tab-target="sandbox">Sandbox</button>
-    <button class="tab-button" data-tab-target="snake">Neon Snake</button>
-    <button class="tab-button" data-tab-target="settings">Settings</button>
-  </aside>
+  <!-- Top bar -->
+  <div class="rgb-frame topbar-frame">
+    <div class="rgb-inner topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Pablo's Portal 3.0 — Neon Shell</div>
+        <div class="topbar-sub">Single-file build with Physics Sandbox, Neon Snake, and Pablo Dash Level Editor.</div>
+      </div>
+      <div class="topbar-right">
+        <div class="chip">HTML + CSS + JS</div>
+        <div class="chip">Neon Cyber-Glass</div>
+      </div>
+    </div>
+  </div>
 
-  <!-- MAIN -->
-  <main id="main">
-    <!-- Sandbox Panel (canvas visible, blank) -->
-    <section class="panel active" data-tab-panel="sandbox">
-      <h2>Sandbox</h2>
-      <canvas class="canvas-card" id="sandboxCanvas"></canvas>
+  <!-- Main body -->
+  <div class="main-body">
+    <!-- Sandbox Panel -->
+    <section class="panel active" id="panel-sandbox">
+      <div class="panel-top-row">
+        <div class="panel-title">Physics Sandbox</div>
+        <div class="panel-info">Simple falling-sand simulation. Choose a material and paint on the grid.</div>
+      </div>
+      <div class="sandbox-layout">
+        <div class="sandbox-canvas-wrap">
+          <canvas id="sandboxCanvas"></canvas>
+        </div>
+        <div class="sandbox-tools">
+          <div class="sandbox-tools-inner">
+            <div class="tool-group">
+              <div class="tool-group-title">Material</div>
+              <div class="tool-row" id="sandboxMaterialRow">
+                <button class="tool-btn active" data-material="sand">Sand</button>
+                <button class="tool-btn" data-material="water">Water</button>
+                <button class="tool-btn" data-material="stone">Stone</button>
+                <button class="tool-btn" data-material="eraser">Eraser</button>
+              </div>
+            </div>
+            <div class="tool-group">
+              <div class="tool-group-title">Brush</div>
+              <div class="tool-row" id="sandboxBrushRow">
+                <button class="tool-btn active" data-size="2">Small</button>
+                <button class="tool-btn" data-size="4">Medium</button>
+                <button class="tool-btn" data-size="6">Large</button>
+              </div>
+            </div>
+            <div class="tool-group">
+              <div class="tool-group-title">Actions</div>
+              <div class="tool-row">
+                <button class="btn-primary" id="sandboxClear">Clear Grid</button>
+              </div>
+            </div>
+            <div class="tool-group">
+              <div class="tool-group-title">Notes</div>
+              <div class="panel-info">
+                Sand falls and piles up. Water flows sideways. Stone is static. This is a lightweight version of your original sandbox, tuned for this single-file build.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Snake Panel (canvas visible, blank) -->
-    <section class="panel" data-tab-panel="snake">
-      <h2>Neon Snake</h2>
-      <canvas class="canvas-card" id="snakeCanvas"></canvas>
+    <!-- Snake Panel -->
+    <section class="panel" id="panel-snake">
+      <div class="panel-top-row">
+        <div class="panel-title">Neon Snake</div>
+        <div class="panel-info">Arrow keys / WASD to move. Don’t hit the walls or yourself.</div>
+      </div>
+      <div class="snake-layout">
+        <div class="snake-wrap">
+          <canvas id="snakeCanvas"></canvas>
+        </div>
+        <div class="snake-side">
+          <div class="snake-side-inner">
+            <div class="snake-score">Score: <span id="snakeScore">0</span></div>
+            <div class="panel-info">
+              The snake moves on a neon grid. Eat the glowing food to grow. The game speeds up slightly as you score.
+            </div>
+            <div class="tool-group" style="margin-top:10px;">
+              <div class="tool-group-title">Controls</div>
+              <div>• Arrow keys or WASD to move</div>
+              <div>• Game auto-restarts on death</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Settings Panel -->
-    <section class="panel" data-tab-panel="settings">
-      <h2>Settings</h2>
-      <p class="settings-text">
-        This build of Pablo's Portal 2.0 is a <strong>pure neon UI shell</strong>.
-        All interactive game logic — including the physics sandbox, particles, explosions,
-        ruler, lighter, and Neon Snake — has been fully removed.
-        The canvases remain visible as blank neon stages, ready for future features.
-      </p>
+    <!-- Pablo Dash Panel -->
+    <section class="panel" id="panel-pablo-dash">
+      <div class="panel-top-row">
+        <div class="panel-title">Pablo Dash — Level Editor</div>
+        <div class="panel-info">Build a level with blocks and spikes, then play it as an auto-runner.</div>
+      </div>
+      <div class="pdash-layout">
+        <div class="pdash-editor-wrap">
+          <div class="pdash-editor-inner">
+            <div class="pdash-toolbar">
+              <span class="tool-group-title" style="margin-bottom:0;">Brush</span>
+              <button class="tool-btn active" data-dash-brush="block">Block</button>
+              <button class="tool-btn" data-dash-brush="spike">Spike</button>
+              <button class="tool-btn" data-dash-brush="erase">Erase</button>
+              <span style="flex:1;"></span>
+              <button class="btn-primary" id="dashPlay">Play Level</button>
+              <button class="tool-btn" id="dashClear">Clear</button>
+            </div>
+            <div class="pdash-canvas-wrap">
+              <canvas id="dashCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="pdash-side">
+          <div class="pdash-side-inner">
+            <h4>Level Info</h4>
+            <div class="pdash-stat">Width: <span id="dashWidthStat">64</span> tiles</div>
+            <div class="pdash-stat">Height: <span id="dashHeightStat">16</span> tiles</div>
+            <div class="pdash-stat">Blocks: <span id="dashBlocksStat">0</span></div>
+            <div class="pdash-stat">Spikes: <span id="dashSpikesStat">0</span></div>
+            <div class="tool-group" style="margin-top:10px;">
+              <div class="tool-group-title">How to use</div>
+              <div>• Click & drag to paint blocks or spikes.</div>
+              <div>• Use Erase to remove tiles.</div>
+              <div>• Press “Play Level” to run the auto-runner.</div>
+            </div>
+            <div class="tool-group" style="margin-top:10px;">
+              <div class="tool-group-title">Runner Controls</div>
+              <div>• Space / Click to jump.</div>
+              <div>• Avoid spikes. Touching one resets the run.</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
-  </main>
+  </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  // TAB SWITCHING
-  const tabButtons = document.querySelectorAll('.tab-button');
-  const panels = document.querySelectorAll('.panel');
+/* Panel switching */
 
-  function activateTab(id) {
-    tabButtons.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.tabTarget === id);
-    });
-    panels.forEach(panel => {
-      panel.classList.toggle('active', panel.dataset.tabPanel === id);
+const navButtons = Array.from(document.querySelectorAll(".nav-btn"));
+const panels = Array.from(document.querySelectorAll(".panel"));
+
+function activatePanel(id) {
+  panels.forEach(p => p.classList.toggle("active", p.id === id));
+  navButtons.forEach(btn => {
+    const target = btn.getAttribute("data-target");
+    btn.classList.toggle("active", target === id);
+  });
+}
+
+navButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const target = btn.getAttribute("data-target");
+    activatePanel(target);
+  });
+});
+
+window.addEventListener("keydown", e => {
+  if (e.key === "1") activatePanel("panel-sandbox");
+  if (e.key === "2") activatePanel("panel-snake");
+  if (e.key === "3") activatePanel("panel-pablo-dash");
+});
+
+/* Sandbox implementation */
+
+(function () {
+  const canvas = document.getElementById("sandboxCanvas");
+  const ctx = canvas.getContext("2d");
+
+  let width, height, cols, rows, cellSize;
+  let grid;
+  let material = "sand";
+  let brushSize = 2;
+  let isDrawing = false;
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    cellSize = 6;
+    cols = Math.floor(canvas.width / cellSize);
+    rows = Math.floor(canvas.height / cellSize);
+    grid = Array.from({ length: rows }, () =>
+      Array.from({ length: cols }, () => null)
+    );
+  }
+
+  function clearGrid() {
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        grid[y][x] = null;
+      }
+    }
+  }
+
+  function setMaterialButtons() {
+    const row = document.getElementById("sandboxMaterialRow");
+    row.addEventListener("click", e => {
+      const btn = e.target.closest(".tool-btn");
+      if (!btn) return;
+      const mat = btn.getAttribute("data-material");
+      if (!mat) return;
+      material = mat;
+      row.querySelectorAll(".tool-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
     });
   }
 
-  tabButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.tabTarget;
-      if (id) activateTab(id);
+  function setBrushButtons() {
+    const row = document.getElementById("sandboxBrushRow");
+    row.addEventListener("click", e => {
+      const btn = e.target.closest(".tool-btn");
+      if (!btn) return;
+      const size = parseInt(btn.getAttribute("data-size"), 10);
+      if (!size) return;
+      brushSize = size;
+      row.querySelectorAll(".tool-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    });
+  }
+
+  function paintAt(x, y) {
+    const gx = Math.floor(x / cellSize);
+    const gy = Math.floor(y / cellSize);
+    for (let dy = -brushSize; dy <= brushSize; dy++) {
+      for (let dx = -brushSize; dx <= brushSize; dx++) {
+        const nx = gx + dx;
+        const ny = gy + dy;
+        if (nx < 0 || nx >= cols || ny < 0 || ny >= rows) continue;
+        if (material === "eraser") {
+          grid[ny][nx] = null;
+        } else {
+          grid[ny][nx] = material;
+        }
+      }
+    }
+  }
+
+  function updatePhysics() {
+    // simple falling sand / water
+    for (let y = rows - 2; y >= 0; y--) {
+      for (let x = 0; x < cols; x++) {
+        const cell = grid[y][x];
+        if (!cell) continue;
+
+        if (cell === "sand" || cell === "water") {
+          const below = grid[y + 1][x];
+          if (!below) {
+            grid[y + 1][x] = cell;
+            grid[y][x] = null;
+          } else {
+            const dir = Math.random() < 0.5 ? -1 : 1;
+            const nx = x + dir;
+            if (nx >= 0 && nx < cols && !grid[y + 1][nx]) {
+              grid[y + 1][nx] = cell;
+              grid[y][x] = null;
+            } else if (cell === "water") {
+              const nx2 = x - dir;
+              if (nx2 >= 0 && nx2 < cols && !grid[y][nx2]) {
+                grid[y][nx2] = cell;
+                grid[y][x] = null;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const cell = grid[y][x];
+        if (!cell) continue;
+        if (cell === "sand") ctx.fillStyle = "#f2d16b";
+        else if (cell === "water") ctx.fillStyle = "#4ac6ff";
+        else if (cell === "stone") ctx.fillStyle = "#9ea3b5";
+        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+      }
+    }
+  }
+
+  function loop() {
+    updatePhysics();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  function setupEvents() {
+    canvas.addEventListener("mousedown", e => {
+      isDrawing = true;
+      const rect = canvas.getBoundingClientRect();
+      paintAt(e.clientX - rect.left, e.clientY - rect.top);
+    });
+    window.addEventListener("mouseup", () => (isDrawing = false));
+    canvas.addEventListener("mousemove", e => {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      paintAt(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    document.getElementById("sandboxClear").addEventListener("click", clearGrid);
+  }
+
+  window.addEventListener("resize", () => {
+    resize();
+  });
+
+  resize();
+  clearGrid();
+  setMaterialButtons();
+  setBrushButtons();
+  setupEvents();
+  loop();
+})();
+
+/* Snake implementation */
+
+(function () {
+  const canvas = document.getElementById("snakeCanvas");
+  const ctx = canvas.getContext("2d");
+  const scoreEl = document.getElementById("snakeScore");
+
+  let width, height, cols, rows, cellSize;
+  let snake, dir, food, score, speed, lastTime;
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    cellSize = 16;
+    cols = Math.floor(canvas.width / cellSize);
+    rows = Math.floor(canvas.height / cellSize);
+    reset();
+  }
+
+  function reset() {
+    snake = [{ x: Math.floor(cols / 2), y: Math.floor(rows / 2) }];
+    dir = { x: 1, y: 0 };
+    score = 0;
+    speed = 7;
+    placeFood();
+    scoreEl.textContent = score;
+  }
+
+  function placeFood() {
+    food = {
+      x: Math.floor(Math.random() * cols),
+      y: Math.floor(Math.random() * rows)
+    };
+  }
+
+  function update(dt) {
+    const step = 1 / speed;
+    if (!lastTime) lastTime = 0;
+    lastTime += dt;
+    if (lastTime < step) return;
+    lastTime = 0;
+
+    const head = { ...snake[0] };
+    head.x += dir.x;
+    head.y += dir.y;
+
+    if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows) {
+      reset();
+      return;
+    }
+
+    if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+      reset();
+      return;
+    }
+
+    snake.unshift(head);
+
+    if (head.x === food.x && head.y === food.y) {
+      score++;
+      scoreEl.textContent = score;
+      speed = 7 + score * 0.2;
+      placeFood();
+    } else {
+      snake.pop();
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // grid glow
+    ctx.fillStyle = "#050712";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // food
+    ctx.fillStyle = "#ff4af2";
+    ctx.fillRect(food.x * cellSize, food.y * cellSize, cellSize, cellSize);
+
+    // snake
+    for (let i = 0; i < snake.length; i++) {
+      const seg = snake[i];
+      const t = i / snake.length;
+      const r = 74 + t * (255 - 74);
+      const g = 242 - t * 120;
+      const b = 197 + t * 40;
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(seg.x * cellSize, seg.y * cellSize, cellSize, cellSize);
+    }
+  }
+
+  let lastTs = 0;
+  function loop(ts) {
+    const dt = (ts - lastTs) / 1000;
+    lastTs = ts;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  function handleKey(e) {
+    if (e.key === "ArrowUp" || e.key === "w") {
+      if (dir.y === 1) return;
+      dir = { x: 0, y: -1 };
+    } else if (e.key === "ArrowDown" || e.key === "s") {
+      if (dir.y === -1) return;
+      dir = { x: 0, y: 1 };
+    } else if (e.key === "ArrowLeft" || e.key === "a") {
+      if (dir.x === 1) return;
+      dir = { x: -1, y: 0 };
+    } else if (e.key === "ArrowRight" || e.key === "d") {
+      if (dir.x === -1) return;
+      dir = { x: 1, y: 0 };
+    }
+  }
+
+  window.addEventListener("resize", resize);
+  window.addEventListener("keydown", handleKey);
+
+  resize();
+  requestAnimationFrame(loop);
+})();
+
+/* Pablo Dash + Level Editor */
+
+(function () {
+  const canvas = document.getElementById("dashCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const brushButtons = Array.from(
+    document.querySelectorAll("[data-dash-brush]")
+  );
+  const playBtn = document.getElementById("dashPlay");
+  const clearBtn = document.getElementById("dashClear");
+
+  const widthStat = document.getElementById("dashWidthStat");
+  const heightStat = document.getElementById("dashHeightStat");
+  const blocksStat = document.getElementById("dashBlocksStat");
+  const spikesStat = document.getElementById("dashSpikesStat");
+
+  let cellSize = 16;
+  let cols = 64;
+  let rows = 16;
+  let grid;
+  let brush = "block";
+  let isDrawing = false;
+  let mode = "edit"; // "edit" or "play"
+
+  // runner state
+  let runnerX, runnerY, runnerVy, runnerOnGround, cameraX, playing;
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    cellSize = Math.floor(canvas.height / rows);
+    cols = Math.max(32, Math.floor(canvas.width / cellSize));
+    widthStat.textContent = cols;
+    heightStat.textContent = rows;
+    initGrid();
+  }
+
+  function initGrid() {
+    grid = Array.from({ length: rows }, () =>
+      Array.from({ length: cols }, () => 0)
+    );
+    updateStats();
+  }
+
+  function updateStats() {
+    let blocks = 0;
+    let spikes = 0;
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (grid[y][x] === 1) blocks++;
+        if (grid[y][x] === 2) spikes++;
+      }
+    }
+    blocksStat.textContent = blocks;
+    spikesStat.textContent = spikes;
+  }
+
+  function setBrush(newBrush) {
+    brush = newBrush;
+    brushButtons.forEach(b => b.classList.remove("active"));
+    const btn = brushButtons.find(b => b.getAttribute("data-dash-brush") === newBrush);
+    if (btn) btn.classList.add("active");
+  }
+
+  brushButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const b = btn.getAttribute("data-dash-brush");
+      setBrush(b);
     });
   });
 
-  // CANVASES: KEEP VISIBLE BUT BLANK
-  const canvases = document.querySelectorAll('canvas');
-  canvases.forEach(c => {
-    if (!c.width) c.width = c.clientWidth || 960;
-    if (!c.height) c.height = c.clientHeight || 520;
-    // No drawing, no loops, no game logic.
+  function gridFromCoords(x, y) {
+    const gx = Math.floor((x + cameraX) / cellSize);
+    const gy = Math.floor(y / cellSize);
+    return { gx, gy };
+  }
+
+  function paintAt(x, y) {
+    const { gx, gy } = gridFromCoords(x, y);
+    if (gx < 0 || gx >= cols || gy < 0 || gy >= rows) return;
+    if (brush === "erase") {
+      grid[gy][gx] = 0;
+    } else if (brush === "block") {
+      grid[gy][gx] = 1;
+    } else if (brush === "spike") {
+      grid[gy][gx] = 2;
+    }
+    updateStats();
+  }
+
+  canvas.addEventListener("mousedown", e => {
+    if (mode !== "edit") return;
+    isDrawing = true;
+    const rect = canvas.getBoundingClientRect();
+    paintAt(e.clientX - rect.left, e.clientY - rect.top);
   });
 
-  // NO GAME LOGIC AT ALL BELOW THIS LINE
-});
-</script>
+  window.addEventListener("mouseup", () => (isDrawing = false));
 
+  canvas.addEventListener("mousemove", e => {
+    if (!isDrawing || mode !== "edit") return;
+    const rect = canvas.getBoundingClientRect();
+    paintAt(e.clientX - rect.left, e.clientY - rect.top);
+  });
+
+  clearBtn.addEventListener("click", () => {
+    if (mode !== "edit") return;
+    initGrid();
+  });
+
+  function startPlay() {
+    mode = "play";
+    playing = true;
+    cameraX = 0;
+    runnerX = cellSize * 2;
+    runnerY = cellSize * (rows - 3);
+    runnerVy = 0;
+    runnerOnGround = false;
+  }
+
+  function stopPlay() {
+    mode = "edit";
+    playing = false;
+  }
+
+  playBtn.addEventListener("click", () => {
+    if (mode === "edit") {
+      startPlay();
+    } else {
+      stopPlay();
+    }
+  });
+
+  window.addEventListener("keydown", e => {
+    if (mode === "play" && (e.key === " " || e.key === "Spacebar")) {
+      if (runnerOnGround) {
+        runnerVy = -cellSize * 0.6;
+        runnerOnGround = false;
+      }
+    }
+  });
+
+  canvas.addEventListener("click", e => {
+    if (mode === "play") {
+      if (runnerOnGround) {
+        runnerVy = -cellSize * 0.6;
+        runnerOnGround = false;
+      }
+    }
+  });
+
+  function getTileAt(px, py) {
+    const gx = Math.floor((px + cameraX) / cellSize);
+    const gy = Math.floor(py / cellSize);
+    if (gx < 0 || gx >= cols || gy < 0 || gy >= rows) return 0;
+    return grid[gy][gx];
+  }
+
+  function updateRunner(dt) {
+    const speed = cellSize * 4;
+    runnerX += speed * dt;
+    runnerVy += cellSize * 2.5 * dt;
+    runnerY += runnerVy * dt;
+
+    const footY = runnerY + cellSize * 0.9;
+    const headY = runnerY;
+    const leftX = runnerX + cellSize * 0.2;
+    const rightX = runnerX + cellSize * 0.8;
+
+    runnerOnGround = false;
+
+    // ground collision
+    const tilesToCheck = [
+      { x: leftX, y: footY },
+      { x: rightX, y: footY }
+    ];
+    for (const t of tilesToCheck) {
+      const tile = getTileAt(t.x, t.y);
+      if (tile === 1) {
+        runnerOnGround = true;
+        runnerVy = 0;
+        runnerY = Math.floor(footY / cellSize) * cellSize - cellSize;
+      }
+      if (tile === 2) {
+        startPlay(); // restart
+        return;
+      }
+    }
+
+    // spike collision at body
+    const bodyCheck = [
+      { x: leftX, y: headY + cellSize * 0.3 },
+      { x: rightX, y: headY + cellSize * 0.3 }
+    ];
+    for (const t of bodyCheck) {
+      const tile = getTileAt(t.x, t.y);
+      if (tile === 2) {
+        startPlay();
+        return;
+      }
+    }
+
+    cameraX = runnerX - canvas.width * 0.3;
+    if (cameraX < 0) cameraX = 0;
+    if (cameraX > cols * cellSize - canvas.width) {
+      cameraX = cols * cellSize - canvas.width;
+    }
+
+    if (runnerX - cameraX > canvas.width + cellSize * 2) {
+      startPlay();
+    }
+  }
+
+  function drawGrid() {
+    ctx.fillStyle = "#050712";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // tiles
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const tile = grid[y][x];
+        if (!tile) continue;
+        const px = x * cellSize - cameraX;
+        const py = y * cellSize;
+        if (px + cellSize < 0 || px > canvas.width) continue;
+
+        if (tile === 1) {
+          ctx.fillStyle = "#4af2c5";
+          ctx.fillRect(px, py, cellSize, cellSize);
+        } else if (tile === 2) {
+          ctx.fillStyle = "#ff4a6a";
+          ctx.beginPath();
+          ctx.moveTo(px + cellSize * 0.5, py);
+          ctx.lineTo(px, py + cellSize);
+          ctx.lineTo(px + cellSize, py + cellSize);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+    }
+
+    // grid lines
+    ctx.strokeStyle = "rgba(255,255,255,0.05)";
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= cols; x++) {
+      const px = x * cellSize - cameraX;
+      if (px < 0 || px > canvas.width) continue;
+      ctx.beginPath();
+      ctx.moveTo(px, 0);
+      ctx.lineTo(px, canvas.height);
+      ctx.stroke();
+    }
+    for (let y = 0; y <= rows; y++) {
+      const py = y * cellSize;
+      ctx.beginPath();
+      ctx.moveTo(0, py);
+      ctx.lineTo(canvas.width, py);
+      ctx.stroke();
+    }
+  }
+
+  function drawRunner() {
+    if (!playing) return;
+    const px = runnerX - cameraX;
+    const py = runnerY;
+    ctx.fillStyle = "#4ac6ff";
+    ctx.fillRect(px, py, cellSize, cellSize);
+  }
+
+  let lastTs = 0;
+  function loop(ts) {
+    const dt = (ts - lastTs) / 1000;
+    lastTs = ts;
+
+    if (mode === "play") {
+      updateRunner(dt);
+    }
+
+    drawGrid();
+    drawRunner();
+
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener("resize", resize);
+  resize();
+  setBrush("block");
+  requestAnimationFrame(loop);
+})();
+</script>
 </body>
 </html>
