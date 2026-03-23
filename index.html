@@ -1,1202 +1,2197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Pablo's Portal 2.0 – Single File</title>
-<style>
+  <meta charset="UTF-8" />
+  <title>Pablo's Portal 2.0</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
     :root {
-        --bg: #050712;
-        --card-bg: rgba(15, 20, 40, 0.9);
-        --accent: #4af2c5;
-        --accent-soft: rgba(74, 242, 197, 0.25);
-        --accent-strong: rgba(74, 242, 197, 0.6);
-        --accent2: #7b5cff;
-        --text: #f5f7ff;
-        --muted: #9aa0c2;
-        --danger: #ff4b6e;
-        --border: rgba(255, 255, 255, 0.06);
-        --shadow-strong: 0 0 40px rgba(0, 0, 0, 0.8);
-        --radius-lg: 18px;
-        --radius-md: 12px;
-        --radius-sm: 8px;
-        --blur: 18px;
+      --bg: #000000;
+      --panel: rgba(5, 5, 5, 0.96);
+      --text: #f5f7ff;
+      --danger: #ff4b6b;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --blur: 18px;
+      --border-glass: 1px solid rgba(255, 255, 255, 0.12);
     }
 
     * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-                     "Segoe UI", sans-serif;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
     }
 
     body {
-        background: radial-gradient(circle at top, #1b2340 0, #050712 55%, #02030a 100%);
-        color: var(--text);
-        min-height: 100vh;
-        display: flex;
-        align-items: stretch;
-        justify-content: center;
-        padding: 20px;
+      min-height: 100vh;
+      background: #000000;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    @keyframes rgbCycleBorder {
+      0% {
+        border-image-source: linear-gradient(90deg, #ff0000, #00ff00, #0000ff);
+      }
+      33% {
+        border-image-source: linear-gradient(90deg, #00ff00, #0000ff, #ff0000);
+      }
+      66% {
+        border-image-source: linear-gradient(90deg, #0000ff, #ff0000, #00ff00);
+      }
+      100% {
+        border-image-source: linear-gradient(90deg, #ff0000, #00ff00, #0000ff);
+      }
+    }
+
+    @keyframes rgbCycleBg {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .rgb-cycle-btn {
+      background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff0000);
+      background-size: 300% 300%;
+      animation: rgbCycleBg 4s linear infinite;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
     }
 
     .portal-shell {
-        width: 100%;
-        max-width: 1400px;
-        display: grid;
-        grid-template-columns: 280px 1fr;
-        gap: 20px;
+      width: 100%;
+      max-width: 1320px;
+      min-height: 720px;
+      background: #000000;
+      border-radius: 32px;
+      border-width: 3px;
+      border-style: solid;
+      border-image-slice: 1;
+      animation: rgbCycleBorder 6s linear infinite;
+      padding: 20px 22px;
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
     }
+
+    .portal-shell-inner {
+      position: relative;
+      z-index: 1;
+      display: contents;
+    }
+
+    /* Sidebar */
 
     .sidebar {
-        background: linear-gradient(145deg, rgba(10, 12, 30, 0.95), rgba(5, 8, 20, 0.98));
-        border-radius: var(--radius-lg);
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow-strong);
-        padding: 18px 16px;
-        display: flex;
-        flex-direction: column;
-        backdrop-filter: blur(var(--blur));
+      background: var(--panel);
+      border-radius: 24px;
+      border: var(--border-glass);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
+      padding: 18px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      backdrop-filter: blur(var(--blur));
     }
 
-    .sidebar-header {
-        margin-bottom: 16px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 8px 10px;
+      border-radius: 18px;
+      background: #050505;
     }
 
-    .logo {
-        font-size: 20px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--accent);
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #050712;
+      font-weight: 800;
+      font-size: 18px;
     }
 
-    .logo span {
-        color: var(--accent2);
+    .brand-text-main {
+      font-weight: 650;
+      letter-spacing: 0.04em;
+      font-size: 14px;
+      text-transform: uppercase;
     }
 
-    .subtitle {
-        font-size: 12px;
-        color: var(--muted);
-        margin-top: 4px;
+    .brand-text-sub {
+      font-size: 11px;
+      opacity: 0.7;
     }
 
-    .nav-section-title {
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.16em;
-        color: var(--muted);
-        margin: 16px 4px 8px;
+    .nav-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      opacity: 0.6;
+      padding: 0 4px;
     }
 
-    .nav-list {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .nav-button {
-        border-radius: var(--radius-md);
-        border: 1px solid transparent;
-        background: radial-gradient(circle at top left,
-                    rgba(74, 242, 197, 0.08),
-                    rgba(10, 12, 30, 0.95));
-        color: var(--text);
-        padding: 10px 12px;
-        font-size: 13px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        cursor: pointer;
-        transition: 0.15s ease;
+    .nav-btn {
+      position: relative;
+      border: none;
+      outline: none;
+      border-radius: 999px;
+      padding: 10px 11px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 13px;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.16s ease;
     }
 
-    .nav-button span.label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+    .nav-btn-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .nav-button span.badge {
-        font-size: 10px;
-        padding: 2px 6px;
-        border-radius: 999px;
-        background: rgba(74, 242, 197, 0.12);
-        color: var(--accent);
-        border: 1px solid rgba(74, 242, 197, 0.4);
+    .nav-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
     }
 
-    .nav-button:hover {
-        border-color: var(--accent-soft);
-        box-shadow: 0 0 18px rgba(74, 242, 197, 0.25);
-        transform: translateY(-1px);
+    .nav-title {
+      font-weight: 550;
     }
 
-    .nav-button.active {
-        border-color: var(--accent);
-        background: radial-gradient(circle at top left,
-                    rgba(74, 242, 197, 0.18),
-                    rgba(10, 12, 30, 0.98));
-        box-shadow: 0 0 22px rgba(74, 242, 197, 0.35);
+    .nav-tag {
+      font-size: 11px;
+      opacity: 0.7;
     }
+
+    .nav-btn.active {
+      transform: translateY(-1px);
+      box-shadow: 0 0 22px rgba(255, 255, 255, 0.4);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .nav-btn:hover:not(.active)) {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
+    }
+
+    .nav-kbd {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: #050505;
+      opacity: 0.8;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 6px;
+      font-size: 11px;
+      opacity: 0.7;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-footer span strong {
+      font-weight: 600;
+    }
+
+    /* Main */
 
     .main {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
+      background: var(--panel);
+      border-radius: 24px;
+      border: var(--border-glass);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
+      padding: 16px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      backdrop-filter: blur(var(--blur));
+      position: relative;
+      overflow: hidden;
     }
 
-    .top-row {
-        display: grid;
-        grid-template-columns: 1.4fr 1fr;
-        gap: 16px;
+    .main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 4px 4px 6px;
     }
 
-    .card {
-        background: radial-gradient(circle at top left,
-                    rgba(74, 242, 197, 0.08),
-                    rgba(5, 8, 20, 0.98));
-        border-radius: var(--radius-lg);
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow-strong);
-        padding: 14px 14px 12px;
-        backdrop-filter: blur(var(--blur));
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
+    .main-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
-    .card-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 8px;
+    .main-title {
+      font-size: 18px;
+      font-weight: 650;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
-    .card-title {
-        font-size: 14px;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--muted);
+    .main-subtitle {
+      font-size: 11px;
+      opacity: 0.7;
     }
 
-    .card-title span {
-        color: var(--accent);
-    }
-
-    .card-controls {
-        display: flex;
-        gap: 6px;
+    .main-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
     }
 
     .pill {
-        font-size: 10px;
-        padding: 2px 8px;
-        border-radius: 999px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        color: var(--muted);
-        background: rgba(5, 8, 20, 0.9);
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: #050505;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    .pill.accent {
-        border-color: rgba(74, 242, 197, 0.6);
-        color: var(--accent);
-        background: rgba(74, 242, 197, 0.08);
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
     }
 
-    .card-body {
-        flex: 1;
-        border-radius: var(--radius-md);
-        background: radial-gradient(circle at top,
-                    rgba(255, 255, 255, 0.02),
-                    rgba(0, 0, 0, 0.9));
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        padding: 8px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        overflow: hidden;
+    .main-body {
+      flex: 1;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr);
+      gap: 10px;
+      position: relative;
+    }
+
+    .panel {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(6px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .panel-top-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .panel-info {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .panel-controls {
+      margin-left: auto;
+      display: flex;
+      gap: 6px;
+    }
+
+    .chip {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: #050505;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chip-key {
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .panel-main-full {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .card {
+      background: #050505;
+      border-radius: var(--radius-md);
+      border: var(--border-glass);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.9);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .card-title {
+      font-weight: 550;
+    }
+
+    .card-sub {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+    .card-badge-row {
+      display: flex;
+      gap: 6px;
+      font-size: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(0, 0, 0, 0.4);
+      opacity: 0.85;
     }
 
     canvas {
-        border-radius: var(--radius-md);
-        background: #050712;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        image-rendering: pixelated;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: radial-gradient(circle at top, #050712, #020308 60%, #000 100%);
+      display: block;
     }
 
-    .toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        font-size: 11px;
+    .card-footer {
+      font-size: 11px;
+      opacity: 0.75;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
-    .tool-button {
-        border-radius: var(--radius-sm);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        background: rgba(5, 8, 20, 0.95);
-        color: var(--muted);
-        padding: 4px 8px;
-        cursor: pointer;
-        font-size: 11px;
-        display: flex;
+    .card-footer span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .dot-soft,
+    .dot-soft-pink,
+    .dot-soft-green {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+    }
+
+    .dot-soft {
+      background: #35f0ff;
+      box-shadow: 0 0 10px rgba(53, 240, 255, 0.9);
+    }
+
+    .dot-soft-pink {
+      background: #ff3bff;
+      box-shadow: 0 0 10px rgba(255, 59, 255, 0.9);
+    }
+
+    .dot-soft-green {
+      background: #7cff6b;
+      box-shadow: 0 0 10px rgba(124, 255, 107, 0.9);
+    }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .control-item {
+      padding: 6px 7px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .control-label {
+      opacity: 0.8;
+    }
+
+    .control-keys {
+      font-size: 10px;
+      opacity: 0.9;
+    }
+
+    .control-keys span {
+      padding: 1px 5px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      margin-right: 2px;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .slider-row input[type="range"] {
+      flex: 1;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-soft {
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: #050505;
+    }
+
+    .btn-soft:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
+    }
+
+    .btn-soft-danger {
+      border-color: rgba(255, 75, 107, 0.6);
+      color: var(--danger);
+    }
+
+    .btn-soft-tool {
+      font-size: 11px;
+      padding: 4px 10px;
+    }
+
+    .btn-soft-tool.active {
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.5);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .score-row {
+      display: flex;
+      gap: 6px;
+      font-size: 11px;
+      flex-wrap: wrap;
+    }
+
+    .score-pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(0, 0, 0, 0.4);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .score-label {
+      opacity: 0.8;
+    }
+
+    .score-value {
+      font-weight: 600;
+    }
+
+    /* Matter state selector */
+
+    .matter-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 6px;
+      font-size: 11px;
+    }
+
+    .matter-tab {
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .matter-tab.active {
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
+    }
+
+    .matter-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-height: 120px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .matter-pill {
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(0, 0, 0, 0.5);
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .matter-pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      box-shadow: 0 0 10px rgba(53, 240, 255, 0.9);
+    }
+
+    .matter-pill.active {
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
+    }
+
+    .matter-backdrop {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.35;
+      mix-blend-mode: screen;
+    }
+
+    .matter-backdrop.solid {
+      background:
+        radial-gradient(circle at top left, rgba(200, 200, 255, 0.25), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(120, 80, 40, 0.25), transparent 60%);
+    }
+
+    .matter-backdrop.liquid {
+      background:
+        radial-gradient(circle at top left, rgba(80, 180, 255, 0.3), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(255, 80, 40, 0.3), transparent 60%);
+    }
+
+    .matter-backdrop.gas {
+      background:
+        radial-gradient(circle at top left, rgba(180, 255, 200, 0.3), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(255, 200, 120, 0.3), transparent 60%);
+    }
+
+    @media (max-width: 980px) {
+      .portal-shell {
+        grid-template-columns: minmax(0, 1fr);
+        min-height: 0;
+      }
+
+      .sidebar {
+        order: 2;
+        flex-direction: row;
         align-items: center;
-        gap: 4px;
-        transition: 0.12s ease;
-    }
-
-    .tool-button.active {
-        border-color: var(--accent);
-        color: var(--accent);
-        background: rgba(74, 242, 197, 0.12);
-        box-shadow: 0 0 12px rgba(74, 242, 197, 0.3);
-    }
-
-    .tool-button.danger {
-        border-color: rgba(255, 75, 110, 0.7);
-        color: var(--danger);
-        background: rgba(255, 75, 110, 0.08);
-    }
-
-    .status-bar {
-        font-size: 11px;
-        color: var(--muted);
-        display: flex;
         justify-content: space-between;
-        gap: 8px;
+        gap: 10px;
+      }
+
+      .nav {
+        flex-direction: row;
+      }
+
+      .nav-btn {
+        flex: 1;
+      }
+
+      .sidebar-footer {
+        display: none;
+      }
     }
 
-    .status-bar span strong {
-        color: var(--accent);
+    @media (max-width: 780px) {
+      .panel-main,
+      .panel-main-full {
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
-
-    .bottom-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-    }
-
-    .hidden {
-        display: none !important;
-    }
-
-    @media (max-width: 1100px) {
-        .portal-shell {
-            grid-template-columns: 1fr;
-        }
-        .top-row, .bottom-row {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
+  </style>
 </head>
 <body>
-<div class="portal-shell">
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">Pablo's <span>Portal</span></div>
-            <div class="subtitle">Sandbox • Neon Snake • Pablo‑Dash</div>
+  <div class="portal-shell">
+    <div class="portal-shell-inner">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon">P</div>
+          <div>
+            <div class="brand-text-main">Pablo's Portal 2.0</div>
+            <div class="brand-text-sub">Neon Physics &amp; Snake Playground</div>
+          </div>
         </div>
 
-        <div class="nav-section-title">Modes</div>
-        <div class="nav-list">
-            <button class="nav-button active" data-panel="sandbox">
-                <span class="label">🧪 Sandbox</span>
-                <span class="badge">Core</span>
-            </button>
-            <button class="nav-button" data-panel="snake">
-                <span class="label">🟩 Neon Snake</span>
-                <span class="badge">Arcade</span>
-            </button>
-            <button class="nav-button" data-panel="dash">
-                <span class="label">⚡ Pablo‑Dash</span>
-                <span class="badge">New</span>
-            </button>
+        <div class="nav-label">Menu</div>
+        <nav class="nav">
+          <button class="nav-btn rgb-cycle-btn active" data-target="panel-sandbox">
+            <div class="nav-btn-left">
+              <div class="nav-dot"></div>
+              <div>
+                <div class="nav-title">Physics Sandbox</div>
+                <div class="nav-tag">States of matter, lighter, ruler &amp; chain explosions</div>
+              </div>
+            </div>
+            <div class="nav-kbd">1</div>
+          </button>
+
+          <button class="nav-btn rgb-cycle-btn" data-target="panel-snake">
+            <div class="nav-btn-left">
+              <div class="nav-dot"></div>
+              <div>
+                <div class="nav-title">Neon Snake</div>
+                <div class="nav-tag">Large grid, chunky pixels</div>
+              </div>
+            </div>
+            <div class="nav-kbd">2</div>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <span><strong>Tip:</strong> Press 1 or 2 to switch instantly.</span>
+          <span>Sandbox: solids, liquids, gases, lighter &amp; ruler. Snake: bigger pixels, rounded body.</span>
         </div>
-    </aside>
+      </aside>
 
-    <main class="main">
-        <div class="top-row">
-            <section class="card" id="main-card">
+      <!-- Main -->
+      <main class="main">
+        <header class="main-header">
+          <div class="main-title-block">
+            <div class="main-title">Pablo's Portal 2.0</div>
+            <div class="main-subtitle">
+              Physics sandbox + neon snake, with ruler lines and RGB-cycling UI.
+            </div>
+          </div>
+          <div class="main-pills">
+            <div class="pill">
+              <div class="pill-dot"></div>
+              RGB outline
+            </div>
+            <div class="pill">States of matter</div>
+          </div>
+        </header>
+
+        <section class="main-body">
+          <!-- Sandbox Panel -->
+          <section class="panel active" id="panel-sandbox">
+            <div class="panel-top-row">
+              <div class="panel-info">
+                Large neon sandbox with solids, liquids, gases, a lighter that can spark &amp; chain-explode,
+                plus a ruler for perfect lines.
+              </div>
+              <div class="panel-controls">
+                <div class="chip">
+                  <span class="chip-key">1</span>
+                  Focus Sandbox
+                </div>
+                <div class="chip">
+                  <span class="chip-key">C</span>
+                  Clear
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-main">
+              <!-- Sandbox canvas card -->
+              <div class="card" style="position:relative;">
+                <div class="matter-backdrop solid" id="matterBackdrop"></div>
                 <div class="card-header">
-                    <div class="card-title"><span>Play</span> Area</div>
-                    <div class="card-controls">
-                        <div class="pill accent" id="mode-label">Sandbox</div>
-                        <div class="pill">Single‑File Build</div>
-                    </div>
+                  <div>
+                    <div class="card-title">Physics Sandbox</div>
+                    <div class="card-sub">Large grid, states of matter, lighter &amp; ruler</div>
+                  </div>
+                  <div class="card-badge-row">
+                    <span class="badge">Solid / Liquid / Gas</span>
+                    <span class="badge">Lighter &amp; explosions</span>
+                    <span class="badge">Ruler lines</span>
+                  </div>
                 </div>
-                <div class="card-body">
-                    <canvas id="sandboxCanvas" width="640" height="360"></canvas>
-                    <canvas id="snakeCanvas" width="640" height="360" class="hidden"></canvas>
-                    <canvas id="dashCanvas" width="900" height="400" class="hidden"></canvas>
-                    <div class="status-bar">
-                        <span id="status-left">Mode: <strong>Sandbox</strong></span>
-                        <span id="status-right">Ready.</span>
-                    </div>
+                <canvas id="sandboxCanvas"></canvas>
+                <div class="card-footer">
+                  <span>
+                    <span class="dot-soft"></span>
+                    Left click: draw / place flame / ruler line
+                  </span>
+                  <span>
+                    <span class="dot-soft-pink"></span>
+                    Right click / E: erase
+                  </span>
                 </div>
-            </section>
+              </div>
 
-            <section class="card" id="dash-editor-card">
+              <!-- Sandbox controls card -->
+              <div class="card">
                 <div class="card-header">
-                    <div class="card-title"><span>Pablo‑Dash</span> Editor</div>
-                    <div class="card-controls">
-                        <div class="pill">Space/Click = Jump</div>
-                        <div class="pill">Buttons = Camera</div>
-                    </div>
+                  <div class="card-title">Matter &amp; Tools</div>
+                  <div class="card-sub">Choose state, material, brush, gravity, lighter &amp; ruler</div>
                 </div>
-                <div class="card-body">
-                    <div class="toolbar" id="dash-toolbar">
-                        <button class="tool-button" data-dash-tool="play">▶ Playtest</button>
-                        <button class="tool-button" data-dash-tool="edit">✏ Editor</button>
-                        <button class="tool-button" data-dash-tool="ground">▉ Ground</button>
-                        <button class="tool-button" data-dash-tool="spike">▲ Spike</button>
-                        <button class="tool-button" data-dash-tool="pad">⤴ Jump Pad</button>
-                        <button class="tool-button" data-dash-tool="ring">◯ Ring</button>
-                        <button class="tool-button" data-dash-tool="spawn">│ Spawn</button>
-                        <button class="tool-button" data-dash-tool="endportal">⧉ EndPortal</button>
-                        <button class="tool-button" data-dash-tool="erase">⌫ Erase</button>
-                        <button class="tool-button danger" data-dash-tool="clear">🗑 Clear</button>
-                    </div>
-                    <div class="toolbar" id="dash-scroll-toolbar">
-                        <button class="tool-button" data-dash-scroll="left">⬅ Scroll Left</button>
-                        <button class="tool-button" data-dash-scroll="right">Scroll Right ➡</button>
-                    </div>
-                    <canvas id="dashEditorCanvas" width="900" height="400"></canvas>
-                    <div class="status-bar">
-                        <span id="dash-status-left">Mode: <strong>Editor</strong></span>
-                        <span id="dash-status-right">Use tools to build. Scroll buttons move camera.</span>
-                    </div>
-                </div>
-            </section>
-        </div>
 
-        <div class="bottom-row">
-            <section class="card">
+                <!-- State tabs -->
+                <div class="matter-tabs">
+                  <button class="matter-tab rgb-cycle-btn active" data-state="solid">
+                    <span class="dot-soft"></span>
+                    Solid
+                  </button>
+                  <button class="matter-tab rgb-cycle-btn" data-state="liquid">
+                    <span class="dot-soft-pink"></span>
+                    Liquid
+                  </button>
+                  <button class="matter-tab rgb-cycle-btn" data-state="gas">
+                    <span class="dot-soft-green"></span>
+                    Gas
+                  </button>
+                </div>
+
+                <!-- Material pills -->
+                <div class="matter-pill-row" id="matterPills"></div>
+
+                <!-- Tools -->
+                <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+                  <button class="btn-soft btn-soft-tool rgb-cycle-btn active" id="toolDrawBtn">✏️ Draw</button>
+                  <button class="btn-soft btn-soft-tool rgb-cycle-btn" id="toolLighterBtn">🔥 Lighter</button>
+                  <button class="btn-soft btn-soft-tool rgb-cycle-btn" id="toolEraserBtn">⌫ Eraser</button>
+                  <button class="btn-soft btn-soft-tool rgb-cycle-btn" id="rulerBtn" style="display:none;">📏 Ruler</button>
+                  <button class="btn-soft rgb-cycle-btn" id="lighterStartBtn" style="display:none; margin-left:auto;">
+                    <span class="dot-soft-pink"></span>
+                    Start
+                  </button>
+                </div>
+
+                <!-- Sliders -->
+                <div style="margin-top:10px;" class="control-grid">
+                  <div class="control-item">
+                    <div class="control-label">Brush Size</div>
+                    <div class="slider-row">
+                      <input type="range" id="brushSize" min="1" max="10" value="4" />
+                      <span id="brushSizeLabel">4</span>
+                    </div>
+                  </div>
+                  <div class="control-item">
+                    <div class="control-label">Gravity Strength</div>
+                    <div class="slider-row">
+                      <input type="range" id="gravityStrength" min="0" max="3" step="0.2" value="1.6" />
+                      <span id="gravityLabel">1.6</span>
+                    </div>
+                  </div>
+                  <div class="control-item">
+                    <div class="control-label">Gas Drift</div>
+                    <div class="slider-row">
+                      <input type="range" id="gasDrift" min="0" max="3" step="0.2" value="1.2" />
+                      <span id="gasDriftLabel">1.2</span>
+                    </div>
+                  </div>
+                  <div class="control-item">
+                    <div class="control-label">Particles</div>
+                    <div style="font-size:11px; opacity:0.8;">
+                      <span id="particleCount">0</span>
+                      active
+                    </div>
+                  </div>
+                </div>
+
+                <div style="margin-top:8px; display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap;">
+                  <button class="btn-soft btn-soft-danger rgb-cycle-btn" id="clearSandbox">
+                    <span class="dot-soft-pink"></span>
+                    Clear Sandbox
+                  </button>
+                  <span style="font-size:11px; opacity:0.75;">
+                    Lighter Start: 1 in 5 chance. Fail = sparks. Success = pixel flame that can trigger chain explosions.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Neon Snake Panel -->
+          <section class="panel" id="panel-snake">
+            <div class="panel-top-row">
+              <div class="panel-info">
+                Larger neon grid for snake. Chunky rounded pixels, non-glowing head and fruits.
+              </div>
+              <div class="panel-controls">
+                <div class="chip">
+                  <span class="chip-key">2</span>
+                  Focus Snake
+                </div>
+                <div class="chip">
+                  <span class="chip-key">Space</span>
+                  Pause / Resume
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-main-full">
+              <div class="card">
                 <div class="card-header">
-                    <div class="card-title"><span>Sandbox</span> Notes</div>
-                    <div class="card-controls">
-                        <div class="pill">Stubbed</div>
-                    </div>
+                  <div>
+                    <div class="card-title">Neon Snake</div>
+                    <div class="card-sub">Bigger pixels, rounded body, non-glowing head &amp; fruits</div>
+                  </div>
+                  <div class="card-badge-row">
+                    <span class="badge">Large grid</span>
+                    <span class="badge">Chunky cells</span>
+                  </div>
                 </div>
-                <div class="card-body">
-                    <div style="font-size:12px;color:var(--muted);line-height:1.5;">
-                        This single‑file build includes a placeholder Sandbox implementation.
-                        You can wire in your full states‑of‑matter logic here later.
-                    </div>
+                <canvas id="snakeCanvas"></canvas>
+                <div class="card-footer">
+                  <span>
+                    <span class="dot-soft-green"></span>
+                    Arrow keys: move
+                  </span>
+                  <span>
+                    <span class="dot-soft-pink"></span>
+                    Space: pause / resume
+                  </span>
                 </div>
-            </section>
+              </div>
 
-            <section class="card">
+              <div class="card">
                 <div class="card-header">
-                    <div class="card-title"><span>Neon Snake</span> Notes</div>
-                    <div class="card-controls">
-                        <div class="pill">Stubbed</div>
-                    </div>
+                  <div class="card-title">Snake Stats &amp; Controls</div>
+                  <div class="card-sub">Score, speed, quick reset</div>
                 </div>
-                <div class="card-body">
-                    <div style="font-size:12px;color:var(--muted);line-height:1.5;">
-                        Neon Snake is also stubbed in this build. The canvas and mode switching
-                        are wired; you can drop in your full snake logic where indicated.
-                    </div>
+
+                <div class="score-row">
+                  <div class="score-pill">
+                    <span class="dot-soft-green"></span>
+                    <span class="score-label">Score</span>
+                    <span class="score-value" id="snakeScore">0</span>
+                  </div>
+                  <div class="score-pill">
+                    <span class="dot-soft"></span>
+                    <span class="score-label">Best</span>
+                    <span class="score-value" id="snakeBest">0</span>
+                  </div>
+                  <div class="score-pill">
+                    <span class="dot-soft-pink"></span>
+                    <span class="score-label">Speed</span>
+                    <span class="score-value" id="snakeSpeedLabel">1.0x</span>
+                  </div>
                 </div>
-            </section>
-        </div>
-    </main>
-</div>
 
-<script>
-// =============================
-// Core UI switching
-// =============================
-const navButtons = document.querySelectorAll('.nav-button');
-const modeLabel = document.getElementById('mode-label');
-const statusLeft = document.getElementById('status-left');
-const statusRight = document.getElementById('status-right');
+                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px; font-size:11px;">
+                  <div class="slider-row">
+                    <span>Base Speed</span>
+                    <input type="range" id="snakeSpeed" min="0.6" max="1.8" step="0.1" value="1.0" />
+                  </div>
 
-const sandboxCanvas = document.getElementById('sandboxCanvas');
-const snakeCanvas = document.getElementById('snakeCanvas');
-const dashCanvas = document.getElementById('dashCanvas');
-const dashEditorCanvas = document.getElementById('dashEditorCanvas');
+                  <div class="control-grid">
+                    <div class="control-item">
+                      <div class="control-label">Movement</div>
+                      <div class="control-keys">
+                        <span>↑</span>
+                        <span>↓</span>
+                        <span>←</span>
+                        <span>→</span>
+                      </div>
+                    </div>
+                    <div class="control-item">
+                      <div class="control-label">Pause / Resume</div>
+                      <div class="control-keys">
+                        <span>Space</span>
+                      </div>
+                    </div>
+                    <div class="control-item">
+                      <div class="control-label">Reset Game</div>
+                      <div class="control-keys">
+                        <span>R</span>
+                      </div>
+                    </div>
+                    <div class="control-item">
+                      <div class="control-label">Portal Switch</div>
+                      <div class="control-keys">
+                        <span>1</span> Sandbox
+                        <span>2</span> Snake
+                      </div>
+                    </div>
+                  </div>
 
-let currentMode = 'sandbox';
+                  <div style="display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap; margin-top:4px;">
+                    <button class="btn-soft rgb-cycle-btn" id="snakeResetBtn">
+                      <span class="dot-soft"></span>
+                      Reset Snake
+                    </button>
+                    <span style="opacity:0.75;">
+                      Each fruit slightly increases speed. The bigger pixels give you a chunky neon feel.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+  </div>
 
-function setMode(mode) {
-    currentMode = mode;
+  <script>
+    // ---------- Layout & Navigation ----------
+
+    const navButtons = document.querySelectorAll(".nav-btn");
+    const panels = document.querySelectorAll(".panel");
+
+    function activatePanel(id) {
+      panels.forEach(p => p.classList.toggle("active", p.id === id));
+      navButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.target === id);
+      });
+    }
+
     navButtons.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.panel === mode);
+      btn.addEventListener("click", () => {
+        activatePanel(btn.dataset.target);
+      });
     });
 
-    sandboxCanvas.classList.add('hidden');
-    snakeCanvas.classList.add('hidden');
-    dashCanvas.classList.add('hidden');
-
-    if (mode === 'sandbox') {
-        sandboxCanvas.classList.remove('hidden');
-        modeLabel.textContent = 'Sandbox';
-        statusLeft.innerHTML = 'Mode: <strong>Sandbox</strong>';
-        statusRight.textContent = 'Sandbox stub running.';
-    } else if (mode === 'snake') {
-        snakeCanvas.classList.remove('hidden');
-        modeLabel.textContent = 'Neon Snake';
-        statusLeft.innerHTML = 'Mode: <strong>Neon Snake</strong>';
-        statusRight.textContent = 'Snake stub running.';
-    } else if (mode === 'dash') {
-        dashCanvas.classList.remove('hidden');
-        modeLabel.textContent = 'Pablo‑Dash';
-        statusLeft.innerHTML = 'Mode: <strong>Pablo‑Dash</strong>';
-        statusRight.textContent = 'Use editor on the right to build levels.';
-    }
-}
-
-navButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        setMode(btn.dataset.panel);
+    window.addEventListener("keydown", e => {
+      if (e.target.tagName === "INPUT") return;
+      if (e.key === "1") activatePanel("panel-sandbox");
+      if (e.key === "2") activatePanel("panel-snake");
     });
-});
 
-setMode('sandbox');
+    // ---------- Physics Sandbox ----------
 
-// =============================
-// Sandbox stub
-// =============================
-(function initSandbox() {
-    const ctx = sandboxCanvas.getContext('2d');
-    function drawSandboxStub() {
-        ctx.clearRect(0, 0, sandboxCanvas.width, sandboxCanvas.height);
-        const g = ctx.createLinearGradient(0, 0, sandboxCanvas.width, sandboxCanvas.height);
-        g.addColorStop(0, '#141a33');
-        g.addColorStop(1, '#050712');
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, sandboxCanvas.width, sandboxCanvas.height);
+    const sandboxCanvas = document.getElementById("sandboxCanvas");
+    const sandboxCtx = sandboxCanvas.getContext("2d");
 
-        ctx.fillStyle = '#4af2c5';
-        ctx.font = '16px system-ui';
-        ctx.fillText('Sandbox stub – plug in your full physics here.', 20, 40);
+    const brushSizeInput = document.getElementById("brushSize");
+    const brushSizeLabel = document.getElementById("brushSizeLabel");
+    const gravityInput = document.getElementById("gravityStrength");
+    const gravityLabel = document.getElementById("gravityLabel");
+    const gasDriftInput = document.getElementById("gasDrift");
+    const gasDriftLabel = document.getElementById("gasDriftLabel");
+    const clearSandboxBtn = document.getElementById("clearSandbox");
+    const particleCountLabel = document.getElementById("particleCount");
+
+    const matterTabs = document.querySelectorAll(".matter-tab");
+    const matterPillsContainer = document.getElementById("matterPills");
+    const matterBackdrop = document.getElementById("matterBackdrop");
+
+    const toolDrawBtn = document.getElementById("toolDrawBtn");
+    const toolLighterBtn = document.getElementById("toolLighterBtn");
+    const toolEraserBtn = document.getElementById("toolEraserBtn");
+    const lighterStartBtn = document.getElementById("lighterStartBtn");
+    const rulerBtn = document.getElementById("rulerBtn");
+
+    let sandboxWidth;
+    let sandboxHeight;
+    let gridCols = 200;
+    let gridRows = 130;
+    let cellSize;
+
+    let sandboxGrid;
+    let sandboxParticles = [];
+    let sandboxGravity = parseFloat(gravityInput.value);
+    let gasDrift = parseFloat(gasDriftInput.value);
+    let sandboxBrushSize = parseInt(brushSizeInput.value, 10);
+
+    let currentState = "solid";
+    let currentMaterialKey = "mirror";
+    let currentTool = "draw"; // draw | lighter | eraser
+
+    let sandboxMouseDown = false;
+    let sandboxMouseButton = 0;
+
+    let effects = []; // sparks, flames, explosions
+    let lighterOn = false;
+
+    let lastPointerGridX = Math.floor(gridCols / 2);
+    let lastPointerGridY = Math.floor(gridRows / 2);
+
+    // Ruler state
+    let rulerMode = false;
+    let rulerDrawing = false;
+    let rulerStart = null;
+    let rulerEnd = null;
+
+    const MATERIALS = {
+      // SOLIDS
+      mirror: {
+        id: 1,
+        name: "Mirror",
+        state: "solid",
+        color: "#cfd9ff",
+        behavior: "solid",
+        flammable: false,
+        explosive: false
+      },
+      wood: {
+        id: 2,
+        name: "Wood",
+        state: "solid",
+        color: "#c28a4a",
+        behavior: "solid",
+        flammable: true,
+        explosive: false
+      },
+      metal: {
+        id: 3,
+        name: "Metal",
+        state: "solid",
+        color: "#a0a6b8",
+        behavior: "solid",
+        flammable: false,
+        explosive: false
+      },
+      sand: {
+        id: 4,
+        name: "Sand",
+        state: "solid",
+        color: "#f2d28a",
+        behavior: "solid",
+        flammable: false,
+        explosive: false
+      },
+      slime: {
+        id: 5,
+        name: "Slime",
+        state: "solid",
+        color: "#7cff6b",
+        behavior: "solid",
+        flammable: false,
+        explosive: false
+      },
+
+      // LIQUIDS
+      poison: {
+        id: 6,
+        name: "Poison",
+        state: "liquid",
+        color: "#7cff6b",
+        behavior: "liquid",
+        flammable: false,
+        explosive: false
+      },
+      gasoline: {
+        id: 7,
+        name: "Gasoline",
+        state: "liquid",
+        color: "#ffd27a",
+        behavior: "liquid",
+        flammable: true,
+        explosive: true
+      },
+      water: {
+        id: 8,
+        name: "Water",
+        state: "liquid",
+        color: "#4fc3ff",
+        behavior: "liquid",
+        flammable: false,
+        explosive: false
+      },
+      lava: {
+        id: 9,
+        name: "Lava",
+        state: "liquid",
+        color: "#ff6b3b",
+        behavior: "liquid",
+        flammable: false,
+        explosive: false,
+        hot: true
+      },
+      acid: {
+        id: 10,
+        name: "Acid",
+        state: "liquid",
+        color: "#b4ff4f",
+        behavior: "liquid",
+        flammable: false,
+        explosive: false
+      },
+
+      // GASES
+      poisonGas: {
+        id: 11,
+        name: "Poison Gas",
+        state: "gas",
+        color: "#9cff7a",
+        behavior: "gas",
+        flammable: false,
+        explosive: false
+      },
+      propane: {
+        id: 12,
+        name: "Propane",
+        state: "gas",
+        color: "#ffc47a",
+        behavior: "gas",
+        flammable: true,
+        explosive: true
+      },
+      explosiveGas: {
+        id: 13,
+        name: "Explosive Gas",
+        state: "gas",
+        color: "#ff9b7a",
+        behavior: "gas",
+        flammable: true,
+        explosive: true
+      },
+      sleepGas: {
+        id: 14,
+        name: "Sleep Gas",
+        state: "gas",
+        color: "#cfa4ff",
+        behavior: "gas",
+        flammable: false,
+        explosive: false
+      }
+    };
+
+    const MATERIAL_KEYS_BY_STATE = {
+      solid: ["mirror", "wood", "metal", "sand", "slime"],
+      liquid: ["poison", "gasoline", "water", "lava", "acid"],
+      gas: ["poisonGas", "propane", "explosiveGas", "sleepGas"]
+    };
+
+    const EXPLOSIVE_KEYS = ["gasoline", "propane", "explosiveGas"];
+
+    function resizeSandbox() {
+      const rect = sandboxCanvas.parentElement.getBoundingClientRect();
+      const maxWidth = rect.width - 4;
+      const maxHeight = rect.height - 60;
+
+      const scaleX = maxWidth / gridCols;
+      const scaleY = maxHeight / gridRows;
+
+      cellSize = Math.floor(Math.min(scaleX, scaleY));
+      cellSize = Math.max(cellSize, 3);
+
+      sandboxWidth = gridCols * cellSize;
+      sandboxHeight = gridRows * cellSize;
+
+      sandboxCanvas.width = sandboxWidth;
+      sandboxCanvas.height = sandboxHeight;
     }
-    drawSandboxStub();
-})();
 
-// =============================
-// Neon Snake stub
-// =============================
-(function initSnake() {
-    const ctx = snakeCanvas.getContext('2d');
-    function drawSnakeStub() {
-        ctx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-        const g = ctx.createLinearGradient(0, 0, snakeCanvas.width, snakeCanvas.height);
-        g.addColorStop(0, '#10152b');
-        g.addColorStop(1, '#050712');
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-
-        ctx.fillStyle = '#7bff7b';
-        ctx.font = '16px system-ui';
-        ctx.fillText('Neon Snake stub – drop in your full game logic.', 20, 40);
+    function initSandbox() {
+      sandboxGrid = [];
+      for (let y = 0; y < gridRows; y++) {
+        const row = new Array(gridCols).fill(0);
+        sandboxGrid.push(row);
+      }
+      sandboxParticles = [];
+      effects = [];
+      rulerDrawing = false;
+      rulerStart = null;
+      rulerEnd = null;
     }
-    drawSnakeStub();
-})();
 
-// =============================
-// Pablo‑Dash engine + editor
-// =============================
-const dashCtx = dashCanvas.getContext('2d');
-const dashEditorCtx = dashEditorCanvas.getContext('2d');
+    function addParticle(x, y, matKey) {
+      if (x < 0 || x >= gridCols || y < 0 || y >= gridRows) return;
+      if (sandboxGrid[y][x] !== 0) return;
 
-const TILE_SIZE = 20;
-const GRAVITY = 0.5;
-const JUMP_VELOCITY = -9;
-const PLAYER_WIDTH = 18;
-const PLAYER_HEIGHT = 18;
-
-const world = {};
-
-let spawnX = 100;
-const barrierX = 100;
-
-let endPortal = null;
-
-let cameraX = barrierX;
-let cameraY = 0;
-const CAMERA_STEP = 80;
-
-let editorMode = 'edit';
-let currentTool = 'ground';
-let isMouseDown = false;
-
-let player = {
-    x: spawnX,
-    y: 200,
-    vx: 4,
-    vy: 0,
-    onGround: false,
-    alive: true,
-    levelComplete: false
-};
-
-let isPlayingDash = false;
-let jumpHeld = false;
-
-const dashToolbarButtons = document.querySelectorAll('[data-dash-tool]');
-const dashScrollButtons = document.querySelectorAll('[data-dash-scroll]');
-const dashStatusLeft = document.getElementById('dash-status-left');
-const dashStatusRight = document.getElementById('dash-status-right');
-
-function worldKey(tx, ty) {
-    return `${tx},${ty}`;
-}
-
-function setTile(tx, ty, type) {
-    const key = worldKey(tx, ty);
-    if (type === null) {
-        delete world[key];
-    } else {
-        world[key] = type;
+      const mat = MATERIALS[matKey];
+      sandboxGrid[y][x] = mat.id;
+      sandboxParticles.push({ x, y, matKey, vy: 0, life: 0 });
     }
-}
 
-function getTile(tx, ty) {
-    return world[worldKey(tx, ty)] || null;
-}
+    function eraseParticle(x, y) {
+      if (x < 0 || x >= gridCols || y < 0 || y >= gridRows) return;
+      if (sandboxGrid[y][x] === 0) return;
 
-dashToolbarButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const tool = btn.dataset.dashTool;
+      const id = sandboxGrid[y][x];
+      sandboxGrid[y][x] = 0;
+      sandboxParticles = sandboxParticles.filter(
+        p => !(p.x === x && p.y === y && MATERIALS[p.matKey].id === id)
+      );
+    }
 
-        if (tool === 'play') {
-            editorMode = 'play';
-            startDashPlaytest();
-            dashToolbarButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            updateDashStatus();
-            return;
+    function handleSandboxPointer(clientX, clientY) {
+      const rect = sandboxCanvas.getBoundingClientRect();
+      const cx = clientX - rect.left;
+      const cy = clientY - rect.top;
+
+      const gx = Math.floor(cx / cellSize);
+      const gy = Math.floor(cy / cellSize);
+
+      lastPointerGridX = gx;
+      lastPointerGridY = gy;
+
+      if (rulerMode) {
+        return;
+      }
+
+      const r = sandboxBrushSize;
+
+      if (currentTool === "lighter") {
+        if (!lighterOn) {
+          spawnSparkEffect(gx, gy);
+          return;
         }
+        spawnStaticFlameAt(gx, gy);
+        igniteExplosivesAroundCell(gx, gy);
+        return;
+      }
 
-        if (tool === 'edit') {
-            editorMode = 'edit';
-            stopDashPlaytest();
-            dashToolbarButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const toolBtn = document.querySelector(`[data-dash-tool="${currentTool}"]`);
-            if (toolBtn && !['play','edit','clear'].includes(currentTool)) {
-                toolBtn.classList.add('active');
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          if (dx * dx + dy * dy <= r * r) {
+            const x = gx + dx;
+            const y = gy + dy;
+
+            if (currentTool === "eraser" || sandboxMouseButton === 2) {
+              eraseParticle(x, y);
+            } else {
+              addParticle(x, y, currentMaterialKey);
             }
-            updateDashStatus();
-            return;
+          }
         }
+      }
+    }
 
-        if (tool === 'clear') {
-            for (const k in world) delete world[k];
-            endPortal = null;
-            return;
+    // Ruler helpers
+
+    function gridFromClient(clientX, clientY) {
+      const rect = sandboxCanvas.getBoundingClientRect();
+      const cx = clientX - rect.left;
+      const cy = clientY - rect.top;
+      return {
+        gx: Math.floor(cx / cellSize),
+        gy: Math.floor(cy / cellSize)
+      };
+    }
+
+    function drawRulerPreview() {
+      if (!rulerDrawing || !rulerStart || !rulerEnd) return;
+
+      sandboxCtx.save();
+      sandboxCtx.strokeStyle = "rgba(255,255,255,0.9)";
+      sandboxCtx.lineWidth = 2;
+      sandboxCtx.setLineDash([6, 4]);
+      sandboxCtx.beginPath();
+      sandboxCtx.moveTo(
+        rulerStart.x * cellSize + cellSize / 2,
+        rulerStart.y * cellSize + cellSize / 2
+      );
+      sandboxCtx.lineTo(
+        rulerEnd.x * cellSize + cellSize / 2,
+        rulerEnd.y * cellSize + cellSize / 2
+      );
+      sandboxCtx.stroke();
+      sandboxCtx.restore();
+    }
+
+    function applyRulerLine() {
+      if (!rulerStart || !rulerEnd) return;
+
+      const x0 = rulerStart.x;
+      const y0 = rulerStart.y;
+      const x1 = rulerEnd.x;
+      const y1 = rulerEnd.y;
+
+      let dx = Math.abs(x1 - x0);
+      let sx = x0 < x1 ? 1 : -1;
+      let dy = -Math.abs(y1 - y0);
+      let sy = y0 < y1 ? 1 : -1;
+      let err = dx + dy;
+      let x = x0;
+      let y = y0;
+
+      while (true) {
+        addParticle(x, y, currentMaterialKey);
+        if (x === x1 && y === y1) break;
+
+        const e2 = 2 * err;
+        if (e2 >= dy) {
+          err += dy;
+          x += sx;
         }
+        if (e2 <= dx) {
+          err += dx;
+          y += sy;
+        }
+      }
+    }
 
-        currentTool = tool;
-        dashToolbarButtons.forEach(b => {
-            if (['ground','spike','pad','ring','spawn','endportal','erase'].includes(b.dataset.dashTool)) {
-                b.classList.toggle('active', b === btn);
+    sandboxCanvas.addEventListener("mousedown", e => {
+      sandboxMouseDown = true;
+      sandboxMouseButton = e.button;
+
+      if (rulerMode && e.button === 0) {
+        const { gx, gy } = gridFromClient(e.clientX, e.clientY);
+        rulerDrawing = true;
+        rulerStart = { x: gx, y: gy };
+        rulerEnd = { x: gx, y: gy };
+        return;
+      }
+
+      handleSandboxPointer(e.clientX, e.clientY);
+    });
+
+    window.addEventListener("mouseup", e => {
+      if (rulerMode && rulerDrawing && e.button === 0) {
+        rulerDrawing = false;
+        applyRulerLine();
+      }
+      sandboxMouseDown = false;
+    });
+
+    sandboxCanvas.addEventListener("mousemove", e => {
+      if (!sandboxMouseDown && !rulerDrawing) return;
+
+      if (rulerMode && rulerDrawing) {
+        const { gx, gy } = gridFromClient(e.clientX, e.clientY);
+        rulerEnd = { x: gx, y: gy };
+        return;
+      }
+
+      handleSandboxPointer(e.clientX, e.clientY);
+    });
+
+    sandboxCanvas.addEventListener("contextmenu", e => e.preventDefault());
+
+    // Keyboard shortcuts
+
+    window.addEventListener("keydown", e => {
+      if (e.target.tagName === "INPUT") return;
+
+      if (e.key.toLowerCase() === "e") {
+        setTool("eraser");
+      }
+      if (e.key.toLowerCase() === "c") {
+        initSandbox();
+      }
+    });
+
+    brushSizeInput.addEventListener("input", () => {
+      sandboxBrushSize = parseInt(brushSizeInput.value, 10);
+      brushSizeLabel.textContent = sandboxBrushSize;
+    });
+
+    gravityInput.addEventListener("input", () => {
+      sandboxGravity = parseFloat(gravityInput.value);
+      gravityLabel.textContent = sandboxGravity.toFixed(1);
+    });
+
+    gasDriftInput.addEventListener("input", () => {
+      gasDrift = parseFloat(gasDriftInput.value);
+      gasDriftLabel.textContent = gasDrift.toFixed(1);
+    });
+
+    clearSandboxBtn.addEventListener("click", () => {
+      initSandbox();
+    });
+
+    // Matter UI
+
+    function renderMatterPills() {
+      matterPillsContainer.innerHTML = "";
+      const keys = MATERIAL_KEYS_BY_STATE[currentState];
+
+      keys.forEach(key => {
+        const mat = MATERIALS[key];
+        const pill = document.createElement("button");
+        pill.className = "matter-pill" + (key === currentMaterialKey ? " active" : "");
+        pill.dataset.key = key;
+
+        const dot = document.createElement("span");
+        dot.className = "matter-pill-dot";
+        dot.style.background = mat.color;
+        pill.appendChild(dot);
+
+        const label = document.createElement("span");
+        label.textContent = mat.name;
+        pill.appendChild(label);
+
+        matterPillsContainer.appendChild(pill);
+      });
+    }
+
+    matterTabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        matterTabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        currentState = tab.dataset.state;
+        matterBackdrop.className = "matter-backdrop " + currentState;
+        currentMaterialKey = MATERIAL_KEYS_BY_STATE[currentState][0];
+
+        renderMatterPills();
+      });
+    });
+
+    matterPillsContainer.addEventListener("click", e => {
+      const pill = e.target.closest(".matter-pill");
+      if (!pill) return;
+      const key = pill.dataset.key;
+      currentMaterialKey = key;
+      renderMatterPills();
+    });
+
+    function setTool(tool) {
+      currentTool = tool;
+
+      [toolDrawBtn, toolLighterBtn, toolEraserBtn].forEach(btn =>
+        btn.classList.remove("active")
+      );
+
+      if (tool === "draw") toolDrawBtn.classList.add("active");
+      if (tool === "lighter") toolLighterBtn.classList.add("active");
+      if (tool === "eraser") toolEraserBtn.classList.add("active");
+
+      if (tool === "lighter") {
+        lighterStartBtn.style.display = "inline-flex";
+        rulerBtn.style.display = "none";
+        rulerMode = false;
+        rulerBtn.classList.remove("active");
+      } else if (tool === "draw") {
+        lighterStartBtn.style.display = "none";
+        lighterOn = false;
+        effects = effects.filter(e => e.type !== "flameStatic");
+        rulerBtn.style.display = "inline-flex";
+      } else {
+        lighterStartBtn.style.display = "none";
+        lighterOn = false;
+        effects = effects.filter(e => e.type !== "flameStatic");
+        rulerBtn.style.display = "none";
+        rulerMode = false;
+        rulerBtn.classList.remove("active");
+      }
+    }
+
+    toolDrawBtn.addEventListener("click", () => setTool("draw"));
+    toolLighterBtn.addEventListener("click", () => setTool("lighter"));
+    toolEraserBtn.addEventListener("click", () => setTool("eraser"));
+
+    // Ruler button
+
+    rulerBtn.addEventListener("click", () => {
+      rulerMode = !rulerMode;
+      rulerBtn.classList.toggle("active", rulerMode);
+      rulerDrawing = false;
+      rulerStart = null;
+      rulerEnd = null;
+    });
+
+    // Lighter Start button
+
+    lighterStartBtn.addEventListener("click", () => {
+      const success = Math.random() < 0.2;
+      const gx = lastPointerGridX;
+      const gy = lastPointerGridY;
+
+      lighterStartBtn.innerHTML = "";
+
+      if (!success) {
+        lighterOn = false;
+        const dot = document.createElement("span");
+        dot.className = "dot-soft-pink";
+        lighterStartBtn.appendChild(dot);
+        lighterStartBtn.append(" Start");
+        spawnSparkEffect(gx, gy);
+        effects = effects.filter(e => e.type !== "flameStatic");
+        return;
+      }
+
+      lighterOn = true;
+      const dot = document.createElement("span");
+      dot.className = "dot-soft";
+      lighterStartBtn.appendChild(dot);
+      lighterStartBtn.append(" Flame On");
+      spawnStaticFlameAt(gx, gy);
+    });
+
+    // Lighter effects & explosions
+
+    function spawnSparkEffect(gx, gy) {
+      const px = gx * cellSize + cellSize / 2;
+      const py = gy * cellSize + cellSize / 2;
+      effects.push({
+        type: "spark",
+        x: px,
+        y: py,
+        life: 0,
+        maxLife: 300
+      });
+    }
+
+    function spawnStaticFlameAt(gx, gy) {
+      const px = gx * cellSize + cellSize / 2;
+      const py = gy * cellSize + cellSize / 2;
+      effects = effects.filter(e => e.type !== "flameStatic");
+      effects.push({
+        type: "flameStatic",
+        x: px,
+        y: py,
+        life: 0,
+        maxLife: Infinity
+      });
+    }
+
+    function spawnExplosionEffect(gx, gy) {
+      const px = gx * cellSize + cellSize / 2;
+      const py = gy * cellSize + cellSize / 2;
+      effects.push({
+        type: "explosion",
+        x: px,
+        y: py,
+        life: 0,
+        maxLife: 600
+      });
+    }
+
+    function igniteExplosivesAroundCell(cx, cy) {
+      const visited = new Set();
+
+      function key(x, y) {
+        return x + "," + y;
+      }
+
+      function isExplosiveCell(x, y) {
+        if (x < 0 || x >= gridCols || y < 0 || y >= gridRows) return false;
+        const id = sandboxGrid[y][x];
+        if (!id) return false;
+        const matKey = Object.keys(MATERIALS).find(k => MATERIALS[k].id === id);
+        if (!matKey) return false;
+        return EXPLOSIVE_KEYS.includes(matKey);
+      }
+
+      function triggerExplosion(x, y, depth) {
+        if (depth > 6) return;
+        const k = key(x, y);
+        if (visited.has(k)) return;
+        visited.add(k);
+        if (!isExplosiveCell(x, y)) return;
+
+        sandboxGrid[y][x] = 0;
+        sandboxParticles = sandboxParticles.filter(p => !(p.x === x && p.y === y));
+        spawnExplosionEffect(x, y);
+
+        const radius = 3;
+        for (let dy = -radius; dy <= radius; dy++) {
+          for (let dx = -radius; dx <= radius; dx++) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if (isExplosiveCell(nx, ny)) {
+              triggerExplosion(nx, ny, depth + 1);
             }
-        });
-        updateDashStatus();
-    });
-});
-
-document.querySelector('[data-dash-tool="edit"]').classList.add('active');
-document.querySelector('[data-dash-tool="ground"]').classList.add('active');
-
-function updateDashStatus() {
-    dashStatusLeft.innerHTML = `Mode: <strong>${editorMode === 'edit' ? 'Editor' : 'Playtest'}</strong>`;
-    if (editorMode === 'edit') {
-        dashStatusRight.textContent =
-            `Tool: ${currentTool.toUpperCase()} • Use scroll buttons to move camera, click to place tiles.`;
-    } else {
-        if (player.levelComplete) {
-            dashStatusRight.textContent = 'LEVEL COMPLETE – Press Playtest to retry or Edit to modify.';
-        } else if (!player.alive) {
-            dashStatusRight.textContent = 'You died – Press Playtest to retry or Edit to modify.';
-        } else {
-            dashStatusRight.textContent = 'Space/Click to jump. ESC to return to editor.';
+          }
         }
+      }
+
+      const radius = 4;
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          const x = cx + dx;
+          const y = cy + dy;
+          triggerExplosion(x, y, 0);
+        }
+      }
     }
-}
-updateDashStatus();
 
-dashScrollButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        if (editorMode !== 'edit') return;
-        const dir = btn.dataset.dashScroll;
-        if (dir === 'left') {
-            cameraX = Math.max(cameraX - CAMERA_STEP, barrierX);
-        } else if (dir === 'right') {
-            cameraX += CAMERA_STEP;
-        }
-    });
-});
-
-dashEditorCanvas.addEventListener('mousedown', (e) => {
-    isMouseDown = true;
-    handleEditorClick(e);
-});
-dashEditorCanvas.addEventListener('mouseup', () => {
-    isMouseDown = false;
-});
-dashEditorCanvas.addEventListener('mouseleave', () => {
-    isMouseDown = false;
-});
-dashEditorCanvas.addEventListener('mousemove', (e) => {
-    if (isMouseDown && editorMode === 'edit') {
-        handleEditorClick(e);
+    function igniteExplosivesAroundFlameEffect(eff) {
+      const gx = Math.floor(eff.x / cellSize);
+      const gy = Math.floor(eff.y / cellSize);
+      igniteExplosivesAroundCell(gx, gy);
     }
-});
 
-function handleEditorClick(e) {
-    if (editorMode !== 'edit') return;
+    function updateSandbox() {
+      const newGrid = [];
+      for (let y = 0; y < gridRows; y++) {
+        newGrid.push(sandboxGrid[y].slice());
+      }
 
-    const rect = dashEditorCanvas.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
+      const shuffled = sandboxParticles.slice();
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
 
-    const worldX = mx + cameraX;
-    const worldY = my + cameraY;
+      const updatedParticles = [];
 
-    const tx = Math.floor(worldX / TILE_SIZE);
-    const ty = Math.floor(worldY / TILE_SIZE);
+      for (const p of shuffled) {
+        let { x, y, matKey, vy, life } = p;
+        const mat = MATERIALS[matKey];
+        if (!mat) continue;
+        if (newGrid[y][x] !== mat.id) continue;
 
-    if (currentTool === 'erase') {
-        setTile(tx, ty, null);
-        if (endPortal && endPortal.tx === tx && endPortal.ty === ty) {
-            endPortal = null;
-        }
-    } else if (currentTool === 'ground') {
-        setTile(tx, ty, 'ground');
-    } else if (currentTool === 'spike') {
-        setTile(tx, ty, 'spike');
-    } else if (currentTool === 'pad') {
-        setTile(tx, ty, 'pad');
-    } else if (currentTool === 'ring') {
-        setTile(tx, ty, 'ring');
-    } else if (currentTool === 'spawn') {
-        spawnX = tx * TILE_SIZE;
-    } else if (currentTool === 'endportal') {
-        endPortal = {
-            tx,
-            ty,
-            x: tx * TILE_SIZE,
-            y: ty * TILE_SIZE
+        life += 16;
+        let moved = false;
+        const dir = Math.random() < 0.5 ? -1 : 1;
+
+        const tryMove = (nx, ny) => {
+          if (nx < 0 || nx >= gridCols || ny < 0 || ny >= gridRows) return false;
+          if (newGrid[ny][nx] === 0) {
+            newGrid[y][x] = 0;
+            newGrid[ny][nx] = mat.id;
+            x = nx;
+            y = ny;
+            moved = true;
+            return true;
+          }
+          return false;
         };
-    }
-}
 
-function startDashPlaytest() {
-    isPlayingDash = true;
-    player.x = spawnX;
-    player.y = 200;
-    player.vx = 4;
-    player.vy = 0;
-    player.alive = true;
-    player.onGround = false;
-    player.levelComplete = false;
-    updateDashStatus();
-}
+        if (mat.behavior === "solid" || mat.behavior === "liquid") {
+          vy += sandboxGravity * 0.1;
+          if (vy > 1.8) vy = 1.8;
+          const down = Math.floor(vy >= 1 ? 1 : 0);
 
-function stopDashPlaytest() {
-    isPlayingDash = false;
-}
-
-window.addEventListener('keydown', (e) => {
-    if (currentMode !== 'dash') return;
-
-    if (e.code === 'Space') {
-        e.preventDefault();
-        jumpHeld = true;
-        if (!isPlayingDash) return;
-        if (player.onGround && player.alive && !player.levelComplete) {
-            player.vy = JUMP_VELOCITY;
-            player.onGround = false;
-        }
-    } else if (e.code === 'Escape') {
-        editorMode = 'edit';
-        stopDashPlaytest();
-        dashToolbarButtons.forEach(b => b.classList.remove('active'));
-        document.querySelector('[data-dash-tool="edit"]').classList.add('active');
-        const toolBtn = document.querySelector(`[data-dash-tool="${currentTool}"]`);
-        if (toolBtn && !['play','edit','clear'].includes(currentTool)) {
-            toolBtn.classList.add('active');
-        }
-        updateDashStatus();
-    }
-});
-
-window.addEventListener('keyup', (e) => {
-    if (e.code === 'Space') {
-        jumpHeld = false;
-    }
-});
-
-window.addEventListener('mousedown', (e) => {
-    if (currentMode !== 'dash') return;
-    if (e.target === dashCanvas && isPlayingDash) {
-        jumpHeld = true;
-        if (player.onGround && player.alive && !player.levelComplete) {
-            player.vy = JUMP_VELOCITY;
-            player.onGround = false;
-        }
-    }
-});
-
-window.addEventListener('mouseup', (e) => {
-    if (e.target === dashCanvas) {
-        jumpHeld = false;
-    }
-});
-
-function updatePlayer() {
-    if (!isPlayingDash) return;
-    if (!player.alive || player.levelComplete) return;
-
-    player.vy += GRAVITY;
-    player.x += player.vx;
-    player.y += player.vy;
-
-    player.onGround = false;
-
-    const px1 = player.x;
-    const py1 = player.y;
-    const px2 = player.x + PLAYER_WIDTH;
-    const py2 = player.y + PLAYER_HEIGHT;
-
-    const tx1 = Math.floor(px1 / TILE_SIZE) - 1;
-    const tx2 = Math.floor(px2 / TILE_SIZE) + 1;
-    const ty1 = Math.floor(py1 / TILE_SIZE) - 1;
-    const ty2 = Math.floor(py2 / TILE_SIZE) + 1;
-
-    for (let ty = ty1; ty <= ty2; ty++) {
-        for (let tx = tx1; tx <= tx2; tx++) {
-            const tile = getTile(tx, ty);
-            if (!tile) continue;
-
-            const tileX = tx * TILE_SIZE;
-            const tileY = ty * TILE_SIZE;
-            const tileRect = {
-                x: tileX,
-                y: tileY,
-                w: TILE_SIZE,
-                h: TILE_SIZE
-            };
-
-            if (tile === 'ground') {
-                if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
-                                tileRect.x, tileRect.y, tileRect.w, tileRect.h)) {
-                    if (py2 > tileRect.y && py1 < tileRect.y) {
-                        player.y = tileRect.y - PLAYER_HEIGHT;
-                        player.vy = 0;
-                        player.onGround = true;
-                    }
+          if (down > 0) {
+            if (!tryMove(x, y + 1)) {
+              if (mat.behavior === "liquid") {
+                if (!tryMove(x + dir, y + 1)) {
+                  tryMove(x - dir, y + 1);
                 }
-            } else if (tile === 'spike') {
-                if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
-                                tileRect.x, tileRect.y, tileRect.w, tileRect.h)) {
-                    player.alive = false;
-                    updateDashStatus();
+              } else {
+                if (!tryMove(x + dir, y + 1) && !tryMove(x - dir, y + 1)) {
+                  // no-op
                 }
-            } else if (tile === 'pad') {
-                if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
-                                tileRect.x, tileRect.y, tileRect.w, tileRect.h)) {
-                    player.vy = JUMP_VELOCITY * 1.2;
-                    player.onGround = false;
-                }
-            } else if (tile === 'ring') {
-                if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
-                                tileRect.x, tileRect.y, tileRect.w, tileRect.h)) {
-                    player.vy = JUMP_VELOCITY * 0.8;
-                    player.onGround = false;
-                }
+              }
             }
-        }
-    }
+          }
 
-    if (endPortal) {
-        const portalRect = {
-            x: endPortal.x,
-            y: endPortal.y,
-            w: TILE_SIZE,
-            h: TILE_SIZE * 2
-        };
-        if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
-                        portalRect.x, portalRect.y, portalRect.w, portalRect.h)) {
-            player.levelComplete = true;
-            player.vx = 0;
-            player.vy = 0;
-            updateDashStatus();
-        }
-    }
+          if (!moved && mat.behavior === "liquid") {
+            if (!tryMove(x + dir, y)) {
+              tryMove(x - dir, y);
+            }
+          }
+        } else if (mat.behavior === "gas") {
+          vy -= gasDrift * 0.08;
+          if (vy < -1.5) vy = -1.5;
+          const up = Math.floor(vy <= -0.2 ? -1 : 0);
 
-    if (player.y > dashCanvas.height + 200) {
-        player.alive = false;
-        updateDashStatus();
-    }
+          if (up < 0) {
+            if (!tryMove(x, y - 1)) {
+              if (!tryMove(x + dir, y - 1)) {
+                tryMove(x - dir, y - 1);
+              }
+            }
+          }
 
-    if (!player.alive) {
-        player.vx = 0;
-    }
-}
-
-function rectOverlap(x1, y1, w1, h1, x2, y2, w2, h2) {
-    return !(x1 + w1 <= x2 ||
-             x1 >= x2 + w2 ||
-             y1 + h1 <= y2 ||
-             y1 >= y2 + h2);
-}
-
-function renderDashEditor() {
-    dashEditorCtx.clearRect(0, 0, dashEditorCanvas.width, dashEditorCanvas.height);
-
-    const g = dashEditorCtx.createLinearGradient(0, 0, dashEditorCanvas.width, dashEditorCanvas.height);
-    g.addColorStop(0, '#10152b');
-    g.addColorStop(1, '#050712');
-    dashEditorCtx.fillStyle = g;
-    dashEditorCtx.fillRect(0, 0, dashEditorCanvas.width, dashEditorCanvas.height);
-
-    dashEditorCtx.strokeStyle = 'rgba(255,255,255,0.05)';
-    dashEditorCtx.lineWidth = 1;
-    const startX = Math.floor(cameraX / TILE_SIZE) * TILE_SIZE - cameraX;
-    const startY = Math.floor(cameraY / TILE_SIZE) * TILE_SIZE - cameraY;
-
-    for (let x = startX; x < dashEditorCanvas.width; x += TILE_SIZE) {
-        dashEditorCtx.beginPath();
-        dashEditorCtx.moveTo(x, 0);
-        dashEditorCtx.lineTo(x, dashEditorCanvas.height);
-        dashEditorCtx.stroke();
-    }
-    for (let y = startY; y < dashEditorCanvas.height; y += TILE_SIZE) {
-        dashEditorCtx.beginPath();
-        dashEditorCtx.moveTo(0, y);
-        dashEditorCtx.lineTo(dashEditorCanvas.width, y);
-        dashEditorCtx.stroke();
-    }
-
-    for (const key in world) {
-        const [txStr, tyStr] = key.split(',');
-        const tx = parseInt(txStr, 10);
-        const ty = parseInt(tyStr, 10);
-        const tile = world[key];
-
-        const screenX = tx * TILE_SIZE - cameraX;
-        const screenY = ty * TILE_SIZE - cameraY;
-
-        if (screenX + TILE_SIZE < 0 || screenX > dashEditorCanvas.width ||
-            screenY + TILE_SIZE < 0 || screenY > dashEditorCanvas.height) {
-            continue;
+          if (!moved) {
+            if (!tryMove(x + dir, y)) {
+              tryMove(x - dir, y);
+            }
+          }
         }
 
-        if (tile === 'ground') {
-            dashEditorCtx.fillStyle = '#4af2c5';
-            dashEditorCtx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
-        } else if (tile === 'spike') {
-            dashEditorCtx.fillStyle = '#ff4b6e';
-            dashEditorCtx.beginPath();
-            dashEditorCtx.moveTo(screenX, screenY + TILE_SIZE);
-            dashEditorCtx.lineTo(screenX + TILE_SIZE / 2, screenY);
-            dashEditorCtx.lineTo(screenX + TILE_SIZE, screenY + TILE_SIZE);
-            dashEditorCtx.closePath();
-            dashEditorCtx.fill();
-        } else if (tile === 'pad') {
-            dashEditorCtx.fillStyle = '#ffd54a';
-            dashEditorCtx.fillRect(screenX, screenY + TILE_SIZE / 2, TILE_SIZE, TILE_SIZE / 2);
-        } else if (tile === 'ring') {
-            dashEditorCtx.strokeStyle = '#7b5cff';
-            dashEditorCtx.lineWidth = 2;
-            dashEditorCtx.beginPath();
-            dashEditorCtx.arc(
-                screenX + TILE_SIZE / 2,
-                screenY + TILE_SIZE / 2,
-                TILE_SIZE / 3,
-                0,
-                Math.PI * 2
+        updatedParticles.push({ x, y, matKey, vy, life });
+      }
+
+      sandboxParticles = updatedParticles;
+      sandboxGrid = newGrid;
+      particleCountLabel.textContent = sandboxParticles.length;
+    }
+
+    function drawSandbox() {
+      sandboxCtx.clearRect(0, 0, sandboxWidth, sandboxHeight);
+
+      const imgData = sandboxCtx.createImageData(sandboxWidth, sandboxHeight);
+      const data = imgData.data;
+
+      function setPixel(px, py, r, g, b, a) {
+        if (px < 0 || px >= sandboxWidth || py < 0 || py >= sandboxHeight) return;
+        const idx = (py * sandboxWidth + px) * 4;
+        data[idx] = r;
+        data[idx + 1] = g;
+        data[idx + 2] = b;
+        data[idx + 3] = a;
+      }
+
+      for (let y = 0; y < gridRows; y++) {
+        for (let x = 0; x < gridCols; x++) {
+          const id = sandboxGrid[y][x];
+          if (!id) continue;
+
+          const matKey = Object.keys(MATERIALS).find(k => MATERIALS[k].id === id);
+          if (!matKey) continue;
+
+          const mat = MATERIALS[matKey];
+          const col = mat.color;
+          const r = parseInt(col.slice(1, 3), 16);
+          const g = parseInt(col.slice(3, 5), 16);
+          const b = parseInt(col.slice(5, 7), 16);
+
+          for (let py = 0; py < cellSize; py++) {
+            for (let px = 0; px < cellSize; px++) {
+              const gx = x * cellSize + px;
+              const gy = y * cellSize + py;
+              setPixel(gx, gy, r, g, b, 255);
+            }
+          }
+        }
+      }
+
+      sandboxCtx.putImageData(imgData, 0, 0);
+
+      // Glow border
+      sandboxCtx.save();
+      sandboxCtx.globalCompositeOperation = "lighter";
+      sandboxCtx.shadowBlur = 18;
+      sandboxCtx.shadowColor = "rgba(255,255,255,0.7)";
+      sandboxCtx.strokeStyle = "rgba(255,255,255,0.4)";
+      sandboxCtx.lineWidth = 1;
+      sandboxCtx.strokeRect(2, 2, sandboxWidth - 4, sandboxHeight - 4);
+      sandboxCtx.restore();
+
+      // Effects
+      const now = performance.now();
+      effects = effects.filter(e => e.life < e.maxLife);
+
+      for (const eff of effects) {
+        const t = eff.maxLife === Infinity ? 0 : eff.life / eff.maxLife;
+
+        if (eff.type === "spark") {
+          sandboxCtx.save();
+          sandboxCtx.globalCompositeOperation = "lighter";
+          sandboxCtx.strokeStyle = `rgba(255,255,200,${1 - t})`;
+          sandboxCtx.lineWidth = 2;
+          sandboxCtx.beginPath();
+          sandboxCtx.moveTo(eff.x - 4, eff.y);
+          sandboxCtx.lineTo(eff.x + 4, eff.y);
+          sandboxCtx.moveTo(eff.x, eff.y - 4);
+          sandboxCtx.lineTo(eff.x, eff.y + 4);
+          sandboxCtx.stroke();
+          sandboxCtx.restore();
+        } else if (eff.type === "flameStatic") {
+          const baseSize = cellSize * 1.2;
+          const flicker = 1 + Math.sin(now / 70 + eff.x * 0.03) * 0.2;
+          const size = baseSize * flicker;
+
+          sandboxCtx.save();
+          sandboxCtx.globalCompositeOperation = "lighter";
+
+          for (let i = 0; i < 4; i++) {
+            const level = i / 4;
+            const w = size * (1 - level * 0.4);
+            const h = size * 0.4;
+            const px = eff.x - w / 2 + (Math.random() - 0.5) * 2;
+            const py = eff.y - size * 0.6 + i * (h * 0.7);
+
+            let color;
+            if (i === 0) color = "rgba(255,240,210,0.95)";
+            else if (i === 1) color = "rgba(255,190,120,0.9)";
+            else if (i === 2) color = "rgba(255,120,60,0.85)";
+            else color = "rgba(200,60,40,0.7)";
+
+            sandboxCtx.fillStyle = color;
+            sandboxCtx.fillRect(
+              Math.round(px / 2) * 2,
+              Math.round(py / 2) * 2,
+              Math.round(w / 2) * 2,
+              Math.round(h / 2) * 2
             );
-            dashEditorCtx.stroke();
+          }
+
+          sandboxCtx.restore();
+          igniteExplosivesAroundFlameEffect(eff);
+        } else if (eff.type === "explosion") {
+          const radius = cellSize * 4 * (0.3 + t);
+          const inner = radius * 0.4;
+
+          const grad = sandboxCtx.createRadialGradient(
+            eff.x,
+            eff.y,
+            0,
+            eff.x,
+            eff.y,
+            radius
+          );
+          grad.addColorStop(0, `rgba(255,255,220,${1 - t})`);
+          grad.addColorStop(0.3, `rgba(255,200,80,${0.9 - t})`);
+          grad.addColorStop(0.7, `rgba(255,80,40,${0.7 - t})`);
+          grad.addColorStop(1, "rgba(0,0,0,0)");
+
+          sandboxCtx.save();
+          sandboxCtx.globalCompositeOperation = "lighter";
+          sandboxCtx.fillStyle = grad;
+          sandboxCtx.beginPath();
+          sandboxCtx.arc(eff.x, eff.y, radius, 0, Math.PI * 2);
+          sandboxCtx.fill();
+
+          sandboxCtx.strokeStyle = `rgba(255,240,220,${0.8 - t})`;
+          sandboxCtx.lineWidth = 2;
+          sandboxCtx.beginPath();
+          sandboxCtx.arc(eff.x, eff.y, inner, 0, Math.PI * 2);
+          sandboxCtx.stroke();
+          sandboxCtx.restore();
         }
+
+        if (eff.maxLife !== Infinity) {
+          eff.life += 16;
+        }
+      }
+
+      // Ruler preview
+      drawRulerPreview();
     }
 
-    const spawnScreenX = spawnX - cameraX;
-    dashEditorCtx.strokeStyle = '#ffffff';
-    dashEditorCtx.lineWidth = 2;
-    dashEditorCtx.beginPath();
-    dashEditorCtx.moveTo(spawnScreenX, 0);
-    dashEditorCtx.lineTo(spawnScreenX, dashEditorCanvas.height);
-    dashEditorCtx.stroke();
-
-    const barrierScreenX = barrierX - cameraX;
-    dashEditorCtx.strokeStyle = '#ff4b6e';
-    dashEditorCtx.lineWidth = 2;
-    dashEditorCtx.beginPath();
-    dashEditorCtx.moveTo(barrierScreenX, 0);
-    dashEditorCtx.lineTo(barrierScreenX, dashEditorCanvas.height);
-    dashEditorCtx.stroke();
-
-    dashEditorCtx.fillStyle = '#ff4b6e';
-    dashEditorCtx.font = '12px system-ui';
-    dashEditorCtx.textAlign = 'center';
-    dashEditorCtx.fillText('BARRIER', barrierScreenX, 14);
-
-    if (endPortal) {
-        const portalScreenX = endPortal.x - cameraX;
-        const portalScreenY = endPortal.y - cameraY;
-
-        if (!(portalScreenX + TILE_SIZE < 0 || portalScreenX > dashEditorCanvas.width ||
-              portalScreenY + TILE_SIZE * 2 < 0 || portalScreenY > dashEditorCanvas.height)) {
-
-            const w = TILE_SIZE;
-            const h = TILE_SIZE * 2;
-
-            const gradient = dashEditorCtx.createLinearGradient(
-                portalScreenX, portalScreenY,
-                portalScreenX + w, portalScreenY + h
-            );
-            gradient.addColorStop(0, '#4af2c5');
-            gradient.addColorStop(0.5, '#7b5cff');
-            gradient.addColorStop(1, '#ff4b6e');
-
-            dashEditorCtx.save();
-            dashEditorCtx.shadowColor = 'rgba(122, 255, 255, 0.8)';
-            dashEditorCtx.shadowBlur = 18;
-
-            dashEditorCtx.strokeStyle = gradient;
-            dashEditorCtx.lineWidth = 3;
-            dashEditorCtx.strokeRect(portalScreenX, portalScreenY, w, h);
-
-            dashEditorCtx.restore();
-
-            dashEditorCtx.fillStyle = 'rgba(255, 255, 255, 0.18)';
-            dashEditorCtx.fillRect(portalScreenX + 3, portalScreenY + 3, w - 6, h - 6);
-        }
-    }
-}
-
-function renderDashPlay() {
-    dashCtx.clearRect(0, 0, dashCanvas.width, dashCanvas.height);
-
-    const g = dashCtx.createLinearGradient(0, 0, dashCanvas.width, dashCanvas.height);
-    g.addColorStop(0, '#10152b');
-    g.addColorStop(1, '#050712');
-    dashCtx.fillStyle = g;
-    dashCtx.fillRect(0, 0, dashCanvas.width, dashCanvas.height);
-
-    const playCameraX = player.x - 200;
-    const playCameraY = 0;
-
-    for (const key in world) {
-        const [txStr, tyStr] = key.split(',');
-        const tx = parseInt(txStr, 10);
-        const ty = parseInt(tyStr, 10);
-        const tile = world[key];
-
-        const screenX = tx * TILE_SIZE - playCameraX;
-        const screenY = ty * TILE_SIZE - playCameraY;
-
-        if (screenX + TILE_SIZE < 0 || screenX > dashCanvas.width ||
-            screenY + TILE_SIZE < 0 || screenY > dashCanvas.height) {
-            continue;
-        }
-
-        if (tile === 'ground') {
-            dashCtx.fillStyle = '#4af2c5';
-            dashCtx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
-        } else if (tile === 'spike') {
-            dashCtx.fillStyle = '#ff4b6e';
-            dashCtx.beginPath();
-            dashCtx.moveTo(screenX, screenY + TILE_SIZE);
-            dashCtx.lineTo(screenX + TILE_SIZE / 2, screenY);
-            dashCtx.lineTo(screenX + TILE_SIZE, screenY + TILE_SIZE);
-            dashCtx.closePath();
-            dashCtx.fill();
-        } else if (tile === 'pad') {
-            dashCtx.fillStyle = '#ffd54a';
-            dashCtx.fillRect(screenX, screenY + TILE_SIZE / 2, TILE_SIZE, TILE_SIZE / 2);
-        } else if (tile === 'ring') {
-            dashCtx.strokeStyle = '#7b5cff';
-            dashCtx.lineWidth = 2;
-            dashCtx.beginPath();
-            dashCtx.arc(
-                screenX + TILE_SIZE / 2,
-                screenY + TILE_SIZE / 2,
-                TILE_SIZE / 3,
-                0,
-                Math.PI * 2
-            );
-            dashCtx.stroke();
-        }
+    function sandboxLoop() {
+      updateSandbox();
+      drawSandbox();
+      requestAnimationFrame(sandboxLoop);
     }
 
-    const barrierScreenX = barrierX - playCameraX;
-    dashCtx.strokeStyle = '#ff4b6e';
-    dashCtx.lineWidth = 2;
-    dashCtx.beginPath();
-    dashCtx.moveTo(barrierScreenX, 0);
-    dashCtx.lineTo(barrierScreenX, dashCanvas.height);
-    dashCtx.stroke();
+    // ---------- Neon Snake ----------
 
-    dashCtx.fillStyle = '#ff4b6e';
-    dashCtx.font = '12px system-ui';
-    dashCtx.textAlign = 'center';
-    dashCtx.fillText('BARRIER', barrierScreenX, 14);
+    const snakeCanvas = document.getElementById("snakeCanvas");
+    const snakeCtx = snakeCanvas.getContext("2d");
 
-    if (endPortal) {
-        const portalScreenX = endPortal.x - playCameraX;
-        const portalScreenY = endPortal.y - playCameraY;
-        const w = TILE_SIZE;
-        const h = TILE_SIZE * 2;
+    const snakeScoreLabel = document.getElementById("snakeScore");
+    const snakeBestLabel = document.getElementById("snakeBest");
+    const snakeSpeedSlider = document.getElementById("snakeSpeed");
+    const snakeSpeedLabel = document.getElementById("snakeSpeedLabel");
+    const snakeResetBtn = document.getElementById("snakeResetBtn");
 
-        const gradient = dashCtx.createLinearGradient(
-            portalScreenX, portalScreenY,
-            portalScreenX + w, portalScreenY + h
+    let snakeGridSize = 36;
+    let snakeCellSize;
+    let snakeWidth;
+    let snakeHeight;
+
+    let snake;
+    let snakeDir;
+    let snakeNextDir;
+    let snakeFood;
+    let snakeScore = 0;
+    let snakeBest = 0;
+
+    let snakeBaseSpeed = parseFloat(snakeSpeedSlider.value);
+    let snakeSpeed = 7;
+    let snakeLastTime = 0;
+    let snakeAccum = 0;
+    let snakePaused = false;
+
+    function resizeSnake() {
+      const rect = snakeCanvas.parentElement.getBoundingClientRect();
+      const maxWidth = rect.width - 4;
+      const maxHeight = rect.height - 60;
+
+      const scaleX = maxWidth / snakeGridSize;
+      const scaleY = maxHeight / snakeGridSize;
+
+      snakeCellSize = Math.floor(Math.min(scaleX, scaleY));
+      snakeCellSize = Math.max(snakeCellSize, 18);
+
+      snakeWidth = snakeGridSize * snakeCellSize;
+      snakeHeight = snakeGridSize * snakeCellSize;
+
+      snakeCanvas.width = snakeWidth;
+      snakeCanvas.height = snakeHeight;
+    }
+
+    function resetSnake() {
+      snake = [
+        { x: 10, y: Math.floor(snakeGridSize / 2) },
+        { x: 9, y: Math.floor(snakeGridSize / 2) },
+        { x: 8, y: Math.floor(snakeGridSize / 2) }
+      ];
+      snakeDir = { x: 1, y: 0 };
+      snakeNextDir = { x: 1, y: 0 };
+      snakeScore = 0;
+      snakeSpeed = 7 * snakeBaseSpeed;
+      spawnFood();
+      snakeScoreLabel.textContent = snakeScore;
+      snakeSpeedLabel.textContent = snakeBaseSpeed.toFixed(1) + "x";
+    }
+
+    function spawnFood() {
+      while (true) {
+        const x = Math.floor(Math.random() * snakeGridSize);
+        const y = Math.floor(Math.random() * snakeGridSize);
+        if (!snake.some(seg => seg.x === x && seg.y === y)) {
+          snakeFood = { x, y };
+          break;
+        }
+      }
+    }
+
+    function updateSnake(dt) {
+      if (snakePaused) return;
+
+      snakeAccum += dt;
+      const stepTime = 1000 / snakeSpeed;
+      if (snakeAccum < stepTime) return;
+      snakeAccum -= stepTime;
+
+      snakeDir = snakeNextDir;
+      const head = snake[0];
+      const nx = head.x + snakeDir.x;
+      const ny = head.y + snakeDir.y;
+
+      if (
+        nx < 0 ||
+        nx >= snakeGridSize ||
+        ny < 0 ||
+        ny >= snakeGridSize ||
+        snake.some(seg => seg.x === nx && seg.y === ny)
+      ) {
+        if (snakeScore > snakeBest) {
+          snakeBest = snakeScore;
+          snakeBestLabel.textContent = snakeBest;
+        }
+        resetSnake();
+        return;
+      }
+
+      snake.unshift({ x: nx, y: ny });
+
+      if (nx === snakeFood.x && ny === snakeFood.y) {
+        snakeScore++;
+        snakeScoreLabel.textContent = snakeScore;
+        snakeSpeed *= 1.03;
+        spawnFood();
+      } else {
+        snake.pop();
+      }
+    }
+
+    function drawSnake() {
+      snakeCtx.clearRect(0, 0, snakeWidth, snakeHeight);
+
+      // Background grid
+      snakeCtx.fillStyle = "#000000";
+      snakeCtx.fillRect(0, 0, snakeWidth, snakeHeight);
+
+      snakeCtx.strokeStyle = "rgba(255,255,255,0.04)";
+      snakeCtx.lineWidth = 1;
+      snakeCtx.beginPath();
+      for (let i = 0; i <= snakeGridSize; i++) {
+        const p = i * snakeCellSize;
+        snakeCtx.moveTo(p, 0);
+        snakeCtx.lineTo(p, snakeHeight);
+        snakeCtx.moveTo(0, p);
+        snakeCtx.lineTo(snakeWidth, p);
+      }
+      snakeCtx.stroke();
+
+      // Fruit
+      const fx = snakeFood.x * snakeCellSize;
+      const fy = snakeFood.y * snakeCellSize;
+      snakeCtx.save();
+      snakeCtx.fillStyle = "#ff3bff";
+      snakeCtx.beginPath();
+      snakeCtx.roundRect(
+        fx + 3,
+        fy + 3,
+        snakeCellSize - 6,
+        snakeCellSize - 6,
+        6
+      );
+      snakeCtx.fill();
+      snakeCtx.restore();
+
+      // Snake body (glow)
+      snakeCtx.save();
+      snakeCtx.shadowBlur = 18;
+      snakeCtx.shadowColor = "rgba(53,240,255,0.9)";
+
+      for (let i = snake.length - 1; i >= 1; i--) {
+        const seg = snake[i];
+        const px = seg.x * snakeCellSize;
+        const py = seg.y * snakeCellSize;
+        const t = i / (snake.length - 1 || 1);
+
+        const r = 53 + (124 - 53) * t;
+        const g = 240 + (255 - 240) * t;
+        const b = 255 + (107 - 255) * t;
+
+        snakeCtx.fillStyle = `rgb(${r | 0},${g | 0},${b | 0})`;
+        snakeCtx.beginPath();
+        snakeCtx.roundRect(
+          px + 3,
+          py + 3,
+          snakeCellSize - 6,
+          snakeCellSize - 6,
+          6
         );
-        gradient.addColorStop(0, '#4af2c5');
-        gradient.addColorStop(0.5, '#7b5cff');
-        gradient.addColorStop(1, '#ff4b6e');
+        snakeCtx.fill();
+      }
 
-        dashCtx.save();
-        dashCtx.shadowColor = 'rgba(122, 255, 255, 0.8)';
-        dashCtx.shadowBlur = 18;
+      snakeCtx.restore();
 
-        dashCtx.strokeStyle = gradient;
-        dashCtx.lineWidth = 3;
-        dashCtx.strokeRect(portalScreenX, portalScreenY, w, h);
+      // Head (no glow)
+      const head = snake[0];
+      const hx = head.x * snakeCellSize;
+      const hy = head.y * snakeCellSize;
+      snakeCtx.save();
+      snakeCtx.fillStyle = "#35f0ff";
+      snakeCtx.beginPath();
+      snakeCtx.roundRect(
+        hx + 3,
+        hy + 3,
+        snakeCellSize - 6,
+        snakeCellSize - 6,
+        6
+      );
+      snakeCtx.fill();
+      snakeCtx.restore();
 
-        dashCtx.restore();
-
-        dashCtx.fillStyle = 'rgba(255, 255, 255, 0.18)';
-        dashCtx.fillRect(portalScreenX + 3, portalScreenY + 3, w - 6, h - 6);
+      // Pause overlay
+      if (snakePaused) {
+        snakeCtx.fillStyle = "rgba(0,0,0,0.45)";
+        snakeCtx.fillRect(0, 0, snakeWidth, snakeHeight);
+        snakeCtx.fillStyle = "#ffffff";
+        snakeCtx.font = "bold 18px system-ui";
+        snakeCtx.textAlign = "center";
+        snakeCtx.fillText("Paused", snakeWidth / 2, snakeHeight / 2);
+      }
     }
 
-    dashCtx.fillStyle = player.levelComplete
-        ? '#4af2c5'
-        : (player.alive ? '#ffffff' : '#888888');
-    dashCtx.fillRect(
-        player.x - playCameraX,
-        player.y - playCameraY,
-        PLAYER_WIDTH,
-        PLAYER_HEIGHT
-    );
+    window.addEventListener("keydown", e => {
+      if (e.target.tagName === "INPUT") return;
 
-    if (player.levelComplete) {
-        dashCtx.fillStyle = '#4af2c5';
-        dashCtx.font = '24px system-ui';
-        dashCtx.textAlign = 'center';
-        dashCtx.fillText('LEVEL COMPLETE', dashCanvas.width / 2, 60);
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+        let dx = 0;
+        let dy = 0;
+        if (e.key === "ArrowUp") dy = -1;
+        if (e.key === "ArrowDown") dy = 1;
+        if (e.key === "ArrowLeft") dx = -1;
+        if (e.key === "ArrowRight") dx = 1;
+
+        if (dx === -snakeDir.x && dy === -snakeDir.y) return;
+        snakeNextDir = { x: dx, y: dy };
+      }
+
+      if (e.key === " " || e.code === "Space") {
+        snakePaused = !snakePaused;
+      }
+
+      if (e.key.toLowerCase() === "r") {
+        resetSnake();
+      }
+    });
+
+    snakeSpeedSlider.addEventListener("input", () => {
+      snakeBaseSpeed = parseFloat(snakeSpeedSlider.value);
+      snakeSpeed = 7 * snakeBaseSpeed;
+      snakeSpeedLabel.textContent = snakeBaseSpeed.toFixed(1) + "x";
+    });
+
+    snakeResetBtn.addEventListener("click", () => {
+      resetSnake();
+    });
+
+    function snakeLoop(timestamp) {
+      const dt = timestamp - snakeLastTime;
+      snakeLastTime = timestamp;
+      updateSnake(dt);
+      drawSnake();
+      requestAnimationFrame(snakeLoop);
     }
-}
 
-function loop() {
-    requestAnimationFrame(loop);
+    // ---------- Init ----------
 
-    renderDashEditor();
+    function initAll() {
+      resizeSandbox();
+      initSandbox();
+      renderMatterPills();
+      sandboxLoop();
 
-    if (isPlayingDash) {
-        updatePlayer();
-        renderDashPlay();
-    } else {
-        dashCtx.clearRect(0, 0, dashCanvas.width, dashCanvas.height);
-        const g = dashCtx.createLinearGradient(0, 0, dashCanvas.width, dashCanvas.height);
-        g.addColorStop(0, '#050712');
-        g.addColorStop(1, '#02030a');
-        dashCtx.fillStyle = g;
-        dashCtx.fillRect(0, 0, dashCanvas.width, dashCanvas.height);
-
-        dashCtx.globalAlpha = 0.4;
-        const previewCameraX = 0;
-        const previewCameraY = 0;
-        for (const key in world) {
-            const [txStr, tyStr] = key.split(',');
-            const tx = parseInt(txStr, 10);
-            const ty = parseInt(tyStr, 10);
-            const tile = world[key];
-
-            const screenX = tx * TILE_SIZE - previewCameraX;
-            const screenY = ty * TILE_SIZE - previewCameraY;
-
-            if (screenX + TILE_SIZE < 0 || screenX > dashCanvas.width ||
-                screenY + TILE_SIZE < 0 || screenY > dashCanvas.height) {
-                continue;
-            }
-
-            if (tile === 'ground') {
-                dashCtx.fillStyle = '#4af2c5';
-                dashCtx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
-            } else if (tile === 'spike') {
-                dashCtx.fillStyle = '#ff4b6e';
-                dashCtx.beginPath();
-                dashCtx.moveTo(screenX, screenY + TILE_SIZE);
-                dashCtx.lineTo(screenX + TILE_SIZE / 2, screenY);
-                dashCtx.lineTo(screenX + TILE_SIZE, screenY + TILE_SIZE);
-                dashCtx.closePath();
-                dashCtx.fill();
-            } else if (tile === 'pad') {
-                dashCtx.fillStyle = '#ffd54a';
-                dashCtx.fillRect(screenX, screenY + TILE_SIZE / 2, TILE_SIZE, TILE_SIZE / 2);
-            } else if (tile === 'ring') {
-                dashCtx.strokeStyle = '#7b5cff';
-                dashCtx.lineWidth = 2;
-                dashCtx.beginPath();
-                dashCtx.arc(
-                    screenX + TILE_SIZE / 2,
-                    screenY + TILE_SIZE / 2,
-                    TILE_SIZE / 3,
-                    0,
-                    Math.PI * 2
-                );
-                dashCtx.stroke();
-            }
-        }
-
-        if (endPortal) {
-            const portalScreenX = endPortal.x - previewCameraX;
-            const portalScreenY = endPortal.y - previewCameraY;
-            const w = TILE_SIZE;
-            const h = TILE_SIZE * 2;
-
-            const gradient = dashCtx.createLinearGradient(
-                portalScreenX, portalScreenY,
-                portalScreenX + w, portalScreenY + h
-            );
-            gradient.addColorStop(0, '#4af2c5');
-            gradient.addColorStop(0.5, '#7b5cff');
-            gradient.addColorStop(1, '#ff4b6e');
-
-            dashCtx.save();
-            dashCtx.shadowColor = 'rgba(122, 255, 255, 0.8)';
-            dashCtx.shadowBlur = 18;
-
-            dashCtx.strokeStyle = gradient;
-            dashCtx.lineWidth = 3;
-            dashCtx.strokeRect(portalScreenX, portalScreenY, w, h);
-
-            dashCtx.restore();
-
-            dashCtx.fillStyle = 'rgba(255, 255, 255, 0.18)';
-            dashCtx.fillRect(portalScreenX + 3, portalScreenY + 3, w - 6, h - 6);
-        }
-
-        const barrierScreenX = barrierX - previewCameraX;
-        dashCtx.strokeStyle = '#ff4b6e';
-        dashCtx.lineWidth = 2;
-        dashCtx.beginPath();
-        dashCtx.moveTo(barrierScreenX, 0);
-        dashCtx.lineTo(barrierScreenX, dashCanvas.height);
-        dashCtx.stroke();
-
-        dashCtx.fillStyle = '#ff4b6e';
-        dashCtx.font = '12px system-ui';
-        dashCtx.textAlign = 'center';
-        dashCtx.fillText('BARRIER', barrierScreenX, 14);
-
-        dashCtx.globalAlpha = 1.0;
+      resizeSnake();
+      resetSnake();
+      requestAnimationFrame(snakeLoop);
     }
-}
 
-loop();
-setMode('sandbox');
-</script>
+    window.addEventListener("resize", () => {
+      resizeSandbox();
+      resizeSnake();
+    });
+
+    initAll();
+  </script>
 </body>
 </html>
