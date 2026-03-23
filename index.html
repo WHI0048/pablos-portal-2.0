@@ -348,7 +348,7 @@
                     <div class="card-title"><span>Pablo‑Dash</span> Editor</div>
                     <div class="card-controls">
                         <div class="pill">Space/Click = Jump</div>
-                        <div class="pill">Scroll = Camera</div>
+                        <div class="pill">Buttons = Camera</div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -363,10 +363,14 @@
                         <button class="tool-button" data-dash-tool="erase">⌫ Erase</button>
                         <button class="tool-button danger" data-dash-tool="clear">🗑 Clear</button>
                     </div>
+                    <div class="toolbar" id="dash-scroll-toolbar">
+                        <button class="tool-button" data-dash-scroll="left">⬅ Scroll Left</button>
+                        <button class="tool-button" data-dash-scroll="right">Scroll Right ➡</button>
+                    </div>
                     <canvas id="dashEditorCanvas" width="900" height="400"></canvas>
                     <div class="status-bar">
                         <span id="dash-status-left">Mode: <strong>Editor</strong></span>
-                        <span id="dash-status-right">Scroll to move camera. Click to place tiles.</span>
+                        <span id="dash-status-right">Use tools to build. Scroll buttons move camera.</span>
                     </div>
                 </div>
             </section>
@@ -522,7 +526,7 @@ let spawnX = 100; // default spawn position
 // Camera for editor and play
 let cameraX = 0; // in pixels
 let cameraY = 0;
-const CAMERA_STEP = 40; // fixed step per wheel notch
+const CAMERA_STEP = 80; // step per button press
 
 // Editor state
 let editorMode = 'edit'; // 'edit' | 'play'
@@ -544,6 +548,7 @@ let jumpHeld = false;
 
 // UI elements
 const dashToolbarButtons = document.querySelectorAll('[data-dash-tool]');
+const dashScrollButtons = document.querySelectorAll('[data-dash-scroll]');
 const dashStatusLeft = document.getElementById('dash-status-left');
 const dashStatusRight = document.getElementById('dash-status-right');
 
@@ -565,24 +570,47 @@ function getTile(tx, ty) {
     return world[worldKey(tx, ty)] || null;
 }
 
-// ----- Editor input -----
+// ----- Editor input: tools -----
 dashToolbarButtons.forEach(btn => {
     btn.addEventListener('click', () => {
         const tool = btn.dataset.dashTool;
-        dashToolbarButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
 
         if (tool === 'play') {
             editorMode = 'play';
             startDashPlaytest();
-        } else if (tool === 'edit') {
+            dashToolbarButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateDashStatus();
+            return;
+        }
+
+        if (tool === 'edit') {
             editorMode = 'edit';
             stopDashPlaytest();
-        } else if (tool === 'clear') {
-            for (const k in world) delete world[k];
-        } else {
-            currentTool = tool;
+            dashToolbarButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            // keep currentTool as last drawing tool
+            updateDashStatus();
+            return;
         }
+
+        if (tool === 'clear') {
+            for (const k in world) delete world[k];
+            return;
+        }
+
+        // drawing tools
+        currentTool = tool;
+        dashToolbarButtons.forEach(b => {
+            if (b.dataset.dashTool === 'ground' ||
+                b.dataset.dashTool === 'spike' ||
+                b.dataset.dashTool === 'pad' ||
+                b.dataset.dashTool === 'ring' ||
+                b.dataset.dashTool === 'spawn' ||
+                b.dataset.dashTool === 'erase') {
+                b.classList.toggle('active', b === btn);
+            }
+        });
         updateDashStatus();
     });
 });
@@ -595,12 +623,26 @@ function updateDashStatus() {
     dashStatusLeft.innerHTML = `Mode: <strong>${editorMode === 'edit' ? 'Editor' : 'Playtest'}</strong>`;
     if (editorMode === 'edit') {
         dashStatusRight.textContent =
-            `Tool: ${currentTool.toUpperCase()} • Scroll to move camera, click to place tiles.`;
+            `Tool: ${currentTool.toUpperCase()} • Use scroll buttons to move camera, click to place tiles.`;
     } else {
         dashStatusRight.textContent = 'Space/Click to jump. ESC to return to editor.';
     }
 }
 updateDashStatus();
+
+// ----- Editor input: scroll buttons -----
+dashScrollButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (editorMode !== 'edit') return;
+        const dir = btn.dataset.dashScroll;
+        if (dir === 'left') {
+            cameraX -= CAMERA_STEP; // infinite left
+        } else if (dir === 'right') {
+            // clamp at spawn line
+            cameraX = Math.min(cameraX + CAMERA_STEP, spawnX);
+        }
+    });
+});
 
 // Mouse handling on editor canvas
 dashEditorCanvas.addEventListener('mousedown', (e) => {
@@ -618,25 +660,6 @@ dashEditorCanvas.addEventListener('mousemove', (e) => {
         handleEditorClick(e);
     }
 });
-
-// 🔧 Smooth, consistent infinite scroll (left) + barrier at spawn line (right)
-window.addEventListener('wheel', (e) => {
-    if (currentMode !== 'dash' || editorMode !== 'edit') return;
-
-    e.preventDefault();
-
-    const direction = Math.sign(e.deltaY); // -1 up, +1 down
-    const speedMultiplier = e.shiftKey ? 2 : 1;
-    const delta = direction * CAMERA_STEP * speedMultiplier;
-
-    if (direction < 0) {
-        // scroll left: infinite
-        cameraX += delta;
-    } else if (direction > 0) {
-        // scroll right: clamp at spawn line
-        cameraX = Math.min(cameraX + delta, spawnX);
-    }
-}, { passive: false });
 
 // Editor click -> place tiles or move spawn line
 function handleEditorClick(e) {
@@ -663,7 +686,6 @@ function handleEditorClick(e) {
     } else if (currentTool === 'ring') {
         setTile(tx, ty, 'ring');
     } else if (currentTool === 'spawn') {
-        // Move spawn line to this tile's X
         spawnX = tx * TILE_SIZE;
     }
 }
@@ -686,7 +708,10 @@ function stopDashPlaytest() {
 // Keyboard + mouse for jump
 window.addEventListener('keydown', (e) => {
     if (currentMode !== 'dash') return;
+
     if (e.code === 'Space') {
+        // prevent page scroll / button activation
+        e.preventDefault();
         jumpHeld = true;
         if (!isPlayingDash) return;
         if (player.onGround && player.alive) {
@@ -698,6 +723,9 @@ window.addEventListener('keydown', (e) => {
         stopDashPlaytest();
         dashToolbarButtons.forEach(b => b.classList.remove('active'));
         document.querySelector('[data-dash-tool="edit"]').classList.add('active');
+        // keep last drawing tool active
+        const toolBtn = document.querySelector(`[data-dash-tool="${currentTool}"]`);
+        if (toolBtn) toolBtn.classList.add('active');
         updateDashStatus();
     }
 });
