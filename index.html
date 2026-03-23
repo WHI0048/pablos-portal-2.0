@@ -495,6 +495,7 @@
                   <div class="palette-item" data-type="portal-speed">Speed</div>
                   <div class="palette-item" data-type="portal-gravity">Gravity</div>
                   <div class="palette-item" data-type="decor">Decor</div>
+                  <div class="palette-item" data-type="spawn">Spawn</div>
                   <div class="palette-item" data-type="erase">Erase</div>
                 </div>
               </div>
@@ -508,8 +509,8 @@
               </div>
             </div>
             <div id="dash-status">
-              <span>Barrier: <code>X = 100</code> · Left scroll clamped</span>
-              <span>Spawn line: <code>X = 150</code> · Right scroll infinite</span>
+              <span>Barrier: <code>X = 0</code> · Left scroll clamped</span>
+              <span>Spawn line: <code id="spawn-readout">X = 40</code> · Move with Spawn tool</span>
               <span>Camera X: <code id="camera-x-readout">0</code></span>
             </div>
           </div>
@@ -548,9 +549,8 @@
               <li><code>3</code> — Switch to Pablo‑Dash</li>
               <li><code>E</code> — Open Dash Editor</li>
               <li><code>P</code> — Play / stop level</li>
-              <li>Left scroll clamped at barrier line</li>
-              <li>Right scroll infinite</li>
-              <li>Spawn line & barrier line always visible</li>
+              <li>Barrier & spawn at editor start</li>
+              <li>Left scroll clamped · Right infinite</li>
             </ul>
           </div>
           <div class="section">
@@ -562,6 +562,7 @@
               <li><strong>Speed Portal:</strong> Change speed</li>
               <li><strong>Gravity Portal:</strong> Flip gravity</li>
               <li><strong>Decor:</strong> Visual only</li>
+              <li><strong>Spawn:</strong> Move spawn line</li>
               <li><strong>Erase:</strong> Remove objects</li>
             </ul>
           </div>
@@ -571,7 +572,7 @@
 
     <div id="footer">
       <span>Pablo's Portal 2.0 — Geometry‑Dash‑Inspired Neon Shell</span>
-      <span>Left scroll clamped at barrier · Right scroll infinite · Spawn & barrier lines locked</span>
+      <span>Barrier & spawn at editor start · Left clamped · Right infinite</span>
     </div>
   </div>
 
@@ -699,7 +700,6 @@
 
     function sbUpdate() {
       if (sbPaused) return;
-      // Simple falling sand / water / fire
       for (let y = sbRows - 1; y >= 0; y--) {
         for (let x = 0; x < sbCols; x++) {
           const cell = sbGrid[y][x];
@@ -734,7 +734,6 @@
             if (cell.temp <= 0) {
               cell.type = "empty";
             } else {
-              // Spread fire
               const dirs = [
                 [1, 0],
                 [-1, 0],
@@ -778,8 +777,6 @@
     }
 
     let sbMouseDown = false;
-    let sbLastX = -1;
-    let sbLastY = -1;
 
     sbCanvas.addEventListener("mousedown", (e) => {
       sbMouseDown = true;
@@ -799,7 +796,6 @@
       const brush = parseInt(brushSizeInput.value, 10);
 
       if (sbTool === "ruler") {
-        // Just draw overlay
         sbDraw();
         sbCtx.strokeStyle = "rgba(255,255,255,0.4)";
         sbCtx.beginPath();
@@ -894,7 +890,6 @@
 
     function snDraw() {
       snCtx.clearRect(0, 0, snCanvas.width, snCanvas.height);
-      // Grid
       snCtx.strokeStyle = "rgba(255,255,255,0.06)";
       snCtx.lineWidth = 1;
       for (let x = 0; x <= snCols; x++) {
@@ -909,7 +904,6 @@
         snCtx.lineTo(snCanvas.width, y * snCellSize);
         snCtx.stroke();
       }
-      // Food
       snCtx.fillStyle = "#ff4b6e";
       snCtx.fillRect(
         snFood.x * snCellSize + 2,
@@ -917,7 +911,6 @@
         snCellSize - 4,
         snCellSize - 4
       );
-      // Snake
       snSnake.forEach((seg, i) => {
         snCtx.fillStyle = i === 0 ? "#4fd1ff" : "#00e0ff";
         snCtx.fillRect(
@@ -955,6 +948,7 @@
     const dashEditorCanvas = document.getElementById("dash-editor-canvas");
     const dashEditorCtx = dashEditorCanvas.getContext("2d");
     const cameraXReadout = document.getElementById("camera-x-readout");
+    const spawnReadout = document.getElementById("spawn-readout");
     const dashAttemptsEl = document.getElementById("dash-attempts");
 
     const scrollLeftBtn = document.getElementById("scroll-left-btn");
@@ -967,8 +961,8 @@
     const paletteItems = document.querySelectorAll(".palette-item");
 
     const gridSize = 20;
-    const barrierX = 100; // world coordinate
-    const spawnX = 150;
+    const barrierX = 0; // at start
+    let spawnX = 40;    // near start
     let cameraX = 0;
     let dashObjects = []; // {type, x, y}
     let selectedType = "block";
@@ -982,11 +976,11 @@
     let dashOnGround = false;
 
     function worldToScreenX(wx) {
-      return (wx - cameraX) + dashEditorCanvas.width / 2;
+      return wx - cameraX;
     }
 
     function screenToWorldX(sx) {
-      return sx - dashEditorCanvas.width / 2 + cameraX;
+      return sx + cameraX;
     }
 
     function snapToGrid(value) {
@@ -1021,7 +1015,7 @@
         ctx.stroke();
       }
 
-      // Barrier line
+      // Barrier line at start
       const barrierScreenX = worldToScreenX(barrierX);
       ctx.strokeStyle = "rgba(255,80,120,0.9)";
       ctx.lineWidth = 2;
@@ -1103,6 +1097,7 @@
       drawDashGrid(dashEditorCtx);
       drawDashObjects(dashEditorCtx);
       cameraXReadout.textContent = cameraX.toFixed(1);
+      spawnReadout.textContent = `X = ${spawnX.toFixed(0)}`;
     }
 
     dashEditorCanvas.addEventListener("mousedown", (e) => {
@@ -1114,7 +1109,9 @@
       const wx = snapToGrid(screenToWorldX(sx));
       const wy = snapToGrid(groundY - sy);
 
-      if (selectedType === "erase") {
+      if (selectedType === "spawn") {
+        spawnX = Math.max(barrierX + gridSize, wx);
+      } else if (selectedType === "erase") {
         dashObjects = dashObjects.filter(
           (o) => !(Math.abs(o.x - wx) < gridSize / 2 && Math.abs(o.y - wy) < gridSize / 2)
         );
@@ -1149,6 +1146,9 @@
         if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") {
           scrollCamera(20);
         }
+        if (e.key.toLowerCase() === "p") {
+          toggleDashPlay();
+        }
       }
       if (panels.dash.classList.contains("active")) {
         if (e.key.toLowerCase() === "p") {
@@ -1156,11 +1156,6 @@
         }
         if (e.key === " ") {
           dashJump();
-        }
-      }
-      if (panels["dash-editor"].classList.contains("active")) {
-        if (e.key.toLowerCase() === "p") {
-          toggleDashPlay();
         }
       }
     });
@@ -1197,7 +1192,7 @@
       };
       dashPlayerVy = 0;
       dashOnGround = false;
-      cameraX = spawnX;
+      cameraX = barrierX;
     }
 
     function stopDashRun() {
@@ -1234,15 +1229,13 @@
         dashOnGround = true;
       }
 
-      // Camera follows player, but clamped left at barrier
-      cameraX = Math.max(barrierX, dashPlayer.x);
-      // Collisions
+      cameraX = Math.max(barrierX, dashPlayer.x - 100);
+
       for (const obj of dashObjects) {
         const dx = dashPlayer.x - obj.x;
         const dy = dashPlayer.y - obj.y;
         if (obj.type === "block") {
           if (Math.abs(dx) < gridSize && Math.abs(dy) < gridSize) {
-            // Simple ground collision
             if (dashPlayer.y > obj.y) {
               dashPlayer.y = obj.y;
               dashPlayerVy = 0;
@@ -1251,7 +1244,6 @@
           }
         } else if (obj.type === "spike") {
           if (Math.abs(dx) < gridSize * 0.7 && Math.abs(dy) < gridSize * 0.7) {
-            // Death
             startDashRun();
             return;
           }
@@ -1300,7 +1292,6 @@
       requestAnimationFrame(loop);
     }
 
-    // Init
     sbClearGrid();
     snReset();
     redrawEditor();
