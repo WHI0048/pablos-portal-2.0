@@ -319,7 +319,6 @@
 
     <main class="main">
         <div class="top-row">
-            <!-- Left: Main canvas area (switches by mode) -->
             <section class="card" id="main-card">
                 <div class="card-header">
                     <div class="card-title"><span>Play</span> Area</div>
@@ -329,11 +328,8 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <!-- Sandbox canvas -->
                     <canvas id="sandboxCanvas" width="640" height="360"></canvas>
-                    <!-- Snake canvas -->
                     <canvas id="snakeCanvas" width="640" height="360" class="hidden"></canvas>
-                    <!-- Pablo‑Dash play canvas -->
                     <canvas id="dashCanvas" width="900" height="400" class="hidden"></canvas>
                     <div class="status-bar">
                         <span id="status-left">Mode: <strong>Sandbox</strong></span>
@@ -342,7 +338,6 @@
                 </div>
             </section>
 
-            <!-- Right: Pablo‑Dash editor / tools -->
             <section class="card" id="dash-editor-card">
                 <div class="card-header">
                     <div class="card-title"><span>Pablo‑Dash</span> Editor</div>
@@ -378,7 +373,6 @@
         </div>
 
         <div class="bottom-row">
-            <!-- Sandbox info / stub -->
             <section class="card">
                 <div class="card-header">
                     <div class="card-title"><span>Sandbox</span> Notes</div>
@@ -394,7 +388,6 @@
                 </div>
             </section>
 
-            <!-- Snake info / stub -->
             <section class="card">
                 <div class="card-header">
                     <div class="card-title"><span>Neon Snake</span> Notes</div>
@@ -427,7 +420,7 @@ const snakeCanvas = document.getElementById('snakeCanvas');
 const dashCanvas = document.getElementById('dashCanvas');
 const dashEditorCanvas = document.getElementById('dashEditorCanvas');
 
-let currentMode = 'sandbox'; // 'sandbox' | 'snake' | 'dash';
+let currentMode = 'sandbox';
 
 function setMode(mode) {
     currentMode = mode;
@@ -517,30 +510,21 @@ const JUMP_VELOCITY = -9;
 const PLAYER_WIDTH = 18;
 const PLAYER_HEIGHT = 18;
 
-// World stored as dictionary: key = "x,y" (tile coords), value = tileType
-// tileType: 'ground', 'spike', 'pad', 'ring'
 const world = {};
 
-// Spawn line (world X in pixels) – movable
-let spawnX = 100; // default spawn position
+let spawnX = 100;
+const barrierX = 100;
 
-// Barrier line – fixed at initial spawnX on load
-const barrierX = spawnX;
+let endPortal = null;
 
-// End portal (only one)
-let endPortal = null; // { x: worldX, y: worldY }
-
-// Camera for editor and play
-let cameraX = 0; // in pixels
+let cameraX = barrierX;
 let cameraY = 0;
-const CAMERA_STEP = 80; // step per button press
+const CAMERA_STEP = 80;
 
-// Editor state
-let editorMode = 'edit'; // 'edit' | 'play'
-let currentTool = 'ground'; // 'ground' | 'spike' | 'pad' | 'ring' | 'spawn' | 'endportal' | 'erase'
+let editorMode = 'edit';
+let currentTool = 'ground';
 let isMouseDown = false;
 
-// Player state
 let player = {
     x: spawnX,
     y: 200,
@@ -554,13 +538,11 @@ let player = {
 let isPlayingDash = false;
 let jumpHeld = false;
 
-// UI elements
 const dashToolbarButtons = document.querySelectorAll('[data-dash-tool]');
 const dashScrollButtons = document.querySelectorAll('[data-dash-scroll]');
 const dashStatusLeft = document.getElementById('dash-status-left');
 const dashStatusRight = document.getElementById('dash-status-right');
 
-// ----- Helper functions -----
 function worldKey(tx, ty) {
     return `${tx},${ty}`;
 }
@@ -578,7 +560,6 @@ function getTile(tx, ty) {
     return world[worldKey(tx, ty)] || null;
 }
 
-// ----- Editor input: tools -----
 dashToolbarButtons.forEach(btn => {
     btn.addEventListener('click', () => {
         const tool = btn.dataset.dashTool;
@@ -621,7 +602,6 @@ dashToolbarButtons.forEach(btn => {
     });
 });
 
-// default active tools
 document.querySelector('[data-dash-tool="edit"]').classList.add('active');
 document.querySelector('[data-dash-tool="ground"]').classList.add('active');
 
@@ -632,7 +612,7 @@ function updateDashStatus() {
             `Tool: ${currentTool.toUpperCase()} • Use scroll buttons to move camera, click to place tiles.`;
     } else {
         if (player.levelComplete) {
-            dashStatusRight.textContent = 'LEVEL COMPLETE – Press Edit to return.';
+            dashStatusRight.textContent = 'LEVEL COMPLETE – Press Playtest to retry or Edit to modify.';
         } else if (!player.alive) {
             dashStatusRight.textContent = 'You died – Press Playtest to retry or Edit to modify.';
         } else {
@@ -642,20 +622,18 @@ function updateDashStatus() {
 }
 updateDashStatus();
 
-// ----- Editor input: scroll buttons -----
 dashScrollButtons.forEach(btn => {
     btn.addEventListener('click', () => {
         if (editorMode !== 'edit') return;
         const dir = btn.dataset.dashScroll;
         if (dir === 'left') {
-            cameraX -= CAMERA_STEP; // infinite left
+            cameraX = Math.max(cameraX - CAMERA_STEP, barrierX);
         } else if (dir === 'right') {
-            cameraX = Math.min(cameraX + CAMERA_STEP, barrierX); // clamp at barrier
+            cameraX += CAMERA_STEP;
         }
     });
 });
 
-// Mouse handling on editor canvas
 dashEditorCanvas.addEventListener('mousedown', (e) => {
     isMouseDown = true;
     handleEditorClick(e);
@@ -672,7 +650,6 @@ dashEditorCanvas.addEventListener('mousemove', (e) => {
     }
 });
 
-// Editor click -> place tiles, move spawn line, or place end portal
 function handleEditorClick(e) {
     if (editorMode !== 'edit') return;
 
@@ -711,7 +688,6 @@ function handleEditorClick(e) {
     }
 }
 
-// ----- Playtest control -----
 function startDashPlaytest() {
     isPlayingDash = true;
     player.x = spawnX;
@@ -728,7 +704,6 @@ function stopDashPlaytest() {
     isPlayingDash = false;
 }
 
-// Keyboard + mouse for jump
 window.addEventListener('keydown', (e) => {
     if (currentMode !== 'dash') return;
 
@@ -776,7 +751,6 @@ window.addEventListener('mouseup', (e) => {
     }
 });
 
-// ----- Physics + collision -----
 function updatePlayer() {
     if (!isPlayingDash) return;
     if (!player.alive || player.levelComplete) return;
@@ -842,7 +816,6 @@ function updatePlayer() {
         }
     }
 
-    // End portal collision
     if (endPortal) {
         const portalRect = {
             x: endPortal.x,
@@ -876,7 +849,6 @@ function rectOverlap(x1, y1, w1, h1, x2, y2, w2, h2) {
              y1 >= y2 + h2);
 }
 
-// ----- Rendering -----
 function renderDashEditor() {
     dashEditorCtx.clearRect(0, 0, dashEditorCanvas.width, dashEditorCanvas.height);
 
@@ -886,7 +858,6 @@ function renderDashEditor() {
     dashEditorCtx.fillStyle = g;
     dashEditorCtx.fillRect(0, 0, dashEditorCanvas.width, dashEditorCanvas.height);
 
-    // Grid
     dashEditorCtx.strokeStyle = 'rgba(255,255,255,0.05)';
     dashEditorCtx.lineWidth = 1;
     const startX = Math.floor(cameraX / TILE_SIZE) * TILE_SIZE - cameraX;
@@ -905,7 +876,6 @@ function renderDashEditor() {
         dashEditorCtx.stroke();
     }
 
-    // Tiles
     for (const key in world) {
         const [txStr, tyStr] = key.split(',');
         const tx = parseInt(txStr, 10);
@@ -949,7 +919,6 @@ function renderDashEditor() {
         }
     }
 
-    // Spawn line (white, movable)
     const spawnScreenX = spawnX - cameraX;
     dashEditorCtx.strokeStyle = '#ffffff';
     dashEditorCtx.lineWidth = 2;
@@ -958,7 +927,6 @@ function renderDashEditor() {
     dashEditorCtx.lineTo(spawnScreenX, dashEditorCanvas.height);
     dashEditorCtx.stroke();
 
-    // Barrier line (red, fixed at barrierX, with label)
     const barrierScreenX = barrierX - cameraX;
     dashEditorCtx.strokeStyle = '#ff4b6e';
     dashEditorCtx.lineWidth = 2;
@@ -972,7 +940,6 @@ function renderDashEditor() {
     dashEditorCtx.textAlign = 'center';
     dashEditorCtx.fillText('BARRIER', barrierScreenX, 14);
 
-    // End portal (neon cyber‑glass gate)
     if (endPortal) {
         const portalScreenX = endPortal.x - cameraX;
         const portalScreenY = endPortal.y - cameraY;
@@ -983,7 +950,6 @@ function renderDashEditor() {
             const w = TILE_SIZE;
             const h = TILE_SIZE * 2;
 
-            // Outer glow
             const gradient = dashEditorCtx.createLinearGradient(
                 portalScreenX, portalScreenY,
                 portalScreenX + w, portalScreenY + h
@@ -996,14 +962,12 @@ function renderDashEditor() {
             dashEditorCtx.shadowColor = 'rgba(122, 255, 255, 0.8)';
             dashEditorCtx.shadowBlur = 18;
 
-            // Border
             dashEditorCtx.strokeStyle = gradient;
             dashEditorCtx.lineWidth = 3;
             dashEditorCtx.strokeRect(portalScreenX, portalScreenY, w, h);
 
             dashEditorCtx.restore();
 
-            // Frosted glass center
             dashEditorCtx.fillStyle = 'rgba(255, 255, 255, 0.18)';
             dashEditorCtx.fillRect(portalScreenX + 3, portalScreenY + 3, w - 6, h - 6);
         }
@@ -1065,7 +1029,19 @@ function renderDashPlay() {
         }
     }
 
-    // End portal in play
+    const barrierScreenX = barrierX - playCameraX;
+    dashCtx.strokeStyle = '#ff4b6e';
+    dashCtx.lineWidth = 2;
+    dashCtx.beginPath();
+    dashCtx.moveTo(barrierScreenX, 0);
+    dashCtx.lineTo(barrierScreenX, dashCanvas.height);
+    dashCtx.stroke();
+
+    dashCtx.fillStyle = '#ff4b6e';
+    dashCtx.font = '12px system-ui';
+    dashCtx.textAlign = 'center';
+    dashCtx.fillText('BARRIER', barrierScreenX, 14);
+
     if (endPortal) {
         const portalScreenX = endPortal.x - playCameraX;
         const portalScreenY = endPortal.y - playCameraY;
@@ -1094,7 +1070,6 @@ function renderDashPlay() {
         dashCtx.fillRect(portalScreenX + 3, portalScreenY + 3, w - 6, h - 6);
     }
 
-    // Player
     dashCtx.fillStyle = player.levelComplete
         ? '#4af2c5'
         : (player.alive ? '#ffffff' : '#888888');
@@ -1113,7 +1088,6 @@ function renderDashPlay() {
     }
 }
 
-// ----- Main loop -----
 function loop() {
     requestAnimationFrame(loop);
 
@@ -1176,7 +1150,6 @@ function loop() {
             }
         }
 
-        // End portal preview
         if (endPortal) {
             const portalScreenX = endPortal.x - previewCameraX;
             const portalScreenY = endPortal.y - previewCameraY;
@@ -1204,6 +1177,19 @@ function loop() {
             dashCtx.fillStyle = 'rgba(255, 255, 255, 0.18)';
             dashCtx.fillRect(portalScreenX + 3, portalScreenY + 3, w - 6, h - 6);
         }
+
+        const barrierScreenX = barrierX - previewCameraX;
+        dashCtx.strokeStyle = '#ff4b6e';
+        dashCtx.lineWidth = 2;
+        dashCtx.beginPath();
+        dashCtx.moveTo(barrierScreenX, 0);
+        dashCtx.lineTo(barrierScreenX, dashCanvas.height);
+        dashCtx.stroke();
+
+        dashCtx.fillStyle = '#ff4b6e';
+        dashCtx.font = '12px system-ui';
+        dashCtx.textAlign = 'center';
+        dashCtx.fillText('BARRIER', barrierScreenX, 14);
 
         dashCtx.globalAlpha = 1.0;
     }
