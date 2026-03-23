@@ -487,7 +487,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Level + camera config
   const TILE_SIZE = 40;
   const GROUND_Y = editorCanvas.height - 80;
-  const LEVEL_HEIGHT_TILES = 10;
   const LEVEL_WIDTH_TILES = 1000; // effectively "infinite" to the right
   const BARRIER_X = 0; // locked barrier at spawn initial position (0)
   let cameraX = 0;
@@ -497,7 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const SPAWN_LINE_COLOR = '#ffffff';
 
   // Objects
-  const objects = []; // { x, y, type }
+  const objects = []; // { x, y, type, w, h }
 
   // Tools
   let currentTool = 'block';
@@ -597,34 +596,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const worldX = cameraX + mx;
     const worldY = my;
 
-    // Snap to grid
-    const snappedX = Math.floor(worldX / TILE_SIZE) * TILE_SIZE;
-    const snappedY = Math.floor(worldY / TILE_SIZE) * TILE_SIZE;
-
     if (currentTool === 'spawn') {
       // Move spawn line, but never left of barrier
-      spawnX = Math.max(BARRIER_X, snappedX);
+      spawnX = Math.max(BARRIER_X, worldX);
       return;
     }
 
     if (currentTool === 'erase') {
-      // Remove any object at this tile
+      // Remove any object close to this point
       for (let i = objects.length - 1; i >= 0; i--) {
         const o = objects[i];
-        if (o.x === snappedX && o.y === snappedY) {
+        const cx = o.x + o.w / 2;
+        const cy = o.y + o.h / 2;
+        const dx = worldX - cx;
+        const dy = worldY - cy;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < (TILE_SIZE * TILE_SIZE) / 4) {
           objects.splice(i, 1);
         }
       }
       return;
     }
 
-    // Place object
-    const type = currentTool; // 'block', 'spike', 'pad'
-    // Avoid duplicates
-    const exists = objects.some(o => o.x === snappedX && o.y === snappedY && o.type === type);
-    if (!exists) {
-      objects.push({ x: snappedX, y: snappedY, type });
+    // Place object centered on cursor
+    let w = TILE_SIZE;
+    let h = TILE_SIZE;
+    if (currentTool === 'pad') {
+      h = TILE_SIZE * 0.5;
     }
+    const objX = worldX - w / 2;
+    const objY = worldY - h / 2;
+
+    const type = currentTool; // 'block', 'spike', 'pad'
+    objects.push({ x: objX, y: objY, type, w, h });
   }
 
   // --------------------------------------------------
@@ -710,20 +714,20 @@ document.addEventListener('DOMContentLoaded', () => {
     objects.forEach(o => {
       if (o.type === 'block') {
         ctx.fillStyle = 'rgba(0,255,255,0.9)';
-        ctx.fillRect(o.x, o.y, TILE_SIZE, TILE_SIZE);
+        ctx.fillRect(o.x, o.y, o.w, o.h);
         ctx.strokeStyle = 'rgba(0,0,0,0.7)';
-        ctx.strokeRect(o.x, o.y, TILE_SIZE, TILE_SIZE);
+        ctx.strokeRect(o.x, o.y, o.w, o.h);
       } else if (o.type === 'spike') {
         ctx.fillStyle = 'rgba(255,0,0,0.9)';
         ctx.beginPath();
-        ctx.moveTo(o.x, o.y + TILE_SIZE);
-        ctx.lineTo(o.x + TILE_SIZE / 2, o.y);
-        ctx.lineTo(o.x + TILE_SIZE, o.y + TILE_SIZE);
+        ctx.moveTo(o.x, o.y + o.h);
+        ctx.lineTo(o.x + o.w / 2, o.y);
+        ctx.lineTo(o.x + o.w, o.y + o.h);
         ctx.closePath();
         ctx.fill();
       } else if (o.type === 'pad') {
         ctx.fillStyle = 'rgba(255,255,0,0.9)';
-        ctx.fillRect(o.x, o.y + TILE_SIZE * 0.5, TILE_SIZE, TILE_SIZE * 0.5);
+        ctx.fillRect(o.x, o.y, o.w, o.h);
       }
     });
 
@@ -733,7 +737,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function updatePlaytest(dt) {
     if (!isPlaytest) return;
 
-    // Simple gravity + jump
     const GRAVITY = 2000;
     const JUMP_VELOCITY = -800;
 
@@ -745,23 +748,19 @@ document.addEventListener('DOMContentLoaded', () => {
     player.vy += GRAVITY * dt;
     player.y += player.vy * dt;
 
-    // Ground collision
     if (player.y + player.height >= GROUND_Y) {
       player.y = GROUND_Y - player.height;
       player.vy = 0;
       player.onGround = true;
     }
 
-    // Move player forward automatically
     const SPEED = 260;
     player.x += SPEED * dt;
 
-    // Barrier collision (invisible but enforced)
     if (player.x < BARRIER_X) {
       player.x = BARRIER_X;
     }
 
-    // Camera follows player, but never left of barrier
     const targetCam = player.x - editorCanvas.width * 0.3;
     cameraX = Math.max(BARRIER_X, targetCam);
   }
