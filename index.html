@@ -468,7 +468,6 @@ document.addEventListener('DOMContentLoaded', () => {
   canvases.forEach(c => {
     if (!c.width) c.width = c.clientWidth || 960;
     if (!c.height) c.height = c.clientHeight || 520;
-    // No drawing, no loops, no game logic.
   });
 
   // --------------------------------------------------
@@ -485,9 +484,9 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('resize', resizeEditorCanvas);
 
   // Level + camera config
-  const TILE_SIZE = 40;
+  const TILE_SIZE = 20; // smaller pixel grid
   const GROUND_Y = editorCanvas.height - 80;
-  const LEVEL_WIDTH_TILES = 1000; // effectively "infinite" to the right
+  const LEVEL_WIDTH_TILES = 2000;
   const BARRIER_X = 0; // locked barrier at spawn initial position (0)
   let cameraX = 0;
 
@@ -495,8 +494,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let spawnX = 0; // starts at 0
   const SPAWN_LINE_COLOR = '#ffffff';
 
-  // Objects
-  const objects = []; // { x, y, type, w, h }
+  // Objects: snapped to grid cells
+  const objects = []; // { x, y, type }
 
   // Tools
   let currentTool = 'block';
@@ -512,7 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Scroll buttons
   const scrollLeftBtn = document.getElementById('scrollLeftBtn');
   const scrollRightBtn = document.getElementById('scrollRightBtn');
-  const SCROLL_STEP = 160;
+  const SCROLL_STEP = 10 * TILE_SIZE;
 
   scrollLeftBtn.addEventListener('click', () => {
     cameraX = Math.max(BARRIER_X, cameraX - SCROLL_STEP);
@@ -526,12 +525,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const playtestBtn = document.getElementById('playtestBtn');
   let isPlaytest = false;
 
-  // Simple player for playtest
   const player = {
     x: spawnX,
-    y: GROUND_Y - 40,
-    width: 30,
-    height: 30,
+    y: GROUND_Y - 30,
+    width: 20,
+    height: 20,
     vy: 0,
     onGround: true
   };
@@ -541,7 +539,6 @@ document.addEventListener('DOMContentLoaded', () => {
     playtestBtn.classList.toggle('active', isPlaytest);
 
     if (isPlaytest) {
-      // Reset player at spawn
       player.x = spawnX;
       player.y = GROUND_Y - player.height;
       player.vy = 0;
@@ -591,44 +588,35 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function handleEditorClick(mx, my) {
-    if (isPlaytest) return; // no editing in playtest
+    if (isPlaytest) return;
 
     const worldX = cameraX + mx;
     const worldY = my;
 
+    // snap to smaller grid
+    const snappedX = Math.floor(worldX / TILE_SIZE) * TILE_SIZE;
+    const snappedY = Math.floor(worldY / TILE_SIZE) * TILE_SIZE;
+
     if (currentTool === 'spawn') {
-      // Move spawn line, but never left of barrier
-      spawnX = Math.max(BARRIER_X, worldX);
+      spawnX = Math.max(BARRIER_X, snappedX);
       return;
     }
 
     if (currentTool === 'erase') {
-      // Remove any object close to this point
       for (let i = objects.length - 1; i >= 0; i--) {
         const o = objects[i];
-        const cx = o.x + o.w / 2;
-        const cy = o.y + o.h / 2;
-        const dx = worldX - cx;
-        const dy = worldY - cy;
-        const distSq = dx * dx + dy * dy;
-        if (distSq < (TILE_SIZE * TILE_SIZE) / 4) {
+        if (o.x === snappedX && o.y === snappedY) {
           objects.splice(i, 1);
         }
       }
       return;
     }
 
-    // Place object centered on cursor
-    let w = TILE_SIZE;
-    let h = TILE_SIZE;
-    if (currentTool === 'pad') {
-      h = TILE_SIZE * 0.5;
-    }
-    const objX = worldX - w / 2;
-    const objY = worldY - h / 2;
-
     const type = currentTool; // 'block', 'spike', 'pad'
-    objects.push({ x: objX, y: objY, type, w, h });
+    const exists = objects.some(o => o.x === snappedX && o.y === snappedY && o.type === type);
+    if (!exists) {
+      objects.push({ x: snappedX, y: snappedY, type });
+    }
   }
 
   // --------------------------------------------------
@@ -714,20 +702,20 @@ document.addEventListener('DOMContentLoaded', () => {
     objects.forEach(o => {
       if (o.type === 'block') {
         ctx.fillStyle = 'rgba(0,255,255,0.9)';
-        ctx.fillRect(o.x, o.y, o.w, o.h);
+        ctx.fillRect(o.x, o.y, TILE_SIZE, TILE_SIZE);
         ctx.strokeStyle = 'rgba(0,0,0,0.7)';
-        ctx.strokeRect(o.x, o.y, o.w, o.h);
+        ctx.strokeRect(o.x, o.y, TILE_SIZE, TILE_SIZE);
       } else if (o.type === 'spike') {
         ctx.fillStyle = 'rgba(255,0,0,0.9)';
         ctx.beginPath();
-        ctx.moveTo(o.x, o.y + o.h);
-        ctx.lineTo(o.x + o.w / 2, o.y);
-        ctx.lineTo(o.x + o.w, o.y + o.h);
+        ctx.moveTo(o.x, o.y + TILE_SIZE);
+        ctx.lineTo(o.x + TILE_SIZE / 2, o.y);
+        ctx.lineTo(o.x + TILE_SIZE, o.y + TILE_SIZE);
         ctx.closePath();
         ctx.fill();
       } else if (o.type === 'pad') {
         ctx.fillStyle = 'rgba(255,255,0,0.9)';
-        ctx.fillRect(o.x, o.y, o.w, o.h);
+        ctx.fillRect(o.x, o.y + TILE_SIZE * 0.5, TILE_SIZE, TILE_SIZE * 0.5);
       }
     });
 
@@ -792,8 +780,6 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
-
-  // NO GAME LOGIC AT ALL BELOW THIS LINE FOR OTHER PANELS
 });
 </script>
 
