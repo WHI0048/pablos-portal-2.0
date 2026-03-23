@@ -359,6 +359,7 @@
                         <button class="tool-button" data-dash-tool="spike">▲ Spike</button>
                         <button class="tool-button" data-dash-tool="pad">⤴ Jump Pad</button>
                         <button class="tool-button" data-dash-tool="ring">◯ Ring</button>
+                        <button class="tool-button" data-dash-tool="spawn">│ Spawn</button>
                         <button class="tool-button" data-dash-tool="erase">⌫ Erase</button>
                         <button class="tool-button danger" data-dash-tool="clear">🗑 Clear</button>
                     </div>
@@ -510,11 +511,13 @@ const GRAVITY = 0.5;
 const JUMP_VELOCITY = -9;
 const PLAYER_WIDTH = 18;
 const PLAYER_HEIGHT = 18;
-const PLAYER_START_Y = 200;
 
 // World stored as dictionary: key = "x,y" (tile coords), value = tileType
 // tileType: 'ground', 'spike', 'pad', 'ring'
 const world = {};
+
+// Spawn line (world X in pixels)
+let spawnX = 100; // default spawn position
 
 // Camera for editor and play
 let cameraX = 0; // in pixels
@@ -523,13 +526,13 @@ const CAMERA_STEP = 40; // fixed step per wheel notch
 
 // Editor state
 let editorMode = 'edit'; // 'edit' | 'play'
-let currentTool = 'ground'; // 'ground' | 'spike' | 'pad' | 'ring' | 'erase'
+let currentTool = 'ground'; // 'ground' | 'spike' | 'pad' | 'ring' | 'spawn' | 'erase'
 let isMouseDown = false;
 
 // Player state
 let player = {
-    x: 100,
-    y: PLAYER_START_Y,
+    x: spawnX,
+    y: 200,
     vx: 4,
     vy: 0,
     onGround: false,
@@ -591,7 +594,8 @@ document.querySelector('[data-dash-tool="ground"]').classList.add('active');
 function updateDashStatus() {
     dashStatusLeft.innerHTML = `Mode: <strong>${editorMode === 'edit' ? 'Editor' : 'Playtest'}</strong>`;
     if (editorMode === 'edit') {
-        dashStatusRight.textContent = `Tool: ${currentTool.toUpperCase()} • Scroll to move camera, click to place tiles.`;
+        dashStatusRight.textContent =
+            `Tool: ${currentTool.toUpperCase()} • Scroll to move camera, click to place tiles.`;
     } else {
         dashStatusRight.textContent = 'Space/Click to jump. ESC to return to editor.';
     }
@@ -615,20 +619,26 @@ dashEditorCanvas.addEventListener('mousemove', (e) => {
     }
 });
 
-// 🔧 FIXED: smooth, consistent infinite scroll
-// Listen on the whole window so it always works while in editor
+// 🔧 Smooth, consistent infinite scroll (left) + barrier at spawn line (right)
 window.addEventListener('wheel', (e) => {
     if (currentMode !== 'dash' || editorMode !== 'edit') return;
 
-    // prevent page scroll while editing
     e.preventDefault();
 
     const direction = Math.sign(e.deltaY); // -1 up, +1 down
     const speedMultiplier = e.shiftKey ? 2 : 1;
-    cameraX += direction * CAMERA_STEP * speedMultiplier;
+    const delta = direction * CAMERA_STEP * speedMultiplier;
+
+    if (direction < 0) {
+        // scroll left: infinite
+        cameraX += delta;
+    } else if (direction > 0) {
+        // scroll right: clamp at spawn line
+        cameraX = Math.min(cameraX + delta, spawnX);
+    }
 }, { passive: false });
 
-// Editor click -> place tiles in infinite world
+// Editor click -> place tiles or move spawn line
 function handleEditorClick(e) {
     if (editorMode !== 'edit') return;
 
@@ -652,14 +662,17 @@ function handleEditorClick(e) {
         setTile(tx, ty, 'pad');
     } else if (currentTool === 'ring') {
         setTile(tx, ty, 'ring');
+    } else if (currentTool === 'spawn') {
+        // Move spawn line to this tile's X
+        spawnX = tx * TILE_SIZE;
     }
 }
 
 // ----- Playtest control -----
 function startDashPlaytest() {
     isPlayingDash = true;
-    player.x = 100;
-    player.y = PLAYER_START_Y;
+    player.x = spawnX;
+    player.y = 200;
     player.vx = 4;
     player.vy = 0;
     player.alive = true;
@@ -720,10 +733,8 @@ function updatePlayer() {
     player.x += player.vx;
     player.y += player.vy;
 
-    // Simple ground collision using tiles
     player.onGround = false;
 
-    // Check tiles around player
     const px1 = player.x;
     const py1 = player.y;
     const px2 = player.x + PLAYER_WIDTH;
@@ -749,10 +760,8 @@ function updatePlayer() {
             };
 
             if (tile === 'ground') {
-                // AABB collision
                 if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
                                 tileRect.x, tileRect.y, tileRect.w, tileRect.h)) {
-                    // Resolve from top only (simple)
                     if (py2 > tileRect.y && py1 < tileRect.y) {
                         player.y = tileRect.y - PLAYER_HEIGHT;
                         player.vy = 0;
@@ -760,7 +769,6 @@ function updatePlayer() {
                     }
                 }
             } else if (tile === 'spike') {
-                // Treat spike as lethal if player intersects tile area
                 if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
                                 tileRect.x, tileRect.y, tileRect.w, tileRect.h)) {
                     player.alive = false;
@@ -768,14 +776,12 @@ function updatePlayer() {
             } else if (tile === 'pad') {
                 if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
                                 tileRect.x, tileRect.y, tileRect.w, tileRect.h)) {
-                    // Jump pad: strong upward boost
                     player.vy = JUMP_VELOCITY * 1.2;
                     player.onGround = false;
                 }
             } else if (tile === 'ring') {
                 if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
                                 tileRect.x, tileRect.y, tileRect.w, tileRect.h)) {
-                    // Ring: small upward boost
                     player.vy = JUMP_VELOCITY * 0.8;
                     player.onGround = false;
                 }
@@ -783,12 +789,10 @@ function updatePlayer() {
         }
     }
 
-    // If player falls too low -> death
     if (player.y > dashCanvas.height + 200) {
         player.alive = false;
     }
 
-    // If dead, stop horizontal movement
     if (!player.alive) {
         player.vx = 0;
     }
@@ -805,7 +809,6 @@ function rectOverlap(x1, y1, w1, h1, x2, y2, w2, h2) {
 function renderDashEditor() {
     dashEditorCtx.clearRect(0, 0, dashEditorCanvas.width, dashEditorCanvas.height);
 
-    // Background
     const g = dashEditorCtx.createLinearGradient(0, 0, dashEditorCanvas.width, dashEditorCanvas.height);
     g.addColorStop(0, '#10152b');
     g.addColorStop(1, '#050712');
@@ -874,23 +877,29 @@ function renderDashEditor() {
             dashEditorCtx.stroke();
         }
     }
+
+    // Spawn line (white)
+    const spawnScreenX = spawnX - cameraX;
+    dashEditorCtx.strokeStyle = '#ffffff';
+    dashEditorCtx.lineWidth = 2;
+    dashEditorCtx.beginPath();
+    dashEditorCtx.moveTo(spawnScreenX, 0);
+    dashEditorCtx.lineTo(spawnScreenX, dashEditorCanvas.height);
+    dashEditorCtx.stroke();
 }
 
 function renderDashPlay() {
     dashCtx.clearRect(0, 0, dashCanvas.width, dashCanvas.height);
 
-    // Background
     const g = dashCtx.createLinearGradient(0, 0, dashCanvas.width, dashCanvas.height);
     g.addColorStop(0, '#10152b');
     g.addColorStop(1, '#050712');
     dashCtx.fillStyle = g;
     dashCtx.fillRect(0, 0, dashCanvas.width, dashCanvas.height);
 
-    // Camera follows player
     const playCameraX = player.x - 200;
     const playCameraY = 0;
 
-    // Tiles
     for (const key in world) {
         const [txStr, tyStr] = key.split(',');
         const tx = parseInt(txStr, 10);
@@ -934,7 +943,6 @@ function renderDashPlay() {
         }
     }
 
-    // Player
     dashCtx.fillStyle = player.alive ? '#ffffff' : '#888888';
     dashCtx.fillRect(
         player.x - playCameraX,
@@ -948,15 +956,12 @@ function renderDashPlay() {
 function loop() {
     requestAnimationFrame(loop);
 
-    // Editor render
     renderDashEditor();
 
-    // Playtest update + render
     if (isPlayingDash) {
         updatePlayer();
         renderDashPlay();
     } else {
-        // When not playing, show a faint preview of the level in dashCanvas
         dashCtx.clearRect(0, 0, dashCanvas.width, dashCanvas.height);
         const g = dashCtx.createLinearGradient(0, 0, dashCanvas.width, dashCanvas.height);
         g.addColorStop(0, '#050712');
@@ -1014,8 +1019,6 @@ function loop() {
 }
 
 loop();
-
-// Start in dash editor visible on right, but main mode sandbox
 setMode('sandbox');
 </script>
 </body>
