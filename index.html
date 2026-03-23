@@ -1,1367 +1,1017 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Pablo's Portal 3.0</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>Pablo's Portal 2.0 – Single File</title>
 <style>
-:root {
-  --bg: #050712;
-  --panel-bg: rgba(10, 14, 30, 0.9);
-  --accent: #4af2c5;
-  --accent2: #ff4af2;
-  --accent3: #4ac6ff;
-  --text: #f5f7ff;
-  --muted: #8a8fa8;
-  --border-glow: 0 0 12px rgba(74, 242, 197, 0.7);
-  --radius-lg: 18px;
-  --radius-md: 12px;
-  --radius-sm: 8px;
-  --shadow-soft: 0 24px 60px rgba(0, 0, 0, 0.6);
-  --grid-line: rgba(255, 255, 255, 0.04);
-  --danger: #ff4a6a;
-  --good: #4af27a;
-  --warning: #ffc44a;
-  --font-main: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-    "Segoe UI", sans-serif;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background: radial-gradient(circle at top, #151b3a 0, #050712 55%, #020308 100%);
-  color: var(--text);
-  font-family: var(--font-main);
-}
-
-body {
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-}
-
-/* Layout shell */
-
-.app-shell {
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr);
-  gap: 16px;
-  padding: 20px;
-  width: 100%;
-  max-width: 1400px;
-}
-
-/* RGB border wrapper */
-
-.rgb-frame {
-  position: relative;
-  border-radius: 26px;
-  padding: 2px;
-  background: conic-gradient(
-    from 0deg,
-    #ff4af2,
-    #4ac6ff,
-    #4af2c5,
-    #ffc44a,
-    #ff4af2
-  );
-  animation: rgb-rotate 12s linear infinite;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
-}
-
-.rgb-inner {
-  border-radius: 24px;
-  background: radial-gradient(circle at top, #151b3a 0, #050712 55%, #020308 100%);
-  padding: 16px;
-  height: 100%;
-}
-
-@keyframes rgb-rotate {
-  0% {
-    filter: hue-rotate(0deg);
-  }
-  100% {
-    filter: hue-rotate(360deg);
-  }
-}
-
-/* Sidebar */
-
-.sidebar {
-  grid-row: 1 / span 2;
-}
-
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
-}
-
-.logo-mark {
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
-  background: radial-gradient(circle at 30% 20%, #ffffff 0, #4af2c5 35%, #151b3a 100%);
-  box-shadow: 0 0 18px rgba(74, 242, 197, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 18px;
-  color: #050712;
-}
-
-.logo-text {
-  margin-left: 10px;
-}
-
-.logo-title {
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  font-size: 14px;
-  text-transform: uppercase;
-}
-
-.logo-sub {
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.sidebar-header-left {
-  display: flex;
-  align-items: center;
-}
-
-.sidebar-tag {
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(74, 242, 197, 0.14), rgba(74, 198, 255, 0.08));
-  border: 1px solid rgba(74, 242, 197, 0.4);
-  color: var(--accent);
-}
-
-/* Nav buttons */
-
-.nav {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 18px;
-}
-
-.nav-btn {
-  width: 100%;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: linear-gradient(
-    135deg,
-    rgba(10, 14, 30, 0.96),
-    rgba(10, 14, 30, 0.86)
-  );
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: var(--text);
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.15s ease, background 0.15s ease, transform 0.08s ease;
-}
-
-.nav-btn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 0 0, rgba(74, 242, 197, 0.18), transparent 55%);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.nav-btn:hover::before {
-  opacity: 1;
-}
-
-.nav-btn:hover {
-  border-color: rgba(74, 242, 197, 0.7);
-  transform: translateY(-1px);
-}
-
-.nav-btn.active {
-  border-color: rgba(74, 242, 197, 0.9);
-  box-shadow: 0 0 18px rgba(74, 242, 197, 0.45);
-}
-
-.nav-btn-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.nav-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: radial-gradient(circle at 30% 20%, #ffffff 0, #4af2c5 40%, #151b3a 100%);
-  box-shadow: 0 0 10px rgba(74, 242, 197, 0.7);
-}
-
-.nav-title {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.nav-tag {
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.nav-kbd {
-  font-size: 11px;
-  padding: 3px 7px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(5, 7, 18, 0.9);
-  color: var(--muted);
-}
-
-/* Sidebar footer */
-
-.sidebar-footer {
-  margin-top: 10px;
-  font-size: 11px;
-  color: var(--muted);
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 10px 12px;
-  background: linear-gradient(
-    135deg,
-    rgba(10, 14, 30, 0.96),
-    rgba(10, 14, 30, 0.86)
-  );
-}
-
-.sidebar-footer strong {
-  color: var(--accent3);
-}
-
-/* Top bar */
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.topbar-left {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.topbar-title {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.topbar-sub {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.chip {
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(5, 7, 18, 0.9);
-  color: var(--muted);
-}
-
-/* Main body */
-
-.main-body {
-  margin-top: 12px;
-  border-radius: var(--radius-lg);
-  background: radial-gradient(circle at top, rgba(74, 242, 197, 0.08), rgba(5, 7, 18, 0.98));
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: var(--shadow-soft);
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  min-height: 540px;
-}
-
-/* Panels */
-
-.panel {
-  display: none;
-  height: 100%;
-  flex-direction: column;
-}
-
-.panel.active {
-  display: flex;
-}
-
-.panel-top-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.panel-title {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.panel-info {
-  font-size: 11px;
-  color: var(--muted);
-}
-
-/* Sandbox */
-
-.sandbox-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  gap: 10px;
-  flex: 1;
-}
-
-.sandbox-canvas-wrap,
-.sandbox-tools {
-  border-radius: var(--radius-md);
-  background: var(--panel-bg);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 10px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* ensure visible height */
-.sandbox-canvas-wrap,
-.snake-wrap,
-.pdash-canvas-wrap {
-  min-height: 260px;
-}
-
-.sandbox-canvas-wrap::before,
-.sandbox-tools::before,
-.pdash-editor-wrap::before,
-.pdash-side::before,
-.snake-wrap::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(
-      to right,
-      var(--grid-line) 1px,
-      transparent 1px
-    ),
-    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-  background-size: 16px 16px;
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-.sandbox-canvas-wrap canvas {
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at top, #151b3a 0, #050712 55%, #020308 100%);
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.sandbox-tools-inner {
-  position: relative;
-  z-index: 1;
-}
-
-.tool-group {
-  margin-bottom: 10px;
-}
-
-.tool-group-title {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-
-.tool-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.tool-btn {
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(5, 7, 18, 0.9);
-  color: var(--muted);
-  cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
-}
-
-.tool-btn.active {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: rgba(10, 40, 30, 0.9);
-}
-
-/* Snake */
-
-.snake-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  gap: 10px;
-  flex: 1;
-}
-
-.snake-wrap,
-.snake-side {
-  border-radius: var(--radius-md);
-  background: var(--panel-bg);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 10px;
-  position: relative;
-  overflow: hidden;
-}
-
-.snake-wrap canvas {
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at top, #151b3a 0, #050712 55%, #020308 100%);
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.snake-side-inner {
-  position: relative;
-  z-index: 1;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.snake-score {
-  font-size: 13px;
-  margin-bottom: 6px;
-}
-
-/* Pablo Dash */
-
-.pdash-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-  gap: 10px;
-  flex: 1;
-}
-
-.pdash-editor-wrap,
-.pdash-side {
-  border-radius: var(--radius-md);
-  background: var(--panel-bg);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 10px;
-  position: relative;
-  overflow: hidden;
-}
-
-.pdash-editor-inner {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  height: 100%;
-}
-
-.pdash-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.pdash-toolbar .tool-btn {
-  font-size: 11px;
-}
-
-.pdash-canvas-wrap {
-  flex: 1;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: radial-gradient(circle at top, #151b3a 0, #050712 55%, #020308 100%);
-  overflow: hidden;
-}
-
-.pdash-canvas-wrap canvas {
-  width: 100%;
-  height: 100%;
-}
-
-.pdash-side-inner {
-  position: relative;
-  z-index: 1;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.pdash-side-inner h4 {
-  margin: 0 0 6px;
-  font-size: 13px;
-}
-
-.pdash-stat {
-  font-size: 12px;
-  margin-bottom: 4px;
-}
-
-/* Buttons */
-
-.btn-primary {
-  font-size: 11px;
-  padding: 5px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(74, 242, 197, 0.7);
-  background: radial-gradient(circle at 0 0, rgba(74, 242, 197, 0.3), rgba(5, 7, 18, 0.96));
-  color: var(--accent);
-  cursor: pointer;
-  transition: transform 0.08s ease, box-shadow 0.12s ease;
-}
-
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 16px rgba(74, 242, 197, 0.5);
-}
-
-/* Responsive */
-
-@media (max-width: 980px) {
-  .app-shell {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-  }
-  .sidebar {
-    grid-row: auto;
-  }
-  .main-body {
-    min-height: 480px;
-  }
-  .sandbox-layout,
-  .snake-layout,
-  .pdash-layout {
-    grid-template-columns: 1fr;
-  }
-}
+    :root {
+        --bg: #050712;
+        --card-bg: rgba(15, 20, 40, 0.9);
+        --accent: #4af2c5;
+        --accent-soft: rgba(74, 242, 197, 0.25);
+        --accent-strong: rgba(74, 242, 197, 0.6);
+        --accent2: #7b5cff;
+        --text: #f5f7ff;
+        --muted: #9aa0c2;
+        --danger: #ff4b6e;
+        --border: rgba(255, 255, 255, 0.06);
+        --shadow-strong: 0 0 40px rgba(0, 0, 0, 0.8);
+        --radius-lg: 18px;
+        --radius-md: 12px;
+        --radius-sm: 8px;
+        --blur: 18px;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                     "Segoe UI", sans-serif;
+    }
+
+    body {
+        background: radial-gradient(circle at top, #1b2340 0, #050712 55%, #02030a 100%);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .portal-shell {
+        width: 100%;
+        max-width: 1400px;
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 20px;
+    }
+
+    .sidebar {
+        background: linear-gradient(145deg, rgba(10, 12, 30, 0.95), rgba(5, 8, 20, 0.98));
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-strong);
+        padding: 18px 16px;
+        display: flex;
+        flex-direction: column;
+        backdrop-filter: blur(var(--blur));
+    }
+
+    .sidebar-header {
+        margin-bottom: 16px;
+    }
+
+    .logo {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+    }
+
+    .logo span {
+        color: var(--accent2);
+    }
+
+    .subtitle {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+    }
+
+    .nav-section-title {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--muted);
+        margin: 16px 4px 8px;
+    }
+
+    .nav-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .nav-button {
+        border-radius: var(--radius-md);
+        border: 1px solid transparent;
+        background: radial-gradient(circle at top left,
+                    rgba(74, 242, 197, 0.08),
+                    rgba(10, 12, 30, 0.95));
+        color: var(--text);
+        padding: 10px 12px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: 0.15s ease;
+    }
+
+    .nav-button span.label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .nav-button span.badge {
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: rgba(74, 242, 197, 0.12);
+        color: var(--accent);
+        border: 1px solid rgba(74, 242, 197, 0.4);
+    }
+
+    .nav-button:hover {
+        border-color: var(--accent-soft);
+        box-shadow: 0 0 18px rgba(74, 242, 197, 0.25);
+        transform: translateY(-1px);
+    }
+
+    .nav-button.active {
+        border-color: var(--accent);
+        background: radial-gradient(circle at top left,
+                    rgba(74, 242, 197, 0.18),
+                    rgba(10, 12, 30, 0.98));
+        box-shadow: 0 0 22px rgba(74, 242, 197, 0.35);
+    }
+
+    .main {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .top-row {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 16px;
+    }
+
+    .card {
+        background: radial-gradient(circle at top left,
+                    rgba(74, 242, 197, 0.08),
+                    rgba(5, 8, 20, 0.98));
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-strong);
+        padding: 14px 14px 12px;
+        backdrop-filter: blur(var(--blur));
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+
+    .card-title {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    .card-title span {
+        color: var(--accent);
+    }
+
+    .card-controls {
+        display: flex;
+        gap: 6px;
+    }
+
+    .pill {
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--muted);
+        background: rgba(5, 8, 20, 0.9);
+    }
+
+    .pill.accent {
+        border-color: rgba(74, 242, 197, 0.6);
+        color: var(--accent);
+        background: rgba(74, 242, 197, 0.08);
+    }
+
+    .card-body {
+        flex: 1;
+        border-radius: var(--radius-md);
+        background: radial-gradient(circle at top,
+                    rgba(255, 255, 255, 0.02),
+                    rgba(0, 0, 0, 0.9));
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        overflow: hidden;
+    }
+
+    canvas {
+        border-radius: var(--radius-md);
+        background: #050712;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        image-rendering: pixelated;
+    }
+
+    .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 11px;
+    }
+
+    .tool-button {
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(5, 8, 20, 0.95);
+        color: var(--muted);
+        padding: 4px 8px;
+        cursor: pointer;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: 0.12s ease;
+    }
+
+    .tool-button.active {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: rgba(74, 242, 197, 0.12);
+        box-shadow: 0 0 12px rgba(74, 242, 197, 0.3);
+    }
+
+    .tool-button.danger {
+        border-color: rgba(255, 75, 110, 0.7);
+        color: var(--danger);
+        background: rgba(255, 75, 110, 0.08);
+    }
+
+    .status-bar {
+        font-size: 11px;
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .status-bar span strong {
+        color: var(--accent);
+    }
+
+    .bottom-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    @media (max-width: 1100px) {
+        .portal-shell {
+            grid-template-columns: 1fr;
+        }
+        .top-row, .bottom-row {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 </head>
 <body>
-<div class="app-shell">
-  <!-- Sidebar -->
-  <div class="rgb-frame sidebar">
-    <div class="rgb-inner">
-      <div class="sidebar-header">
-        <div class="sidebar-header-left">
-          <div class="logo-mark">P</div>
-          <div class="logo-text">
-            <div class="logo-title">Pablo's Portal</div>
-            <div class="logo-sub">Neon Physics Playground</div>
-          </div>
+<div class="portal-shell">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">Pablo's <span>Portal</span></div>
+            <div class="subtitle">Sandbox • Neon Snake • Pablo‑Dash</div>
         </div>
-        <div class="sidebar-tag">v3.0 single-file</div>
-      </div>
 
-      <nav class="nav">
-        <button class="nav-btn active" data-target="panel-sandbox">
-          <div class="nav-btn-left">
-            <div class="nav-dot"></div>
-            <div>
-              <div class="nav-title">Physics Sandbox</div>
-              <div class="nav-tag">Falling sand, fire, water, chaos</div>
-            </div>
-          </div>
-          <div class="nav-kbd">1</div>
-        </button>
-
-        <button class="nav-btn" data-target="panel-snake">
-          <div class="nav-btn-left">
-            <div class="nav-dot"></div>
-            <div>
-              <div class="nav-title">Neon Snake</div>
-              <div class="nav-tag">Classic snake, neon grid</div>
-            </div>
-          </div>
-          <div class="nav-kbd">2</div>
-        </button>
-
-        <button class="nav-btn" data-target="panel-pablo-dash" id="pablo-dash">
-          <div class="nav-btn-left">
-            <div class="nav-dot"></div>
-            <div>
-              <div class="nav-title">Pablo Dash</div>
-              <div class="nav-tag">Dash + Level Editor</div>
-            </div>
-          </div>
-          <div class="nav-kbd">3</div>
-        </button>
-      </nav>
-
-      <div class="sidebar-footer">
-        <div><strong>Tip:</strong> Press <strong>1 / 2 / 3</strong> to switch panels instantly.</div>
-        <div>Sandbox: click & drag to paint. Snake: arrows / WASD. Dash: build, then play.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Top bar -->
-  <div class="rgb-frame topbar-frame">
-    <div class="rgb-inner topbar">
-      <div class="topbar-left">
-        <div class="topbar-title">Pablo's Portal 3.0 — Neon Shell</div>
-        <div class="topbar-sub">Single-file build with Physics Sandbox, Neon Snake, and Pablo Dash Level Editor.</div>
-      </div>
-      <div class="topbar-right">
-        <div class="chip">HTML + CSS + JS</div>
-        <div class="chip">Neon Cyber-Glass</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main body -->
-  <div class="main-body">
-    <!-- Sandbox Panel -->
-    <section class="panel active" id="panel-sandbox">
-      <div class="panel-top-row">
-        <div class="panel-title">Physics Sandbox</div>
-        <div class="panel-info">Simple falling-sand simulation. Choose a material and paint on the grid.</div>
-      </div>
-      <div class="sandbox-layout">
-        <div class="sandbox-canvas-wrap">
-          <canvas id="sandboxCanvas"></canvas>
+        <div class="nav-section-title">Modes</div>
+        <div class="nav-list">
+            <button class="nav-button active" data-panel="sandbox">
+                <span class="label">🧪 Sandbox</span>
+                <span class="badge">Core</span>
+            </button>
+            <button class="nav-button" data-panel="snake">
+                <span class="label">🟩 Neon Snake</span>
+                <span class="badge">Arcade</span>
+            </button>
+            <button class="nav-button" data-panel="dash">
+                <span class="label">⚡ Pablo‑Dash</span>
+                <span class="badge">New</span>
+            </button>
         </div>
-        <div class="sandbox-tools">
-          <div class="sandbox-tools-inner">
-            <div class="tool-group">
-              <div class="tool-group-title">Material</div>
-              <div class="tool-row" id="sandboxMaterialRow">
-                <button class="tool-btn active" data-material="sand">Sand</button>
-                <button class="tool-btn" data-material="water">Water</button>
-                <button class="tool-btn" data-material="stone">Stone</button>
-                <button class="tool-btn" data-material="eraser">Eraser</button>
-              </div>
-            </div>
-            <div class="tool-group">
-              <div class="tool-group-title">Brush</div>
-              <div class="tool-row" id="sandboxBrushRow">
-                <button class="tool-btn active" data-size="2">Small</button>
-                <button class="tool-btn" data-size="4">Medium</button>
-                <button class="tool-btn" data-size="6">Large</button>
-              </div>
-            </div>
-            <div class="tool-group">
-              <div class="tool-group-title">Actions</div>
-              <div class="tool-row">
-                <button class="btn-primary" id="sandboxClear">Clear Grid</button>
-              </div>
-            </div>
-            <div class="tool-group">
-              <div class="tool-group-title">Notes</div>
-              <div class="panel-info">
-                Sand falls and piles up. Water flows sideways. Stone is static. This is a lightweight version of your original sandbox, tuned for this single-file build.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    </aside>
 
-    <!-- Snake Panel -->
-    <section class="panel" id="panel-snake">
-      <div class="panel-top-row">
-        <div class="panel-title">Neon Snake</div>
-        <div class="panel-info">Arrow keys / WASD to move. Don’t hit the walls or yourself.</div>
-      </div>
-      <div class="snake-layout">
-        <div class="snake-wrap">
-          <canvas id="snakeCanvas"></canvas>
-        </div>
-        <div class="snake-side">
-          <div class="snake-side-inner">
-            <div class="snake-score">Score: <span id="snakeScore">0</span></div>
-            <div class="panel-info">
-              The snake moves on a neon grid. Eat the glowing food to grow. The game speeds up slightly as you score.
-            </div>
-            <div class="tool-group" style="margin-top:10px;">
-              <div class="tool-group-title">Controls</div>
-              <div>• Arrow keys or WASD to move</div>
-              <div>• Game auto-restarts on death</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <main class="main">
+        <div class="top-row">
+            <!-- Left: Main canvas area (switches by mode) -->
+            <section class="card" id="main-card">
+                <div class="card-header">
+                    <div class="card-title"><span>Play</span> Area</div>
+                    <div class="card-controls">
+                        <div class="pill accent" id="mode-label">Sandbox</div>
+                        <div class="pill">Single‑File Build</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Sandbox canvas -->
+                    <canvas id="sandboxCanvas" width="640" height="360"></canvas>
+                    <!-- Snake canvas -->
+                    <canvas id="snakeCanvas" width="640" height="360" class="hidden"></canvas>
+                    <!-- Pablo‑Dash play canvas -->
+                    <canvas id="dashCanvas" width="900" height="400" class="hidden"></canvas>
+                    <div class="status-bar">
+                        <span id="status-left">Mode: <strong>Sandbox</strong></span>
+                        <span id="status-right">Ready.</span>
+                    </div>
+                </div>
+            </section>
 
-    <!-- Pablo Dash Panel -->
-    <section class="panel" id="panel-pablo-dash">
-      <div class="panel-top-row">
-        <div class="panel-title">Pablo Dash — Level Editor</div>
-        <div class="panel-info">Build a level with blocks and spikes, then play it as an auto-runner.</div>
-      </div>
-      <div class="pdash-layout">
-        <div class="pdash-editor-wrap">
-          <div class="pdash-editor-inner">
-            <div class="pdash-toolbar">
-              <span class="tool-group-title" style="margin-bottom:0;">Brush</span>
-              <button class="tool-btn active" data-dash-brush="block">Block</button>
-              <button class="tool-btn" data-dash-brush="spike">Spike</button>
-              <button class="tool-btn" data-dash-brush="erase">Erase</button>
-              <span style="flex:1;"></span>
-              <button class="btn-primary" id="dashPlay">Play Level</button>
-              <button class="tool-btn" id="dashClear">Clear</button>
-            </div>
-            <div class="pdash-canvas-wrap">
-              <canvas id="dashCanvas"></canvas>
-            </div>
-          </div>
+            <!-- Right: Pablo‑Dash editor / tools -->
+            <section class="card" id="dash-editor-card">
+                <div class="card-header">
+                    <div class="card-title"><span>Pablo‑Dash</span> Editor</div>
+                    <div class="card-controls">
+                        <div class="pill">Space/Click = Jump</div>
+                        <div class="pill">Scroll = Camera</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="toolbar" id="dash-toolbar">
+                        <button class="tool-button" data-dash-tool="play">▶ Playtest</button>
+                        <button class="tool-button" data-dash-tool="edit">✏ Editor</button>
+                        <button class="tool-button" data-dash-tool="ground">▉ Ground</button>
+                        <button class="tool-button" data-dash-tool="spike">▲ Spike</button>
+                        <button class="tool-button" data-dash-tool="pad">⤴ Jump Pad</button>
+                        <button class="tool-button" data-dash-tool="ring">◯ Ring</button>
+                        <button class="tool-button" data-dash-tool="erase">⌫ Erase</button>
+                        <button class="tool-button danger" data-dash-tool="clear">🗑 Clear</button>
+                    </div>
+                    <canvas id="dashEditorCanvas" width="900" height="400"></canvas>
+                    <div class="status-bar">
+                        <span id="dash-status-left">Mode: <strong>Editor</strong></span>
+                        <span id="dash-status-right">Scroll to move camera. Click to place tiles.</span>
+                    </div>
+                </div>
+            </section>
         </div>
-        <div class="pdash-side">
-          <div class="pdash-side-inner">
-            <h4>Level Info</h4>
-            <div class="pdash-stat">Width: <span id="dashWidthStat">64</span> tiles</div>
-            <div class="pdash-stat">Height: <span id="dashHeightStat">16</span> tiles</div>
-            <div class="pdash-stat">Blocks: <span id="dashBlocksStat">0</span></div>
-            <div class="pdash-stat">Spikes: <span id="dashSpikesStat">0</span></div>
-            <div class="tool-group" style="margin-top:10px;">
-              <div class="tool-group-title">How to use</div>
-              <div>• Click & drag to paint blocks or spikes.</div>
-              <div>• Use Erase to remove tiles.</div>
-              <div>• Press “Play Level” to run the auto-runner.</div>
-            </div>
-            <div class="tool-group" style="margin-top:10px;">
-              <div class="tool-group-title">Runner Controls</div>
-              <div>• Space / Click to jump.</div>
-              <div>• Avoid spikes. Touching one resets the run.</div>
-            </div>
-          </div>
+
+        <div class="bottom-row">
+            <!-- Sandbox info / stub -->
+            <section class="card">
+                <div class="card-header">
+                    <div class="card-title"><span>Sandbox</span> Notes</div>
+                    <div class="card-controls">
+                        <div class="pill">Stubbed</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div style="font-size:12px;color:var(--muted);line-height:1.5;">
+                        This single‑file build includes a placeholder Sandbox implementation.
+                        You can wire in your full states‑of‑matter logic here later.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Snake info / stub -->
+            <section class="card">
+                <div class="card-header">
+                    <div class="card-title"><span>Neon Snake</span> Notes</div>
+                    <div class="card-controls">
+                        <div class="pill">Stubbed</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div style="font-size:12px;color:var(--muted);line-height:1.5;">
+                        Neon Snake is also stubbed in this build. The canvas and mode switching
+                        are wired; you can drop in your full snake logic where indicated.
+                    </div>
+                </div>
+            </section>
         </div>
-      </div>
-    </section>
-  </div>
+    </main>
 </div>
 
 <script>
-/* Panel switching */
+// =============================
+// Core UI switching
+// =============================
+const navButtons = document.querySelectorAll('.nav-button');
+const modeLabel = document.getElementById('mode-label');
+const statusLeft = document.getElementById('status-left');
+const statusRight = document.getElementById('status-right');
 
-const navButtons = Array.from(document.querySelectorAll(".nav-btn"));
-const panels = Array.from(document.querySelectorAll(".panel"));
+const sandboxCanvas = document.getElementById('sandboxCanvas');
+const snakeCanvas = document.getElementById('snakeCanvas');
+const dashCanvas = document.getElementById('dashCanvas');
+const dashEditorCanvas = document.getElementById('dashEditorCanvas');
 
-function activatePanel(id) {
-  panels.forEach(p => p.classList.toggle("active", p.id === id));
-  navButtons.forEach(btn => {
-    const target = btn.getAttribute("data-target");
-    btn.classList.toggle("active", target === id);
-  });
+let currentMode = 'sandbox'; // 'sandbox' | 'snake' | 'dash';
+
+function setMode(mode) {
+    currentMode = mode;
+    navButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.panel === mode);
+    });
+
+    sandboxCanvas.classList.add('hidden');
+    snakeCanvas.classList.add('hidden');
+    dashCanvas.classList.add('hidden');
+
+    if (mode === 'sandbox') {
+        sandboxCanvas.classList.remove('hidden');
+        modeLabel.textContent = 'Sandbox';
+        statusLeft.innerHTML = 'Mode: <strong>Sandbox</strong>';
+        statusRight.textContent = 'Sandbox stub running.';
+    } else if (mode === 'snake') {
+        snakeCanvas.classList.remove('hidden');
+        modeLabel.textContent = 'Neon Snake';
+        statusLeft.innerHTML = 'Mode: <strong>Neon Snake</strong>';
+        statusRight.textContent = 'Snake stub running.';
+    } else if (mode === 'dash') {
+        dashCanvas.classList.remove('hidden');
+        modeLabel.textContent = 'Pablo‑Dash';
+        statusLeft.innerHTML = 'Mode: <strong>Pablo‑Dash</strong>';
+        statusRight.textContent = 'Use editor on the right to build levels.';
+    }
 }
 
 navButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    const target = btn.getAttribute("data-target");
-    activatePanel(target);
-  });
+    btn.addEventListener('click', () => {
+        setMode(btn.dataset.panel);
+    });
 });
 
-window.addEventListener("keydown", e => {
-  if (e.key === "1") activatePanel("panel-sandbox");
-  if (e.key === "2") activatePanel("panel-snake");
-  if (e.key === "3") activatePanel("panel-pablo-dash");
-});
+setMode('sandbox');
 
-/* Sandbox implementation */
+// =============================
+// Sandbox stub
+// =============================
+(function initSandbox() {
+    const ctx = sandboxCanvas.getContext('2d');
+    function drawSandboxStub() {
+        ctx.clearRect(0, 0, sandboxCanvas.width, sandboxCanvas.height);
+        const g = ctx.createLinearGradient(0, 0, sandboxCanvas.width, sandboxCanvas.height);
+        g.addColorStop(0, '#141a33');
+        g.addColorStop(1, '#050712');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, sandboxCanvas.width, sandboxCanvas.height);
 
-(function () {
-  const canvas = document.getElementById("sandboxCanvas");
-  const ctx = canvas.getContext("2d");
-
-  let width, height, cols, rows, cellSize;
-  let grid;
-  let material = "sand";
-  let brushSize = 2;
-  let isDrawing = false;
-
-  function resize() {
-    const rect = canvas.parentElement.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height;
-    cellSize = 6;
-    cols = Math.floor(canvas.width / cellSize);
-    rows = Math.floor(canvas.height / cellSize);
-    grid = Array.from({ length: rows }, () =>
-      Array.from({ length: cols }, () => null)
-    );
-  }
-
-  function clearGrid() {
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < cols; x++) {
-        grid[y][x] = null;
-      }
+        ctx.fillStyle = '#4af2c5';
+        ctx.font = '16px system-ui';
+        ctx.fillText('Sandbox stub – plug in your full physics here.', 20, 40);
     }
-  }
+    drawSandboxStub();
+})();
 
-  function setMaterialButtons() {
-    const row = document.getElementById("sandboxMaterialRow");
-    row.addEventListener("click", e => {
-      const btn = e.target.closest(".tool-btn");
-      if (!btn) return;
-      const mat = btn.getAttribute("data-material");
-      if (!mat) return;
-      material = mat;
-      row.querySelectorAll(".tool-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-    });
-  }
+// =============================
+// Neon Snake stub
+// =============================
+(function initSnake() {
+    const ctx = snakeCanvas.getContext('2d');
+    function drawSnakeStub() {
+        ctx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+        const g = ctx.createLinearGradient(0, 0, snakeCanvas.width, snakeCanvas.height);
+        g.addColorStop(0, '#10152b');
+        g.addColorStop(1, '#050712');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
 
-  function setBrushButtons() {
-    const row = document.getElementById("sandboxBrushRow");
-    row.addEventListener("click", e => {
-      const btn = e.target.closest(".tool-btn");
-      if (!btn) return;
-      const size = parseInt(btn.getAttribute("data-size"), 10);
-      if (!size) return;
-      brushSize = size;
-      row.querySelectorAll(".tool-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-    });
-  }
+        ctx.fillStyle = '#7bff7b';
+        ctx.font = '16px system-ui';
+        ctx.fillText('Neon Snake stub – drop in your full game logic.', 20, 40);
+    }
+    drawSnakeStub();
+})();
 
-  function paintAt(x, y) {
-    const gx = Math.floor(x / cellSize);
-    const gy = Math.floor(y / cellSize);
-    for (let dy = -brushSize; dy <= brushSize; dy++) {
-      for (let dx = -brushSize; dx <= brushSize; dx++) {
-        const nx = gx + dx;
-        const ny = gy + dy;
-        if (nx < 0 || nx >= cols || ny < 0 || ny >= rows) continue;
-        if (material === "eraser") {
-          grid[ny][nx] = null;
+// =============================
+// Pablo‑Dash engine + editor
+// =============================
+const dashCtx = dashCanvas.getContext('2d');
+const dashEditorCtx = dashEditorCanvas.getContext('2d');
+
+const TILE_SIZE = 20;
+const GRAVITY = 0.5;
+const JUMP_VELOCITY = -9;
+const PLAYER_WIDTH = 18;
+const PLAYER_HEIGHT = 18;
+const PLAYER_START_Y = 200;
+
+// World stored as dictionary: key = "x,y" (tile coords), value = tileType
+// tileType: 'ground', 'spike', 'pad', 'ring'
+const world = {};
+
+// Camera for editor and play
+let cameraX = 0; // in pixels
+let cameraY = 0;
+let cameraScrollSpeed = 40;
+
+// Editor state
+let editorMode = 'edit'; // 'edit' | 'play'
+let currentTool = 'ground'; // 'ground' | 'spike' | 'pad' | 'ring' | 'erase'
+let isMouseDown = false;
+
+// Player state
+let player = {
+    x: 100,
+    y: PLAYER_START_Y,
+    vx: 4,
+    vy: 0,
+    onGround: false,
+    alive: true
+};
+
+let isPlayingDash = false;
+let jumpHeld = false;
+
+// UI elements
+const dashToolbarButtons = document.querySelectorAll('[data-dash-tool]');
+const dashStatusLeft = document.getElementById('dash-status-left');
+const dashStatusRight = document.getElementById('dash-status-right');
+
+// ----- Helper functions -----
+function worldKey(tx, ty) {
+    return `${tx},${ty}`;
+}
+
+function setTile(tx, ty, type) {
+    const key = worldKey(tx, ty);
+    if (type === null) {
+        delete world[key];
+    } else {
+        world[key] = type;
+    }
+}
+
+function getTile(tx, ty) {
+    return world[worldKey(tx, ty)] || null;
+}
+
+// ----- Editor input -----
+dashToolbarButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const tool = btn.dataset.dashTool;
+        dashToolbarButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (tool === 'play') {
+            editorMode = 'play';
+            startDashPlaytest();
+        } else if (tool === 'edit') {
+            editorMode = 'edit';
+            stopDashPlaytest();
+        } else if (tool === 'clear') {
+            for (const k in world) delete world[k];
         } else {
-          grid[ny][nx] = material;
+            currentTool = tool;
         }
-      }
+        updateDashStatus();
+    });
+});
+
+// default active tools
+document.querySelector('[data-dash-tool="edit"]').classList.add('active');
+document.querySelector('[data-dash-tool="ground"]').classList.add('active');
+
+function updateDashStatus() {
+    dashStatusLeft.innerHTML = `Mode: <strong>${editorMode === 'edit' ? 'Editor' : 'Playtest'}</strong>`;
+    if (editorMode === 'edit') {
+        dashStatusRight.textContent = `Tool: ${currentTool.toUpperCase()} • Scroll to move camera, click to place tiles.`;
+    } else {
+        dashStatusRight.textContent = 'Space/Click to jump. ESC to return to editor.';
     }
-  }
+}
+updateDashStatus();
 
-  function updatePhysics() {
-    for (let y = rows - 2; y >= 0; y--) {
-      for (let x = 0; x < cols; x++) {
-        const cell = grid[y][x];
-        if (!cell) continue;
+// Mouse handling on editor canvas
+dashEditorCanvas.addEventListener('mousedown', (e) => {
+    isMouseDown = true;
+    handleEditorClick(e);
+});
+dashEditorCanvas.addEventListener('mouseup', () => {
+    isMouseDown = false;
+});
+dashEditorCanvas.addEventListener('mouseleave', () => {
+    isMouseDown = false;
+});
+dashEditorCanvas.addEventListener('mousemove', (e) => {
+    if (isMouseDown && editorMode === 'edit') {
+        handleEditorClick(e);
+    }
+});
 
-        if (cell === "sand" || cell === "water") {
-          const below = grid[y + 1][x];
-          if (!below) {
-            grid[y + 1][x] = cell;
-            grid[y][x] = null;
-          } else {
-            const dir = Math.random() < 0.5 ? -1 : 1;
-            const nx = x + dir;
-            if (nx >= 0 && nx < cols && !grid[y + 1][nx]) {
-              grid[y + 1][nx] = cell;
-              grid[y][x] = null;
-            } else if (cell === "water") {
-              const nx2 = x - dir;
-              if (nx2 >= 0 && nx2 < cols && !grid[y][nx2]) {
-                grid[y][nx2] = cell;
-                grid[y][x] = null;
-              }
+// Infinite smooth scroll with wheel
+dashEditorCanvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const delta = e.deltaY;
+    const speed = e.shiftKey ? cameraScrollSpeed * 2 : cameraScrollSpeed;
+    cameraX += delta * speed * 0.02; // smooth
+});
+
+// Editor click -> place tiles in infinite world
+function handleEditorClick(e) {
+    if (editorMode !== 'edit') return;
+
+    const rect = dashEditorCanvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    const worldX = mx + cameraX;
+    const worldY = my + cameraY;
+
+    const tx = Math.floor(worldX / TILE_SIZE);
+    const ty = Math.floor(worldY / TILE_SIZE);
+
+    if (currentTool === 'erase') {
+        setTile(tx, ty, null);
+    } else if (currentTool === 'ground') {
+        setTile(tx, ty, 'ground');
+    } else if (currentTool === 'spike') {
+        setTile(tx, ty, 'spike');
+    } else if (currentTool === 'pad') {
+        setTile(tx, ty, 'pad');
+    } else if (currentTool === 'ring') {
+        setTile(tx, ty, 'ring');
+    }
+}
+
+// ----- Playtest control -----
+function startDashPlaytest() {
+    isPlayingDash = true;
+    player.x = 100;
+    player.y = PLAYER_START_Y;
+    player.vx = 4;
+    player.vy = 0;
+    player.alive = true;
+    player.onGround = false;
+}
+
+function stopDashPlaytest() {
+    isPlayingDash = false;
+}
+
+// Keyboard + mouse for jump
+window.addEventListener('keydown', (e) => {
+    if (currentMode !== 'dash') return;
+    if (e.code === 'Space') {
+        jumpHeld = true;
+        if (!isPlayingDash) return;
+        if (player.onGround && player.alive) {
+            player.vy = JUMP_VELOCITY;
+            player.onGround = false;
+        }
+    } else if (e.code === 'Escape') {
+        editorMode = 'edit';
+        stopDashPlaytest();
+        dashToolbarButtons.forEach(b => b.classList.remove('active'));
+        document.querySelector('[data-dash-tool="edit"]').classList.add('active');
+        updateDashStatus();
+    }
+});
+
+window.addEventListener('keyup', (e) => {
+    if (e.code === 'Space') {
+        jumpHeld = false;
+    }
+});
+
+window.addEventListener('mousedown', (e) => {
+    if (currentMode !== 'dash') return;
+    if (e.target === dashCanvas && isPlayingDash) {
+        jumpHeld = true;
+        if (player.onGround && player.alive) {
+            player.vy = JUMP_VELOCITY;
+            player.onGround = false;
+        }
+    }
+});
+
+window.addEventListener('mouseup', (e) => {
+    if (e.target === dashCanvas) {
+        jumpHeld = false;
+    }
+});
+
+// ----- Physics + collision -----
+function updatePlayer() {
+    if (!isPlayingDash) return;
+
+    player.vy += GRAVITY;
+    player.x += player.vx;
+    player.y += player.vy;
+
+    // Simple ground collision using tiles
+    player.onGround = false;
+
+    // Check tiles around player
+    const px1 = player.x;
+    const py1 = player.y;
+    const px2 = player.x + PLAYER_WIDTH;
+    const py2 = player.y + PLAYER_HEIGHT;
+
+    const tx1 = Math.floor(px1 / TILE_SIZE) - 1;
+    const tx2 = Math.floor(px2 / TILE_SIZE) + 1;
+    const ty1 = Math.floor(py1 / TILE_SIZE) - 1;
+    const ty2 = Math.floor(py2 / TILE_SIZE) + 1;
+
+    for (let ty = ty1; ty <= ty2; ty++) {
+        for (let tx = tx1; tx <= tx2; tx++) {
+            const tile = getTile(tx, ty);
+            if (!tile) continue;
+
+            const tileX = tx * TILE_SIZE;
+            const tileY = ty * TILE_SIZE;
+            const tileRect = {
+                x: tileX,
+                y: tileY,
+                w: TILE_SIZE,
+                h: TILE_SIZE
+            };
+
+            if (tile === 'ground') {
+                // AABB collision
+                if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
+                                tileRect.x, tileRect.y, tileRect.w, tileRect.h)) {
+                    // Resolve from top only (simple)
+                    if (py2 > tileRect.y && py1 < tileRect.y) {
+                        player.y = tileRect.y - PLAYER_HEIGHT;
+                        player.vy = 0;
+                        player.onGround = true;
+                    }
+                }
+            } else if (tile === 'spike') {
+                // Treat spike as lethal if player intersects tile area
+                if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
+                                tileRect.x, tileRect.y, tileRect.w, tileRect.h)) {
+                    player.alive = false;
+                }
+            } else if (tile === 'pad') {
+                if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
+                                tileRect.x, tileRect.y, tileRect.w, tileRect.h)) {
+                    // Jump pad: strong upward boost
+                    player.vy = JUMP_VELOCITY * 1.2;
+                    player.onGround = false;
+                }
+            } else if (tile === 'ring') {
+                if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
+                                tileRect.x, tileRect.y, tileRect.w, tileRect.h)) {
+                    // Ring: small upward boost
+                    player.vy = JUMP_VELOCITY * 0.8;
+                    player.onGround = false;
+                }
             }
-          }
         }
-      }
-    }
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < cols; x++) {
-        const cell = grid[y][x];
-        if (!cell) continue;
-        if (cell === "sand") ctx.fillStyle = "#f2d16b";
-        else if (cell === "water") ctx.fillStyle = "#4ac6ff";
-        else if (cell === "stone") ctx.fillStyle = "#9ea3b5";
-        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-      }
-    }
-  }
-
-  function loop() {
-    updatePhysics();
-    draw();
-    requestAnimationFrame(loop);
-  }
-
-  function setupEvents() {
-    canvas.addEventListener("mousedown", e => {
-      isDrawing = true;
-      const rect = canvas.getBoundingClientRect();
-      paintAt(e.clientX - rect.left, e.clientY - rect.top);
-    });
-    window.addEventListener("mouseup", () => (isDrawing = false));
-    canvas.addEventListener("mousemove", e => {
-      if (!isDrawing) return;
-      const rect = canvas.getBoundingClientRect();
-      paintAt(e.clientX - rect.left, e.clientY - rect.top);
-    });
-
-    document.getElementById("sandboxClear").addEventListener("click", clearGrid);
-  }
-
-  window.addEventListener("resize", () => {
-    resize();
-  });
-
-  resize();
-  clearGrid();
-  setMaterialButtons();
-  setBrushButtons();
-  setupEvents();
-  loop();
-})();
-
-/* Snake implementation */
-
-(function () {
-  const canvas = document.getElementById("snakeCanvas");
-  const ctx = canvas.getContext("2d");
-  const scoreEl = document.getElementById("snakeScore");
-
-  let cols, rows, cellSize;
-  let snake, dir, food, score, speed, lastTime;
-
-  function resize() {
-    const rect = canvas.parentElement.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height;
-    cellSize = 16;
-    cols = Math.max(10, Math.floor(canvas.width / cellSize));
-    rows = Math.max(10, Math.floor(canvas.height / cellSize));
-    reset();
-  }
-
-  function reset() {
-    snake = [{ x: Math.floor(cols / 2), y: Math.floor(rows / 2) }];
-    dir = { x: 1, y: 0 };
-    score = 0;
-    speed = 7;
-    placeFood();
-    scoreEl.textContent = score;
-    lastTime = 0;
-  }
-
-  function placeFood() {
-    food = {
-      x: Math.floor(Math.random() * cols),
-      y: Math.floor(Math.random() * rows)
-    };
-  }
-
-  function update(dt) {
-    const step = 1 / speed;
-    if (!lastTime) lastTime = 0;
-    lastTime += dt;
-    if (lastTime < step) return;
-    lastTime = 0;
-
-    const head = { ...snake[0] };
-    head.x += dir.x;
-    head.y += dir.y;
-
-    if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows) {
-      reset();
-      return;
     }
 
-    if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
-      reset();
-      return;
+    // If player falls too low -> death
+    if (player.y > dashCanvas.height + 200) {
+        player.alive = false;
     }
 
-    snake.unshift(head);
-
-    if (head.x === food.x && head.y === food.y) {
-      score++;
-      scoreEl.textContent = score;
-      speed = 7 + score * 0.2;
-      placeFood();
-    } else {
-      snake.pop();
+    // If dead, stop horizontal movement
+    if (!player.alive) {
+        player.vx = 0;
     }
-  }
+}
 
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function rectOverlap(x1, y1, w1, h1, x2, y2, w2, h2) {
+    return !(x1 + w1 <= x2 ||
+             x1 >= x2 + w2 ||
+             y1 + h1 <= y2 ||
+             y1 >= y2 + h2);
+}
 
-    ctx.fillStyle = "#050712";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+// ----- Rendering -----
+function renderDashEditor() {
+    dashEditorCtx.clearRect(0, 0, dashEditorCanvas.width, dashEditorCanvas.height);
 
-    ctx.fillStyle = "#ff4af2";
-    ctx.fillRect(food.x * cellSize, food.y * cellSize, cellSize, cellSize);
+    // Background
+    const g = dashEditorCtx.createLinearGradient(0, 0, dashEditorCanvas.width, dashEditorCanvas.height);
+    g.addColorStop(0, '#10152b');
+    g.addColorStop(1, '#050712');
+    dashEditorCtx.fillStyle = g;
+    dashEditorCtx.fillRect(0, 0, dashEditorCanvas.width, dashEditorCanvas.height);
 
-    for (let i = 0; i < snake.length; i++) {
-      const seg = snake[i];
-      const t = i / snake.length;
-      const r = 74 + t * (255 - 74);
-      const g = 242 - t * 120;
-      const b = 197 + t * 40;
-      ctx.fillStyle = `rgb(${r},${g},${b})`;
-      ctx.fillRect(seg.x * cellSize, seg.y * cellSize, cellSize, cellSize);
+    // Grid
+    dashEditorCtx.strokeStyle = 'rgba(255,255,255,0.05)';
+    dashEditorCtx.lineWidth = 1;
+    const startX = Math.floor(cameraX / TILE_SIZE) * TILE_SIZE - cameraX;
+    const startY = Math.floor(cameraY / TILE_SIZE) * TILE_SIZE - cameraY;
+
+    for (let x = startX; x < dashEditorCanvas.width; x += TILE_SIZE) {
+        dashEditorCtx.beginPath();
+        dashEditorCtx.moveTo(x, 0);
+        dashEditorCtx.lineTo(x, dashEditorCanvas.height);
+        dashEditorCtx.stroke();
     }
-  }
-
-  let lastTs = 0;
-  function loop(ts) {
-    const dt = (ts - lastTs) / 1000;
-    lastTs = ts;
-    update(dt);
-    draw();
-    requestAnimationFrame(loop);
-  }
-
-  function handleKey(e) {
-    if (e.key === "ArrowUp" || e.key === "w") {
-      if (dir.y === 1) return;
-      dir = { x: 0, y: -1 };
-    } else if (e.key === "ArrowDown" || e.key === "s") {
-      if (dir.y === -1) return;
-      dir = { x: 0, y: 1 };
-    } else if (e.key === "ArrowLeft" || e.key === "a") {
-      if (dir.x === 1) return;
-      dir = { x: -1, y: 0 };
-    } else if (e.key === "ArrowRight" || e.key === "d") {
-      if (dir.x === -1) return;
-      dir = { x: 1, y: 0 };
+    for (let y = startY; y < dashEditorCanvas.height; y += TILE_SIZE) {
+        dashEditorCtx.beginPath();
+        dashEditorCtx.moveTo(0, y);
+        dashEditorCtx.lineTo(dashEditorCanvas.width, y);
+        dashEditorCtx.stroke();
     }
-  }
 
-  window.addEventListener("resize", resize);
-  window.addEventListener("keydown", handleKey);
+    // Tiles
+    for (const key in world) {
+        const [txStr, tyStr] = key.split(',');
+        const tx = parseInt(txStr, 10);
+        const ty = parseInt(tyStr, 10);
+        const tile = world[key];
 
-  resize();
-  requestAnimationFrame(loop);
-})();
+        const screenX = tx * TILE_SIZE - cameraX;
+        const screenY = ty * TILE_SIZE - cameraY;
 
-/* Pablo Dash + Level Editor */
+        if (screenX + TILE_SIZE < 0 || screenX > dashEditorCanvas.width ||
+            screenY + TILE_SIZE < 0 || screenY > dashEditorCanvas.height) {
+            continue;
+        }
 
-(function () {
-  const canvas = document.getElementById("dashCanvas");
-  const ctx = canvas.getContext("2d");
+        if (tile === 'ground') {
+            dashEditorCtx.fillStyle = '#4af2c5';
+            dashEditorCtx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
+        } else if (tile === 'spike') {
+            dashEditorCtx.fillStyle = '#ff4b6e';
+            dashEditorCtx.beginPath();
+            dashEditorCtx.moveTo(screenX, screenY + TILE_SIZE);
+            dashEditorCtx.lineTo(screenX + TILE_SIZE / 2, screenY);
+            dashEditorCtx.lineTo(screenX + TILE_SIZE, screenY + TILE_SIZE);
+            dashEditorCtx.closePath();
+            dashEditorCtx.fill();
+        } else if (tile === 'pad') {
+            dashEditorCtx.fillStyle = '#ffd54a';
+            dashEditorCtx.fillRect(screenX, screenY + TILE_SIZE / 2, TILE_SIZE, TILE_SIZE / 2);
+        } else if (tile === 'ring') {
+            dashEditorCtx.strokeStyle = '#7b5cff';
+            dashEditorCtx.lineWidth = 2;
+            dashEditorCtx.beginPath();
+            dashEditorCtx.arc(
+                screenX + TILE_SIZE / 2,
+                screenY + TILE_SIZE / 2,
+                TILE_SIZE / 3,
+                0,
+                Math.PI * 2
+            );
+            dashEditorCtx.stroke();
+        }
+    }
+}
 
-  const brushButtons = Array.from(
-    document.querySelectorAll("[data-dash-brush]")
-  );
-  const playBtn = document.getElementById("dashPlay");
-  const clearBtn = document.getElementById("dashClear");
+function renderDashPlay() {
+    dashCtx.clearRect(0, 0, dashCanvas.width, dashCanvas.height);
 
-  const widthStat = document.getElementById("dashWidthStat");
-  const heightStat = document.getElementById("dashHeightStat");
-  const blocksStat = document.getElementById("dashBlocksStat");
-  const spikesStat = document.getElementById("dashSpikesStat");
+    // Background
+    const g = dashCtx.createLinearGradient(0, 0, dashCanvas.width, dashCanvas.height);
+    g.addColorStop(0, '#10152b');
+    g.addColorStop(1, '#050712');
+    dashCtx.fillStyle = g;
+    dashCtx.fillRect(0, 0, dashCanvas.width, dashCanvas.height);
 
-  let cellSize = 16;
-  let cols = 64;
-  let rows = 16;
-  let grid;
-  let brush = "block";
-  let isDrawing = false;
-  let mode = "edit"; // "edit" or "play"
+    // Camera follows player
+    const playCameraX = player.x - 200;
+    const playCameraY = 0;
 
-  // runner state
-  let runnerX, runnerY, runnerVy, runnerOnGround, cameraX = 0, playing;
+    // Tiles
+    for (const key in world) {
+        const [txStr, tyStr] = key.split(',');
+        const tx = parseInt(txStr, 10);
+        const ty = parseInt(tyStr, 10);
+        const tile = world[key];
 
-  function resize() {
-    const rect = canvas.parentElement.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height;
-    cellSize = Math.floor(canvas.height / rows);
-    cols = Math.max(32, Math.floor(canvas.width / cellSize));
-    widthStat.textContent = cols;
-    heightStat.textContent = rows;
-    initGrid();
-    cameraX = 0;
-  }
+        const screenX = tx * TILE_SIZE - playCameraX;
+        const screenY = ty * TILE_SIZE - playCameraY;
 
-  function initGrid() {
-    grid = Array.from({ length: rows }, () =>
-      Array.from({ length: cols }, () => 0)
+        if (screenX + TILE_SIZE < 0 || screenX > dashCanvas.width ||
+            screenY + TILE_SIZE < 0 || screenY > dashCanvas.height) {
+            continue;
+        }
+
+        if (tile === 'ground') {
+            dashCtx.fillStyle = '#4af2c5';
+            dashCtx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
+        } else if (tile === 'spike') {
+            dashCtx.fillStyle = '#ff4b6e';
+            dashCtx.beginPath();
+            dashCtx.moveTo(screenX, screenY + TILE_SIZE);
+            dashCtx.lineTo(screenX + TILE_SIZE / 2, screenY);
+            dashCtx.lineTo(screenX + TILE_SIZE, screenY + TILE_SIZE);
+            dashCtx.closePath();
+            dashCtx.fill();
+        } else if (tile === 'pad') {
+            dashCtx.fillStyle = '#ffd54a';
+            dashCtx.fillRect(screenX, screenY + TILE_SIZE / 2, TILE_SIZE, TILE_SIZE / 2);
+        } else if (tile === 'ring') {
+            dashCtx.strokeStyle = '#7b5cff';
+            dashCtx.lineWidth = 2;
+            dashCtx.beginPath();
+            dashCtx.arc(
+                screenX + TILE_SIZE / 2,
+                screenY + TILE_SIZE / 2,
+                TILE_SIZE / 3,
+                0,
+                Math.PI * 2
+            );
+            dashCtx.stroke();
+        }
+    }
+
+    // Player
+    dashCtx.fillStyle = player.alive ? '#ffffff' : '#888888';
+    dashCtx.fillRect(
+        player.x - playCameraX,
+        player.y - playCameraY,
+        PLAYER_WIDTH,
+        PLAYER_HEIGHT
     );
-    updateStats();
-  }
+}
 
-  function updateStats() {
-    let blocks = 0;
-    let spikes = 0;
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < cols; x++) {
-        if (grid[y][x] === 1) blocks++;
-        if (grid[y][x] === 2) spikes++;
-      }
-    }
-    blocksStat.textContent = blocks;
-    spikesStat.textContent = spikes;
-  }
-
-  function setBrush(newBrush) {
-    brush = newBrush;
-    brushButtons.forEach(b => b.classList.remove("active"));
-    const btn = brushButtons.find(b => b.getAttribute("data-dash-brush") === newBrush);
-    if (btn) btn.classList.add("active");
-  }
-
-  brushButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const b = btn.getAttribute("data-dash-brush");
-      setBrush(b);
-    });
-  });
-
-  function gridFromCoords(x, y) {
-    const gx = Math.floor((x + cameraX) / cellSize);
-    const gy = Math.floor(y / cellSize);
-    return { gx, gy };
-  }
-
-  function paintAt(x, y) {
-    const { gx, gy } = gridFromCoords(x, y);
-    if (gx < 0 || gx >= cols || gy < 0 || gy >= rows) return;
-    if (brush === "erase") {
-      grid[gy][gx] = 0;
-    } else if (brush === "block") {
-      grid[gy][gx] = 1;
-    } else if (brush === "spike") {
-      grid[gy][gx] = 2;
-    }
-    updateStats();
-  }
-
-  canvas.addEventListener("mousedown", e => {
-    if (mode !== "edit") return;
-    isDrawing = true;
-    const rect = canvas.getBoundingClientRect();
-    paintAt(e.clientX - rect.left, e.clientY - rect.top);
-  });
-
-  window.addEventListener("mouseup", () => (isDrawing = false));
-
-  canvas.addEventListener("mousemove", e => {
-    if (!isDrawing || mode !== "edit") return;
-    const rect = canvas.getBoundingClientRect();
-    paintAt(e.clientX - rect.left, e.clientY - rect.top);
-  });
-
-  clearBtn.addEventListener("click", () => {
-    if (mode !== "edit") return;
-    initGrid();
-  });
-
-  function startPlay() {
-    mode = "play";
-    playing = true;
-    cameraX = 0;
-    runnerX = cellSize * 2;
-    runnerY = cellSize * (rows - 3);
-    runnerVy = 0;
-    runnerOnGround = false;
-  }
-
-  function stopPlay() {
-    mode = "edit";
-    playing = false;
-  }
-
-  playBtn.addEventListener("click", () => {
-    if (mode === "edit") {
-      startPlay();
-    } else {
-      stopPlay();
-    }
-  });
-
-  window.addEventListener("keydown", e => {
-    if (mode === "play" && (e.key === " " || e.key === "Spacebar")) {
-      if (runnerOnGround) {
-        runnerVy = -cellSize * 0.6;
-        runnerOnGround = false;
-      }
-    }
-  });
-
-  canvas.addEventListener("click", () => {
-    if (mode === "play") {
-      if (runnerOnGround) {
-        runnerVy = -cellSize * 0.6;
-        runnerOnGround = false;
-      }
-    }
-  });
-
-  function getTileAt(px, py) {
-    const gx = Math.floor((px + cameraX) / cellSize);
-    const gy = Math.floor(py / cellSize);
-    if (gx < 0 || gx >= cols || gy < 0 || gy >= rows) return 0;
-    return grid[gy][gx];
-  }
-
-  function updateRunner(dt) {
-    const speed = cellSize * 4;
-    runnerX += speed * dt;
-    runnerVy += cellSize * 2.5 * dt;
-    runnerY += runnerVy * dt;
-
-    const footY = runnerY + cellSize * 0.9;
-    const headY = runnerY;
-    const leftX = runnerX + cellSize * 0.2;
-    const rightX = runnerX + cellSize * 0.8;
-
-    runnerOnGround = false;
-
-    const tilesToCheck = [
-      { x: leftX, y: footY },
-      { x: rightX, y: footY }
-    ];
-    for (const t of tilesToCheck) {
-      const tile = getTileAt(t.x, t.y);
-      if (tile === 1) {
-        runnerOnGround = true;
-        runnerVy = 0;
-        runnerY = Math.floor(footY / cellSize) * cellSize - cellSize;
-      }
-      if (tile === 2) {
-        startPlay(); // restart
-        return;
-      }
-    }
-
-    const bodyCheck = [
-      { x: leftX, y: headY + cellSize * 0.3 },
-      { x: rightX, y: headY + cellSize * 0.3 }
-    ];
-    for (const t of bodyCheck) {
-      const tile = getTileAt(t.x, t.y);
-      if (tile === 2) {
-        startPlay();
-        return;
-      }
-    }
-
-    cameraX = runnerX - canvas.width * 0.3;
-    if (cameraX < 0) cameraX = 0;
-    if (cameraX > cols * cellSize - canvas.width) {
-      cameraX = cols * cellSize - canvas.width;
-    }
-
-    if (runnerX - cameraX > canvas.width + cellSize * 2) {
-      startPlay();
-    }
-  }
-
-  function drawGrid() {
-    ctx.fillStyle = "#050712";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < cols; x++) {
-        const tile = grid[y][x];
-        if (!tile) continue;
-        const px = x * cellSize - cameraX;
-        const py = y * cellSize;
-        if (px + cellSize < 0 || px > canvas.width) continue;
-
-        if (tile === 1) {
-          ctx.fillStyle = "#4af2c5";
-          ctx.fillRect(px, py, cellSize, cellSize);
-        } else if (tile === 2) {
-          ctx.fillStyle = "#ff4a6a";
-          ctx.beginPath();
-          ctx.moveTo(px + cellSize * 0.5, py);
-          ctx.lineTo(px, py + cellSize);
-          ctx.lineTo(px + cellSize, py + cellSize);
-          ctx.closePath();
-          ctx.fill();
-        }
-      }
-    }
-
-    ctx.strokeStyle = "rgba(255,255,255,0.05)";
-    ctx.lineWidth = 1;
-    for (let x = 0; x <= cols; x++) {
-      const px = x * cellSize - cameraX;
-      if (px < 0 || px > canvas.width) continue;
-      ctx.beginPath();
-      ctx.moveTo(px, 0);
-      ctx.lineTo(px, canvas.height);
-      ctx.stroke();
-    }
-    for (let y = 0; y <= rows; y++) {
-      const py = y * cellSize;
-      ctx.beginPath();
-      ctx.moveTo(0, py);
-      ctx.lineTo(canvas.width, py);
-      ctx.stroke();
-    }
-  }
-
-  function drawRunner() {
-    if (!playing) return;
-    const px = runnerX - cameraX;
-    const py = runnerY;
-    ctx.fillStyle = "#4ac6ff";
-    ctx.fillRect(px, py, cellSize, cellSize);
-  }
-
-  let lastTs = 0;
-  function loop(ts) {
-    const dt = (ts - lastTs) / 1000;
-    lastTs = ts;
-
-    if (mode === "play") {
-      updateRunner(dt);
-    }
-
-    drawGrid();
-    drawRunner();
-
+// ----- Main loop -----
+function loop() {
     requestAnimationFrame(loop);
-  }
 
-  window.addEventListener("resize", resize);
-  resize();
-  setBrush("block");
-  requestAnimationFrame(loop);
-})();
+    // Editor render
+    renderDashEditor();
+
+    // Playtest update + render
+    if (isPlayingDash) {
+        updatePlayer();
+        renderDashPlay();
+    } else {
+        // When not playing, show a faint preview of the level in dashCanvas
+        dashCtx.clearRect(0, 0, dashCanvas.width, dashCanvas.height);
+        const g = dashCtx.createLinearGradient(0, 0, dashCanvas.width, dashCanvas.height);
+        g.addColorStop(0, '#050712');
+        g.addColorStop(1, '#02030a');
+        dashCtx.fillStyle = g;
+        dashCtx.fillRect(0, 0, dashCanvas.width, dashCanvas.height);
+
+        dashCtx.globalAlpha = 0.4;
+        const previewCameraX = 0;
+        const previewCameraY = 0;
+        for (const key in world) {
+            const [txStr, tyStr] = key.split(',');
+            const tx = parseInt(txStr, 10);
+            const ty = parseInt(tyStr, 10);
+            const tile = world[key];
+
+            const screenX = tx * TILE_SIZE - previewCameraX;
+            const screenY = ty * TILE_SIZE - previewCameraY;
+
+            if (screenX + TILE_SIZE < 0 || screenX > dashCanvas.width ||
+                screenY + TILE_SIZE < 0 || screenY > dashCanvas.height) {
+                continue;
+            }
+
+            if (tile === 'ground') {
+                dashCtx.fillStyle = '#4af2c5';
+                dashCtx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
+            } else if (tile === 'spike') {
+                dashCtx.fillStyle = '#ff4b6e';
+                dashCtx.beginPath();
+                dashCtx.moveTo(screenX, screenY + TILE_SIZE);
+                dashCtx.lineTo(screenX + TILE_SIZE / 2, screenY);
+                dashCtx.lineTo(screenX + TILE_SIZE, screenY + TILE_SIZE);
+                dashCtx.closePath();
+                dashCtx.fill();
+            } else if (tile === 'pad') {
+                dashCtx.fillStyle = '#ffd54a';
+                dashCtx.fillRect(screenX, screenY + TILE_SIZE / 2, TILE_SIZE, TILE_SIZE / 2);
+            } else if (tile === 'ring') {
+                dashCtx.strokeStyle = '#7b5cff';
+                dashCtx.lineWidth = 2;
+                dashCtx.beginPath();
+                dashCtx.arc(
+                    screenX + TILE_SIZE / 2,
+                    screenY + TILE_SIZE / 2,
+                    TILE_SIZE / 3,
+                    0,
+                    Math.PI * 2
+                );
+                dashCtx.stroke();
+            }
+        }
+        dashCtx.globalAlpha = 1.0;
+    }
+}
+
+loop();
+
+// Start in dash editor visible on right, but main mode sandbox
+setMode('sandbox');
 </script>
 </body>
 </html>
