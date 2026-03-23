@@ -2,769 +2,619 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Pablo's Portal 3-in-1</title>
+  <title>Pablo's Portal 3‑in‑1</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --bg: #000000;
-      --panel: rgba(5, 5, 5, 0.96);
+      --bg: #050510;
+      --panel: rgba(10, 10, 25, 0.9);
+      --accent1: #00f5ff;
+      --accent2: #ff00ff;
+      --accent3: #00ff85;
+      --accent4: #ffcc00;
+      --danger: #ff3366;
       --text: #f5f7ff;
-      --danger: #ff4b6b;
-      --radius-lg: 24px;
-      --radius-md: 16px;
-      --blur: 18px;
-      --border-glass: 1px solid rgba(255, 255, 255, 0.12);
+      --muted: #9aa0c6;
+      --border-glow: 0 0 12px rgba(0, 245, 255, 0.7),
+                     0 0 24px rgba(255, 0, 255, 0.4);
+      --inner-glow: 0 0 18px rgba(0, 255, 133, 0.4);
+      --transition-fast: 0.15s ease-out;
+      --transition-med: 0.25s ease-out;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     body {
-      min-height: 100vh;
-      background: #000000;
+      background: radial-gradient(circle at top, #1a1030 0, #050510 55%, #000 100%);
       color: var(--text);
+      min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: center;
-      padding: 24px;
+      padding: 16px;
     }
 
-    @keyframes rgbCycleBorder {
-      0% { border-image-source: linear-gradient(90deg, #ff0000, #00ff00, #0000ff); }
-      33% { border-image-source: linear-gradient(90deg, #00ff00, #0000ff, #ff0000); }
-      66% { border-image-source: linear-gradient(90deg, #0000ff, #ff0000, #00ff00); }
-      100% { border-image-source: linear-gradient(90deg, #ff0000, #00ff00, #0000ff); }
-    }
-
-    @keyframes rgbCycleBg {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .rgb-cycle-btn {
-      background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff0000);
-      background-size: 300% 300%;
-      animation: rgbCycleBg 4s linear infinite;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #ffffff;
-    }
-
-    .portal-shell {
+    .app-frame {
       width: 100%;
-      max-width: 1320px;
-      min-height: 720px;
-      background: #000000;
-      border-radius: 32px;
-      border-width: 3px;
-      border-style: solid;
-      border-image-slice: 1;
-      animation: rgbCycleBorder 6s linear infinite;
-      padding: 20px 22px;
-      display: grid;
-      grid-template-columns: 270px minmax(0, 1fr);
-      gap: 18px;
+      max-width: 1200px;
+      min-height: 640px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(255, 0, 255, 0.08));
+      border-radius: 24px;
+      padding: 16px;
       position: relative;
       overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.04),
+        0 0 40px rgba(0, 0, 0, 0.9),
+        0 0 80px rgba(0, 245, 255, 0.25),
+        0 0 120px rgba(255, 0, 255, 0.25);
     }
 
-    .portal-shell-inner {
+    .app-frame::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      pointer-events: none;
+      box-shadow: var(--border-glow);
+    }
+
+    .app-inner {
       position: relative;
       z-index: 1;
-      display: contents;
-    }
-
-    /* Sidebar */
-
-    .sidebar {
-      background: var(--panel);
-      border-radius: 24px;
-      border: var(--border-glass);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
-      padding: 18px 16px 16px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      backdrop-filter: blur(var(--blur));
+      gap: 12px;
+      height: 100%;
     }
 
-    .brand {
+    .app-header {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 6px 8px 10px;
-      border-radius: 18px;
-      background: #050505;
+      justify-content: space-between;
+      gap: 12px;
     }
 
-    .brand-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
-      box-shadow: 0 0 18px rgba(255, 255, 255, 0.5);
+    .app-title {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #050712;
-      font-weight: 800;
-      font-size: 18px;
+      flex-direction: column;
+      gap: 2px;
     }
 
-    .brand-text-main {
-      font-weight: 650;
-      letter-spacing: 0.04em;
-      font-size: 14px;
+    .app-title-main {
+      font-size: 1.4rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
+      font-weight: 700;
+      background: linear-gradient(90deg, #00f5ff, #ff00ff, #00ff85);
+      -webkit-background-clip: text;
+      color: transparent;
     }
 
-    .brand-text-sub {
-      font-size: 11px;
-      opacity: 0.7;
-    }
-
-    .nav-label {
-      font-size: 11px;
+    .app-title-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 0.16em;
-      opacity: 0.6;
-      padding: 0 4px;
+      letter-spacing: 0.18em;
     }
 
     .nav {
       display: flex;
-      flex-direction: column;
       gap: 8px;
+      background: radial-gradient(circle at top left, rgba(0, 245, 255, 0.12), transparent 60%);
+      padding: 6px;
+      border-radius: 999px;
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.7);
     }
 
-    .nav-btn {
+    .nav button {
       position: relative;
       border: none;
-      outline: none;
       border-radius: 999px;
-      padding: 10px 11px;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      font-size: 13px;
-      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.16s ease;
-    }
-
-    .nav-btn-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .nav-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
-    }
-
-    .nav-title {
-      font-weight: 550;
-    }
-
-    .nav-tag {
-      font-size: 11px;
-      opacity: 0.7;
-    }
-
-    .nav-btn.active {
-      transform: translateY(-1px);
-      box-shadow: 0 0 22px rgba(255, 255, 255, 0.4);
-      border-color: rgba(255, 255, 255, 0.4);
-    }
-
-    .nav-btn:hover:not(.active) {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
-    }
-
-    .nav-kbd {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: #050505;
-      opacity: 0.8;
-    }
-
-    .sidebar-footer {
-      margin-top: auto;
-      padding-top: 6px;
-      font-size: 11px;
-      opacity: 0.7;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .sidebar-footer span strong {
-      font-weight: 600;
-    }
-
-    /* Main */
-
-    .main {
-      background: var(--panel);
-      border-radius: 24px;
-      border: var(--border-glass);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
-      padding: 16px 16px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      backdrop-filter: blur(var(--blur));
-      position: relative;
-      overflow: hidden;
-    }
-
-    .main-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 4px 4px 6px;
-    }
-
-    .main-title-block {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .main-title {
-      font-size: 18px;
-      font-weight: 650;
-      letter-spacing: 0.04em;
+      padding: 8px 14px;
+      font-size: 0.8rem;
       text-transform: uppercase;
+      letter-spacing: 0.12em;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      overflow: hidden;
+      transition: color var(--transition-fast), transform var(--transition-fast);
     }
 
-    .main-subtitle {
-      font-size: 11px;
-      opacity: 0.7;
+    .nav button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.2), rgba(255, 0, 255, 0.2));
+      opacity: 0;
+      transition: opacity var(--transition-fast);
     }
 
-    .main-pills {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
+    .nav button span {
+      position: relative;
+      z-index: 1;
     }
 
-    .pill {
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: #050505;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+    .nav button:hover {
+      color: var(--text);
+      transform: translateY(-1px);
     }
 
-    .pill-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+    .nav button.active {
+      color: var(--text);
     }
 
-    .main-body {
+    .nav button.active::before {
+      opacity: 1;
+    }
+
+    .nav button.active::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 0 12px rgba(0, 245, 255, 0.6);
+    }
+
+    .app-main {
       flex: 1;
       display: grid;
-      grid-template-rows: minmax(0, 1fr);
-      gap: 10px;
-      position: relative;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 12px;
+      min-height: 0;
     }
 
     .panel {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(6px);
-      transition: opacity 0.18s ease, transform 0.18s ease;
+      position: relative;
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.06), rgba(5, 5, 16, 0.96));
+      border-radius: 20px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow:
+        0 0 24px rgba(0, 0, 0, 0.9),
+        0 0 30px rgba(0, 245, 255, 0.18);
+      backdrop-filter: blur(18px);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
+      min-height: 0;
     }
 
-    .panel.active {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
-
-    .panel-top-row {
+    .panel-header {
       display: flex;
-      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .panel-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+
+    .panel-badge {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.18), rgba(255, 0, 255, 0.18));
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .panel-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 0;
+    }
+
+    .view {
+      display: none;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .view.active {
+      display: flex;
+    }
+
+    .sandbox-layout,
+    .snake-layout,
+    .dash-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+      gap: 8px;
+      min-height: 0;
+    }
+
+    .canvas-frame {
+      position: relative;
+      background: radial-gradient(circle at top, rgba(0, 245, 255, 0.12), rgba(0, 0, 0, 0.95));
+      border-radius: 16px;
+      padding: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow:
+        0 0 18px rgba(0, 0, 0, 0.9),
+        0 0 30px rgba(0, 245, 255, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 0;
+    }
+
+    .canvas-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .canvas-status {
+      display: flex;
+      gap: 6px;
       align-items: center;
     }
 
-    .panel-info {
-      font-size: 12px;
-      opacity: 0.8;
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent3);
+      box-shadow: 0 0 10px rgba(0, 255, 133, 0.9);
     }
 
-    .panel-controls {
-      margin-left: auto;
+    .canvas-shell {
+      flex: 1;
+      border-radius: 12px;
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.96));
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--inner-glow);
       display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      image-rendering: pixelated;
+      background: #050510;
+      border-radius: 8px;
+    }
+
+    .tool-panel {
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.96));
+      border-radius: 16px;
+      padding: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow:
+        0 0 18px rgba(0, 0, 0, 0.9),
+        0 0 24px rgba(255, 0, 255, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 0;
+    }
+
+    .tool-section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
       gap: 6px;
     }
 
     .chip {
-      font-size: 11px;
-      padding: 4px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: #050505;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+      padding: 4px 9px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(255, 0, 255, 0.08));
+      color: var(--muted);
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
     }
 
-    .chip-key {
-      font-size: 10px;
-      padding: 1px 5px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(0, 0, 0, 0.4);
+    .chip:hover {
+      color: var(--text);
+      transform: translateY(-1px);
+      box-shadow: 0 0 12px rgba(0, 245, 255, 0.5);
     }
 
-    .panel-main,
-    .panel-main-full {
-      flex: 1;
-      display: grid;
-      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
-      gap: 10px;
-    }
-
-    .panel-main-full {
-      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-    }
-
-    .card {
-      background: #050505;
-      border-radius: var(--radius-md);
-      border: var(--border-glass);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.9);
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-    }
-
-    .card-title {
-      font-weight: 550;
-    }
-
-    .card-sub {
-      font-size: 11px;
-      opacity: 0.7;
-    }
-
-    .card-badge-row {
-      display: flex;
-      gap: 6px;
-      font-size: 10px;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      padding: 2px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(0, 0, 0, 0.4);
-      opacity: 0.85;
-    }
-
-    canvas {
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: radial-gradient(circle at top, #050712, #020308 60%, #000 100%);
-      display: block;
-    }
-
-    .card-footer {
-      font-size: 11px;
-      opacity: 0.75;
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .card-footer span {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .dot-soft,
-    .dot-soft-pink,
-    .dot-soft-green {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-    }
-
-    .dot-soft {
-      background: #35f0ff;
-      box-shadow: 0 0 10px rgba(53, 240, 255, 0.9);
-    }
-
-    .dot-soft-pink {
-      background: #ff3bff;
-      box-shadow: 0 0 10px rgba(255, 59, 255, 0.9);
-    }
-
-    .dot-soft-green {
-      background: #7cff6b;
-      box-shadow: 0 0 10px rgba(124, 255, 107, 0.9);
-    }
-
-    .control-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px;
-      font-size: 11px;
-    }
-
-    .control-item {
-      padding: 6px 7px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(0, 0, 0, 0.35);
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .control-label {
-      opacity: 0.8;
-    }
-
-    .control-keys {
-      font-size: 10px;
-      opacity: 0.9;
-    }
-
-    .control-keys span {
-      padding: 1px 5px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      margin-right: 2px;
+    .chip.active {
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.3);
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.3), rgba(255, 0, 255, 0.3));
+      box-shadow: 0 0 14px rgba(0, 245, 255, 0.7);
     }
 
     .slider-row {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 11px;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--muted);
     }
 
     .slider-row input[type="range"] {
       flex: 1;
+      accent-color: var(--accent1);
     }
 
-    input[type="range"] {
-      -webkit-appearance: none;
-      appearance: none;
-      height: 4px;
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .btn {
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.16);
-      outline: none;
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+      padding: 5px 10px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.96));
+      color: var(--muted);
       cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
     }
 
-    input[type="range"]::-moz-range-thumb {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #ff0000, #00ff00, #0000ff);
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
-      cursor: pointer;
-      border: none;
-    }
-
-    .btn-soft {
-      border-radius: 999px;
-      padding: 4px 10px;
-      font-size: 11px;
+    .btn:hover {
       color: var(--text);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: #050505;
-    }
-
-    .btn-soft:hover {
       transform: translateY(-1px);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 0 12px rgba(0, 245, 255, 0.5);
     }
 
-    .btn-soft-danger {
-      border-color: rgba(255, 75, 107, 0.6);
-      color: var(--danger);
-    }
-
-    .btn-soft-tool {
-      font-size: 11px;
-      padding: 4px 10px;
-    }
-
-    .btn-soft-tool.active {
-      box-shadow: 0 0 16px rgba(255, 255, 255, 0.5);
+    .btn.primary {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.3), rgba(0, 255, 133, 0.3));
+      color: var(--text);
       border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 14px rgba(0, 245, 255, 0.7);
     }
 
-    .score-row {
-      display: flex;
-      gap: 6px;
-      font-size: 11px;
-      flex-wrap: wrap;
+    .btn.danger {
+      background: linear-gradient(135deg, rgba(255, 51, 102, 0.3), rgba(255, 0, 128, 0.3));
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 14px rgba(255, 51, 102, 0.7);
     }
 
-    .score-pill {
+    .btn.small {
       padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(0, 0, 0, 0.4);
-      display: inline-flex;
+      font-size: 0.65rem;
+    }
+
+    .info-text {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .credits-list {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .credits-list strong {
+      color: var(--text);
+    }
+
+    .menu-view {
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      gap: 4px;
+      text-align: center;
+      gap: 12px;
     }
 
-    .score-label {
-      opacity: 0.8;
+    .menu-title {
+      font-size: 1.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #00f5ff, #ff00ff, #00ff85, #ffcc00);
+      -webkit-background-clip: text;
+      color: transparent;
     }
 
-    .score-value {
-      font-weight: 600;
+    .menu-sub {
+      font-size: 0.9rem;
+      color: var(--muted);
+      max-width: 420px;
     }
 
-    /* Matter state selector */
-
-    .matter-tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 6px;
-      font-size: 11px;
-    }
-
-    .matter-tab {
-      border-radius: 999px;
-      padding: 4px 10px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(0, 0, 0, 0.4);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .matter-tab.active {
-      box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
-    }
-
-    .matter-pill-row {
+    .menu-buttons {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      max-height: 120px;
-      overflow-y: auto;
-      padding-right: 4px;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 4px;
     }
 
-    .matter-pill {
-      border-radius: 999px;
-      padding: 4px 10px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(0, 0, 0, 0.5);
-      font-size: 11px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      white-space: nowrap;
+    .menu-buttons .btn {
+      min-width: 140px;
     }
 
-    .matter-pill-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      box-shadow: 0 0 10px rgba(53, 240, 255, 0.9);
-    }
-
-    .matter-pill.active {
-      box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
-    }
-
-    .matter-backdrop {
+    .snake-overlay {
       position: absolute;
       inset: 0;
-      pointer-events: none;
-      opacity: 0.35;
-      mix-blend-mode: screen;
-    }
-
-    .matter-backdrop.solid {
-      background:
-        radial-gradient(circle at top left, rgba(200, 200, 255, 0.25), transparent 60%),
-        radial-gradient(circle at bottom right, rgba(120, 80, 40, 0.25), transparent 60%);
-    }
-
-    .matter-backdrop.liquid {
-      background:
-        radial-gradient(circle at top left, rgba(80, 180, 255, 0.3), transparent 60%),
-        radial-gradient(circle at bottom right, rgba(255, 80, 40, 0.3), transparent 60%);
-    }
-
-    .matter-backdrop.gas {
-      background:
-        radial-gradient(circle at top left, rgba(180, 255, 200, 0.3), transparent 60%),
-        radial-gradient(circle at bottom right, rgba(255, 200, 120, 0.3), transparent 60%);
-    }
-
-    /* Pablo Dash editor */
-
-    .dash-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
-      gap: 10px;
-      flex: 1;
-    }
-
-    .dash-editor-grid {
-      display: grid;
-      grid-template-columns: repeat(8, minmax(0, 1fr));
-      gap: 4px;
-      font-size: 11px;
-    }
-
-    .dash-editor-cell {
-      padding: 6px 6px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(0, 0, 0, 0.35);
-      cursor: pointer;
-      text-align: center;
-    }
-
-    .dash-editor-cell.active {
-      box-shadow: 0 0 14px rgba(255, 255, 255, 0.4);
-      border-color: rgba(255, 255, 255, 0.4);
-    }
-
-    .dash-palette-row {
       display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      font-size: 11px;
-    }
-
-    .dash-palette-item {
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(0, 0, 0, 0.5);
-      display: inline-flex;
       align-items: center;
-      gap: 4px;
-      cursor: pointer;
-    }
-
-    .dash-palette-item.active {
-      box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
-    }
-
-    .dash-palette-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
+      justify-content: center;
+      pointer-events: none;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
     }
 
     .dash-toolbar {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 6px;
-      margin-top: 8px;
-      font-size: 11px;
-      align-items: center;
+      font-size: 0.75rem;
+      color: var(--muted);
     }
 
-    .dash-status-row {
+    .dash-toolbar-row {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 8px;
-      font-size: 11px;
-      opacity: 0.8;
+      align-items: center;
     }
 
-    @media (max-width: 980px) {
-      .portal-shell {
+    .dash-label {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.7rem;
+    }
+
+    .dash-object-palette {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .dash-object {
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.96));
+      color: var(--muted);
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .dash-object:hover {
+      color: var(--text);
+      transform: translateY(-1px);
+      box-shadow: 0 0 12px rgba(0, 245, 255, 0.5);
+    }
+
+    .dash-object.active {
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.3);
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.3), rgba(255, 0, 255, 0.3));
+      box-shadow: 0 0 14px rgba(0, 245, 255, 0.7);
+    }
+
+    .dash-scroll-controls {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dash-scroll-btn {
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.96));
+      color: var(--muted);
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .dash-scroll-btn:hover {
+      color: var(--text);
+      transform: translateY(-1px);
+      box-shadow: 0 0 12px rgba(0, 245, 255, 0.5);
+    }
+
+    .dash-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .dash-meta span {
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.96));
+    }
+
+    .dash-direction-toggle {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      font-size: 0.7rem;
+    }
+
+    .dash-direction-toggle select {
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: var(--text);
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      outline: none;
+    }
+
+    .dash-color-input {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+    }
+
+    .dash-color-input input[type="color"] {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0;
+      background: transparent;
+    }
+
+    .dash-legend {
+      font-size: 0.7rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    @media (max-width: 900px) {
+      .app-main {
         grid-template-columns: minmax(0, 1fr);
-        min-height: 0;
       }
-
-      .sidebar {
-        order: 2;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-      }
-
-      .nav {
-        flex-direction: row;
-      }
-
-      .nav-btn {
-        flex: 1;
-      }
-
-      .sidebar-footer {
-        display: none;
-      }
-    }
-
-    @media (max-width: 780px) {
-      .panel-main,
-      .panel-main-full,
+      .sandbox-layout,
+      .snake-layout,
       .dash-layout {
         grid-template-columns: minmax(0, 1fr);
       }
@@ -772,2117 +622,1150 @@
   </style>
 </head>
 <body>
-  <div class="portal-shell">
-    <div class="portal-shell-inner">
-      <!-- Sidebar -->
-      <aside class="sidebar">
-        <div class="brand">
-          <div class="brand-icon">P</div>
-          <div>
-            <div class="brand-text-main">Pablo's Portal 2.0</div>
-            <div class="brand-text-sub">Sandbox, Snake &amp; Pablo Dash</div>
-          </div>
+  <div class="app-frame">
+    <div class="app-inner">
+      <header class="app-header">
+        <div class="app-title">
+          <div class="app-title-main">Pablo's Portal</div>
+          <div class="app-title-sub">Sandbox • Neon Snake • Pablo Dash</div>
         </div>
-
-        <div class="nav-label">Menu</div>
         <nav class="nav">
-          <button class="nav-btn rgb-cycle-btn active" data-target="panel-sandbox">
-            <div class="nav-btn-left">
-              <div class="nav-dot"></div>
-              <div>
-                <div class="nav-title">Physics Sandbox</div>
-                <div class="nav-tag">States of matter, lighter, ruler &amp; chain explosions</div>
-              </div>
-            </div>
-            <div class="nav-kbd">1</div>
-          </button>
-
-          <button class="nav-btn rgb-cycle-btn" data-target="panel-snake">
-            <div class="nav-btn-left">
-              <div class="nav-dot"></div>
-              <div>
-                <div class="nav-title">Neon Snake</div>
-                <div class="nav-tag">Large grid, chunky pixels</div>
-              </div>
-            </div>
-            <div class="nav-kbd">2</div>
-          </button>
-
-          <button class="nav-btn rgb-cycle-btn" data-target="panel-dash">
-            <div class="nav-btn-left">
-              <div class="nav-dot"></div>
-              <div>
-                <div class="nav-title">Pablo Dash</div>
-                <div class="nav-tag">Runner + full level editor</div>
-              </div>
-            </div>
-            <div class="nav-kbd">3</div>
-          </button>
+          <button class="nav-btn active" data-view="menu"><span>Menu</span></button>
+          <button class="nav-btn" data-view="sandbox"><span>Sandbox</span></button>
+          <button class="nav-btn" data-view="snake"><span>Neon Snake</span></button>
+          <button class="nav-btn" data-view="dash"><span>Pablo Dash</span></button>
+          <button class="nav-btn" data-view="credits"><span>Credits</span></button>
         </nav>
+      </header>
 
-        <div class="sidebar-footer">
-          <span><strong>Tip:</strong> Press 1, 2 or 3 to switch instantly.</span>
-          <span>Sandbox: matter &amp; lighter. Snake: chunky neon. Dash: Geometry-style runner + editor.</span>
-        </div>
-      </aside>
-
-      <!-- Main -->
-      <main class="main">
-        <header class="main-header">
-          <div class="main-title-block">
-            <div class="main-title">Pablo's Portal 2.0</div>
-            <div class="main-subtitle">
-              Physics sandbox, neon snake, and Pablo Dash with a built-in level editor.
-            </div>
+      <main class="app-main">
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Playfield</div>
+            <div class="panel-badge">Hyper‑Neon</div>
           </div>
-          <div class="main-pills">
-            <div class="pill">
-              <div class="pill-dot"></div>
-              RGB outline
-            </div>
-            <div class="pill">States of matter</div>
-            <div class="pill">Dash editor</div>
-          </div>
-        </header>
-
-        <section class="main-body">
-          <!-- Sandbox Panel -->
-          <section class="panel active" id="panel-sandbox">
-            <div class="panel-top-row">
-              <div class="panel-info">
-                Large neon sandbox with solids, liquids, gases, a lighter that can spark &amp; chain-explode,
-                plus a ruler for perfect lines.
+          <div class="panel-body">
+            <div class="view menu-view active" id="view-menu">
+              <div class="menu-title">Pablo's Portal</div>
+              <div class="menu-sub">
+                A hyper‑neon playground: falling sand, classic snake, and full Pablo Dash with level editor.
+                Choose a mode to begin.
               </div>
-              <div class="panel-controls">
-                <div class="chip">
-                  <span class="chip-key">1</span>
-                  Focus Sandbox
-                </div>
-                <div class="chip">
-                  <span class="chip-key">C</span>
-                  Clear
-                </div>
+              <div class="menu-buttons">
+                <button class="btn primary" data-view-jump="sandbox">Open Sandbox</button>
+                <button class="btn primary" data-view-jump="snake">Play Neon Snake</button>
+                <button class="btn primary" data-view-jump="dash">Launch Pablo Dash</button>
+                <button class="btn" data-view-jump="credits">View Credits</button>
               </div>
             </div>
 
-            <div class="panel-main">
-              <!-- Sandbox canvas card -->
-              <div class="card" style="position:relative;">
-                <div class="matter-backdrop solid" id="matterBackdrop"></div>
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Physics Sandbox</div>
-                    <div class="card-sub">Large grid, states of matter, lighter &amp; ruler</div>
-                  </div>
-                  <div class="card-badge-row">
-                    <span class="badge">Solid / Liquid / Gas</span>
-                    <span class="badge">Lighter &amp; explosions</span>
-                    <span class="badge">Ruler lines</span>
-                  </div>
-                </div>
-                <canvas id="sandboxCanvas"></canvas>
-                <div class="card-footer">
-                  <span>
-                    <span class="dot-soft"></span>
-                    Left click: draw / place flame / ruler line
-                  </span>
-                  <span>
-                    <span class="dot-soft-pink"></span>
-                    Right click / E: erase
-                  </span>
-                </div>
-              </div>
-
-              <!-- Sandbox controls card -->
-              <div class="card">
-                <div class="card-header">
-                  <div class="card-title">Matter &amp; Tools</div>
-                  <div class="card-sub">Choose state, material, brush, gravity, lighter &amp; ruler</div>
-                </div>
-
-                <!-- State tabs -->
-                <div class="matter-tabs">
-                  <button class="matter-tab rgb-cycle-btn active" data-state="solid">
-                    <span class="dot-soft"></span>
-                    Solid
-                  </button>
-                  <button class="matter-tab rgb-cycle-btn" data-state="liquid">
-                    <span class="dot-soft-pink"></span>
-                    Liquid
-                  </button>
-                  <button class="matter-tab rgb-cycle-btn" data-state="gas">
-                    <span class="dot-soft-green"></span>
-                    Gas
-                  </button>
-                </div>
-
-                <!-- Material pills -->
-                <div class="matter-pill-row" id="matterPills"></div>
-
-                <!-- Tools -->
-                <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
-                  <button class="btn-soft btn-soft-tool rgb-cycle-btn active" id="toolDrawBtn">✏️ Draw</button>
-                  <button class="btn-soft btn-soft-tool rgb-cycle-btn" id="toolLighterBtn">🔥 Lighter</button>
-                  <button class="btn-soft btn-soft-tool rgb-cycle-btn" id="toolEraserBtn">⌫ Eraser</button>
-                  <button class="btn-soft btn-soft-tool rgb-cycle-btn" id="rulerBtn" style="display:none;">📏 Ruler</button>
-                  <button class="btn-soft rgb-cycle-btn" id="lighterStartBtn" style="display:none; margin-left:auto;">
-                    <span class="dot-soft-pink"></span>
-                    Start
-                  </button>
-                </div>
-
-                <!-- Sliders -->
-                <div style="margin-top:10px;" class="control-grid">
-                  <div class="control-item">
-                    <div class="control-label">Brush Size</div>
-                    <div class="slider-row">
-                      <input type="range" id="brushSize" min="1" max="10" value="4" />
-                      <span id="brushSizeLabel">4</span>
+            <div class="view" id="view-sandbox">
+              <div class="sandbox-layout">
+                <div class="canvas-frame">
+                  <div class="canvas-header">
+                    <span>Sandbox Simulation</span>
+                    <div class="canvas-status">
+                      <div class="status-dot"></div>
+                      <span id="sandbox-status">Running</span>
                     </div>
                   </div>
-                  <div class="control-item">
-                    <div class="control-label">Gravity Strength</div>
-                    <div class="slider-row">
-                      <input type="range" id="gravityStrength" min="0" max="3" step="0.2" value="1.6" />
-                      <span id="gravityLabel">1.6</span>
-                    </div>
-                  </div>
-                  <div class="control-item">
-                    <div class="control-label">Gas Drift</div>
-                    <div class="slider-row">
-                      <input type="range" id="gasDrift" min="0" max="3" step="0.2" value="1.2" />
-                      <span id="gasDriftLabel">1.2</span>
-                    </div>
-                  </div>
-                  <div class="control-item">
-                    <div class="control-label">Particles</div>
-                    <div style="font-size:11px; opacity:0.8;">
-                      <span id="particleCount">0</span>
-                      active
-                    </div>
+                  <div class="canvas-shell">
+                    <canvas id="sandbox-canvas" width="320" height="240"></canvas>
                   </div>
                 </div>
+                <div class="tool-panel">
+                  <div class="tool-section-title">Materials</div>
+                  <div class="chip-row" id="sandbox-materials">
+                    <button class="chip active" data-material="sand">Sand</button>
+                    <button class="chip" data-material="water">Water</button>
+                    <button class="chip" data-material="stone">Stone</button>
+                    <button class="chip" data-material="fire">Fire</button>
+                    <button class="chip" data-material="smoke">Smoke</button>
+                    <button class="chip" data-material="acid">Acid</button>
+                  </div>
 
-                <div style="margin-top:8px; display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap;">
-                  <button class="btn-soft btn-soft-danger rgb-cycle-btn" id="clearSandbox">
-                    <span class="dot-soft-pink"></span>
-                    Clear Sandbox
-                  </button>
-                  <span style="font-size:11px; opacity:0.75;">
-                    Lighter Start: 1 in 5 chance. Fail = sparks. Success = pixel flame that can trigger chain explosions.
-                  </span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Neon Snake Panel -->
-          <section class="panel" id="panel-snake">
-            <div class="panel-top-row">
-              <div class="panel-info">
-                Larger neon grid for snake. Chunky rounded pixels, non-glowing head and fruits.
-              </div>
-              <div class="panel-controls">
-                <div class="chip">
-                  <span class="chip-key">2</span>
-                  Focus Snake
-                </div>
-                <div class="chip">
-                  <span class="chip-key">Space</span>
-                  Pause / Resume
-                </div>
-              </div>
-            </div>
-
-            <div class="panel-main-full">
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Neon Snake</div>
-                    <div class="card-sub">Bigger pixels, rounded body, non-glowing head &amp; fruits</div>
+                  <div class="tool-section-title">Tools</div>
+                  <div class="button-row">
+                    <button class="btn small" id="sandbox-brush-tool">Brush</button>
+                    <button class="btn small" id="sandbox-ruler-tool">Ruler</button>
+                    <button class="btn small" id="sandbox-lighter-tool">Lighter</button>
                   </div>
-                  <div class="card-badge-row">
-                    <span class="badge">Large grid</span>
-                    <span class="badge">Chunky cells</span>
-                  </div>
-                </div>
-                <canvas id="snakeCanvas"></canvas>
-                <div class="card-footer">
-                  <span>
-                    <span class="dot-soft-green"></span>
-                    Arrow keys: move
-                  </span>
-                  <span>
-                    <span class="dot-soft-pink"></span>
-                    Space: pause / resume
-                  </span>
-                </div>
-              </div>
 
-              <div class="card">
-                <div class="card-header">
-                  <div class="card-title">Snake Stats &amp; Controls</div>
-                  <div class="card-sub">Score, speed, quick reset</div>
-                </div>
-
-                <div class="score-row">
-                  <div class="score-pill">
-                    <span class="dot-soft-green"></span>
-                    <span class="score-label">Score</span>
-                    <span class="score-value" id="snakeScore">0</span>
-                  </div>
-                  <div class="score-pill">
-                    <span class="dot-soft"></span>
-                    <span class="score-label">Best</span>
-                    <span class="score-value" id="snakeBest">0</span>
-                  </div>
-                  <div class="score-pill">
-                    <span class="dot-soft-pink"></span>
-                    <span class="score-label">Speed</span>
-                    <span class="score-value" id="snakeSpeedLabel">1.0x</span>
-                  </div>
-                </div>
-
-                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px; font-size:11px;">
+                  <div class="tool-section-title">Brush Size</div>
                   <div class="slider-row">
-                    <span>Base Speed</span>
-                    <input type="range" id="snakeSpeed" min="0.6" max="1.8" step="0.1" value="1.0" />
+                    <span>Size</span>
+                    <input type="range" id="sandbox-brush-size" min="1" max="12" value="4" />
+                    <span id="sandbox-brush-label">4</span>
                   </div>
 
-                  <div class="control-grid">
-                    <div class="control-item">
-                      <div class="control-label">Movement</div>
-                      <div class="control-keys">
-                        <span>↑</span>
-                        <span>↓</span>
-                        <span>←</span>
-                        <span>→</span>
-                      </div>
-                    </div>
-                    <div class="control-item">
-                      <div class="control-label">Pause / Resume</div>
-                      <div class="control-keys">
-                        <span>Space</span>
-                      </div>
-                    </div>
-                    <div class="control-item">
-                      <div class="control-label">Reset Game</div>
-                      <div class="control-keys">
-                        <span>R</span>
-                      </div>
-                    </div>
-                    <div class="control-item">
-                      <div class="control-label">Portal Switch</div>
-                      <div class="control-keys">
-                        <span>1</span> Sandbox
-                        <span>2</span> Snake
-                        <span>3</span> Dash
-                      </div>
-                    </div>
+                  <div class="tool-section-title">Simulation</div>
+                  <div class="button-row">
+                    <button class="btn small primary" id="sandbox-toggle">Pause</button>
+                    <button class="btn small" id="sandbox-random">Random Fill</button>
+                    <button class="btn small danger" id="sandbox-clear">Clear</button>
                   </div>
 
-                  <div style="display:flex; justify-content:space-between; gap:6px; flex-wrap:wrap; margin-top:4px;">
-                    <button class="btn-soft rgb-cycle-btn" id="snakeResetBtn">
-                      <span class="dot-soft"></span>
-                      Reset Snake
-                    </button>
-                    <span style="opacity:0.75;">
-                      Each fruit slightly increases speed. The bigger pixels give you a chunky neon feel.
-                    </span>
+                  <div class="info-text">
+                    Left‑click to place material. Right‑click to erase.  
+                    Ruler draws straight lines. Lighter ignites flammable materials.
                   </div>
                 </div>
               </div>
             </div>
-          </section>
 
-          <!-- Pablo Dash Panel -->
-          <section class="panel" id="panel-dash">
-            <div class="panel-top-row">
-              <div class="panel-info">
-                Pablo Dash: auto-runner with spikes, blocks, portals &amp; a full grid-based level editor.
-              </div>
-              <div class="panel-controls">
-                <div class="chip">
-                  <span class="chip-key">3</span>
-                  Focus Dash
+            <div class="view" id="view-snake">
+              <div class="snake-layout">
+                <div class="canvas-frame">
+                  <div class="canvas-header">
+                    <span>Neon Snake</span>
+                    <div class="canvas-status">
+                      <div class="status-dot"></div>
+                      <span id="snake-status">Press any arrow key</span>
+                    </div>
+                  </div>
+                  <div class="canvas-shell">
+                    <canvas id="snake-canvas" width="320" height="240"></canvas>
+                    <div class="snake-overlay" id="snake-overlay">Press any arrow key to start</div>
+                  </div>
                 </div>
-                <div class="chip">
-                  <span class="chip-key">Space</span>
-                  Jump / Play / Pause
+                <div class="tool-panel">
+                  <div class="tool-section-title">Controls</div>
+                  <div class="info-text">
+                    Use arrow keys or WASD to move.  
+                    The snake wraps around edges.  
+                    Eat neon orbs to grow. Avoid your own tail.
+                  </div>
+
+                  <div class="tool-section-title">Game</div>
+                  <div class="button-row">
+                    <button class="btn small primary" id="snake-restart">Restart</button>
+                  </div>
+
+                  <div class="tool-section-title">Stats</div>
+                  <div class="info-text">
+                    Score: <span id="snake-score">0</span><br />
+                    High Score: <span id="snake-highscore">0</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="dash-layout">
-              <!-- Dash game canvas -->
-              <div class="card">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Pablo Dash</div>
-                    <div class="card-sub">Geometry-style runner using your custom level</div>
+            <div class="view" id="view-dash">
+              <div class="dash-layout">
+                <div class="canvas-frame">
+                  <div class="canvas-header">
+                    <span>Pablo Dash</span>
+                    <div class="canvas-status">
+                      <div class="status-dot"></div>
+                      <span id="dash-status">Editor Mode</span>
+                    </div>
                   </div>
-                  <div class="card-badge-row">
-                    <span class="badge">Auto-run</span>
-                    <span class="badge">Jump over spikes</span>
-                    <span class="badge">Editor-powered</span>
+                  <div class="canvas-shell">
+                    <canvas id="dash-canvas" width="480" height="240"></canvas>
                   </div>
                 </div>
-                <canvas id="dashCanvas"></canvas>
-                <div class="card-footer">
-                  <span>
-                    <span class="dot-soft-green"></span>
-                    Space / Click: jump
-                  </span>
-                  <span>
-                    <span class="dot-soft-pink"></span>
-                    R: restart
-                  </span>
-                </div>
-              </div>
+                <div class="tool-panel">
+                  <div class="tool-section-title">Editor Tools</div>
+                  <div class="dash-toolbar">
+                    <div class="dash-toolbar-row">
+                      <span class="dash-label">Object</span>
+                      <div class="dash-object-palette" id="dash-object-palette">
+                        <button class="dash-object active" data-obj="ground">Ground</button>
+                        <button class="dash-object" data-obj="spike">Spike</button>
+                        <button class="dash-object" data-obj="jump">Jump Pad</button>
+                        <button class="dash-object" data-obj="portal">Portal</button>
+                        <button class="dash-object" data-obj="decor">Decor</button>
+                        <button class="dash-object" data-obj="platform">Platform</button>
+                        <button class="dash-object" data-obj="gravity">Gravity Flip</button>
+                        <button class="dash-object" data-obj="speed">Speed</button>
+                        <button class="dash-object" data-obj="checkpoint">Checkpoint</button>
+                        <button class="dash-object" data-obj="color">Color Block</button>
+                        <button class="dash-object" data-obj="erase">Erase</button>
+                      </div>
+                    </div>
 
-              <!-- Dash editor -->
-              <div class="card">
-                <div class="card-header">
-                  <div class="card-title">Level Editor</div>
-                  <div class="card-sub">Paint tiles, set start, test &amp; save</div>
-                </div>
+                    <div class="dash-toolbar-row">
+                      <span class="dash-label">Scroll</span>
+                      <div class="dash-scroll-controls">
+                        <button class="dash-scroll-btn" id="dash-scroll-left">&larr; Left</button>
+                        <button class="dash-scroll-btn" id="dash-scroll-right">Right &rarr;</button>
+                      </div>
+                    </div>
 
-                <div class="dash-palette-row" id="dashPalette">
-                  <button class="dash-palette-item active" data-tile="empty">
-                    <span class="dash-palette-dot" style="background:#111;"></span>
-                    Empty
-                  </button>
-                  <button class="dash-palette-item" data-tile="ground">
-                    <span class="dash-palette-dot" style="background:#35f0ff;"></span>
-                    Ground
-                  </button>
-                  <button class="dash-palette-item" data-tile="spike">
-                    <span class="dash-palette-dot" style="background:#ff3bff;"></span>
-                    Spike
-                  </button>
-                  <button class="dash-palette-item" data-tile="start">
-                    <span class="dash-palette-dot" style="background:#7cff6b;"></span>
-                    Start
-                  </button>
-                  <button class="dash-palette-item" data-tile="goal">
-                    <span class="dash-palette-dot" style="background:#ffd27a;"></span>
-                    Goal
-                  </button>
-                </div>
+                    <div class="dash-toolbar-row">
+                      <span class="dash-label">Direction</span>
+                      <div class="dash-direction-toggle">
+                        <span>Platform Direction</span>
+                        <select id="dash-platform-direction">
+                          <option value="horizontal">Horizontal</option>
+                          <option value="vertical">Vertical</option>
+                        </select>
+                      </div>
+                    </div>
 
-                <div style="margin-top:8px; font-size:11px; opacity:0.8;">
-                  Click cells to paint. Only one Start and one Goal are used by the runner.
-                </div>
+                    <div class="dash-toolbar-row">
+                      <span class="dash-label">Color</span>
+                      <div class="dash-color-input">
+                        <span>Custom Block</span>
+                        <input type="color" id="dash-color-picker" value="#00f5ff" />
+                      </div>
+                    </div>
 
-                <div class="dash-editor-grid" id="dashEditorGrid"></div>
+                    <div class="dash-toolbar-row">
+                      <span class="dash-label">Mode</span>
+                      <div class="button-row">
+                        <button class="btn small primary" id="dash-play">Play</button>
+                        <button class="btn small" id="dash-edit">Edit</button>
+                        <button class="btn small danger" id="dash-clear">Clear Level</button>
+                      </div>
+                    </div>
 
-                <div class="dash-toolbar">
-                  <button class="btn-soft rgb-cycle-btn" id="dashPlayBtn">
-                    <span class="dot-soft"></span>
-                    Play / Pause
-                  </button>
-                  <button class="btn-soft rgb-cycle-btn" id="dashRestartBtn">
-                    <span class="dot-soft-pink"></span>
-                    Restart
-                  </button>
-                  <button class="btn-soft rgb-cycle-btn" id="dashClearBtn">
-                    <span class="dot-soft-pink"></span>
-                    Clear Level
-                  </button>
-                  <button class="btn-soft rgb-cycle-btn" id="dashFillGroundBtn">
-                    <span class="dot-soft"></span>
-                    Fill Bottom Ground
-                  </button>
-                  <button class="btn-soft rgb-cycle-btn" id="dashSaveBtn">
-                    💾 Save
-                  </button>
-                  <button class="btn-soft rgb-cycle-btn" id="dashLoadBtn">
-                    ⟳ Load
-                  </button>
-                </div>
+                    <div class="dash-toolbar-row">
+                      <span class="dash-label">Meta</span>
+                      <div class="dash-meta">
+                        <span>Barrier line at bottom</span>
+                        <span>Spawn line at x = 0</span>
+                        <span>End portal at far right</span>
+                      </div>
+                    </div>
 
-                <div class="dash-status-row">
-                  <span>
-                    <span class="dot-soft"></span>
-                    <span id="dashStatus">Idle</span>
-                  </span>
-                  <span>
-                    <span class="dot-soft-pink"></span>
-                    Jumps: <span id="dashJumpCount">0</span>
-                  </span>
-                  <span>
-                    <span class="dot-soft-green"></span>
-                    Attempts: <span id="dashAttempts">0</span>
-                  </span>
+                    <div class="dash-legend">
+                      Left‑click to place objects on the grid.  
+                      Right‑click to erase.  
+                      Use scroll buttons to move along the level.  
+                      Platforms move horizontally or vertically based on the selected direction.
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </section>
+
+            <div class="view" id="view-credits">
+              <div class="menu-view">
+                <div class="menu-title">Credits</div>
+                <div class="credits-list">
+                  <p><strong>Design & Vision:</strong> Rebecca</p>
+                  <p><strong>Worlds:</strong> Falling Sandbox • Neon Snake • Pablo Dash</p>
+                  <p><strong>Style:</strong> Neon cyber‑glass, RGB glow, frosted panels.</p>
+                  <p><strong>Note:</strong> This is a playground — experiment, break things, and rebuild.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
+
+        <aside class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Context</div>
+            <div class="panel-badge">Live</div>
+          </div>
+          <div class="panel-body" id="side-panel">
+            <div id="side-menu" class="info-text">
+              Choose a mode on the left.  
+              Sandbox: falling sand with tools.  
+              Neon Snake: classic snake with neon glow.  
+              Pablo Dash: full level editor + runner.
+            </div>
+
+            <div id="side-sandbox" class="info-text" style="display:none;">
+              <strong>Sandbox Tips</strong><br />
+              • Sand falls and piles up.<br />
+              • Water flows around obstacles.<br />
+              • Fire burns flammable materials.<br />
+              • Acid eats through most solids.<br />
+              • Use Ruler for clean lines and Lighter to ignite.
+            </div>
+
+            <div id="side-snake" class="info-text" style="display:none;">
+              <strong>Neon Snake Tips</strong><br />
+              • Wraps around edges — use that to your advantage.<br />
+              • Plan ahead: your tail is your biggest enemy.<br />
+              • Restart anytime to chase a higher score.
+            </div>
+
+            <div id="side-dash" class="info-text" style="display:none;">
+              <strong>Pablo Dash Editor</strong><br />
+              • Build levels on a horizontal strip.<br />
+              • Barrier line keeps you grounded; spawn line is the start.<br />
+              • End portal marks the goal.<br />
+              • Moving platforms can be horizontal or vertical — set direction in the toolbar.<br />
+              • Gravity, speed, checkpoints, and color blocks let you shape the feel of the level.
+            </div>
+
+            <div id="side-credits" class="info-text" style="display:none;">
+              <strong>About Pablo's Portal</strong><br />
+              A compact playground built around three vibes: simulation, arcade, and precision platforming.  
+              Everything is tuned to feel like one coherent neon machine.
+            </div>
+          </div>
+        </aside>
       </main>
     </div>
   </div>
 
   <script>
-    // ---------- Layout & Navigation ----------
-
+    // ---------- View switching ----------
     const navButtons = document.querySelectorAll(".nav-btn");
-    const panels = document.querySelectorAll(".panel");
+    const views = {
+      menu: document.getElementById("view-menu"),
+      sandbox: document.getElementById("view-sandbox"),
+      snake: document.getElementById("view-snake"),
+      dash: document.getElementById("view-dash"),
+      credits: document.getElementById("view-credits"),
+    };
 
-    function activatePanel(id) {
-      panels.forEach(p => p.classList.toggle("active", p.id === id));
+    const sidePanels = {
+      menu: document.getElementById("side-menu"),
+      sandbox: document.getElementById("side-sandbox"),
+      snake: document.getElementById("side-snake"),
+      dash: document.getElementById("side-dash"),
+      credits: document.getElementById("side-credits"),
+    };
+
+    function setView(name) {
+      Object.values(views).forEach(v => v.classList.remove("active"));
+      Object.values(sidePanels).forEach(p => (p.style.display = "none"));
+      if (views[name]) views[name].classList.add("active");
+      if (sidePanels[name]) sidePanels[name].style.display = "block";
+
       navButtons.forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.target === id);
+        btn.classList.toggle("active", btn.dataset.view === name);
       });
     }
 
     navButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        activatePanel(btn.dataset.target);
+      btn.addEventListener("click", () => setView(btn.dataset.view));
+    });
+
+    document.querySelectorAll("[data-view-jump]").forEach(btn => {
+      btn.addEventListener("click", () => setView(btn.dataset.viewJump));
+    });
+
+    // ---------- Sandbox (simple falling sand) ----------
+    const sandboxCanvas = document.getElementById("sandbox-canvas");
+    const sandboxCtx = sandboxCanvas.getContext("2d");
+    const sandboxWidth = sandboxCanvas.width;
+    const sandboxHeight = sandboxCanvas.height;
+    const sandboxGridW = 160;
+    const sandboxGridH = 120;
+    const sandboxCellSizeX = sandboxWidth / sandboxGridW;
+    const sandboxCellSizeY = sandboxHeight / sandboxGridH;
+
+    const sandboxGrid = [];
+    for (let y = 0; y < sandboxGridH; y++) {
+      const row = [];
+      for (let x = 0; x < sandboxGridW; x++) row.push(null);
+      sandboxGrid.push(row);
+    }
+
+    const sandboxMaterials = {
+      sand: { color: "#f4d35e", type: "solid" },
+      water: { color: "#00bfff", type: "liquid" },
+      stone: { color: "#9e9e9e", type: "solid-static" },
+      fire: { color: "#ff4500", type: "fire" },
+      smoke: { color: "#aaaaaa", type: "gas" },
+      acid: { color: "#7fff00", type: "liquid-acid" },
+    };
+
+    let sandboxCurrentMaterial = "sand";
+    let sandboxBrushSize = 4;
+    let sandboxRunning = true;
+    let sandboxTool = "brush"; // brush, ruler, lighter
+    let sandboxRulerStart = null;
+
+    document.getElementById("sandbox-brush-size").addEventListener("input", e => {
+      sandboxBrushSize = parseInt(e.target.value, 10);
+      document.getElementById("sandbox-brush-label").textContent = sandboxBrushSize;
+    });
+
+    document.getElementById("sandbox-toggle").addEventListener("click", () => {
+      sandboxRunning = !sandboxRunning;
+      document.getElementById("sandbox-status").textContent = sandboxRunning ? "Running" : "Paused";
+      document.getElementById("sandbox-toggle").textContent = sandboxRunning ? "Pause" : "Resume";
+    });
+
+    document.getElementById("sandbox-clear").addEventListener("click", () => {
+      for (let y = 0; y < sandboxGridH; y++) {
+        for (let x = 0; x < sandboxGridW; x++) sandboxGrid[y][x] = null;
+      }
+    });
+
+    document.getElementById("sandbox-random").addEventListener("click", () => {
+      const keys = Object.keys(sandboxMaterials);
+      for (let y = 0; y < sandboxGridH; y++) {
+        for (let x = 0; x < sandboxGridW; x++) {
+          sandboxGrid[y][x] = Math.random() < 0.1 ? keys[Math.floor(Math.random() * keys.length)] : null;
+        }
+      }
+    });
+
+    document.getElementById("sandbox-brush-tool").addEventListener("click", () => {
+      sandboxTool = "brush";
+    });
+    document.getElementById("sandbox-ruler-tool").addEventListener("click", () => {
+      sandboxTool = "ruler";
+      sandboxRulerStart = null;
+    });
+    document.getElementById("sandbox-lighter-tool").addEventListener("click", () => {
+      sandboxTool = "lighter";
+    });
+
+    document.querySelectorAll("#sandbox-materials .chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        document.querySelectorAll("#sandbox-materials .chip").forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        sandboxCurrentMaterial = chip.dataset.material;
       });
     });
 
-    window.addEventListener("keydown", e => {
-      if (e.target.tagName === "INPUT") return;
-      if (e.key === "1") activatePanel("panel-sandbox");
-      if (e.key === "2") activatePanel("panel-snake");
-      if (e.key === "3") activatePanel("panel-dash");
-    });
-
-    // ---------- Physics Sandbox ----------
-
-    const sandboxCanvas = document.getElementById("sandboxCanvas");
-    const sandboxCtx = sandboxCanvas.getContext("2d");
-
-    const brushSizeInput = document.getElementById("brushSize");
-    const brushSizeLabel = document.getElementById("brushSizeLabel");
-    const gravityInput = document.getElementById("gravityStrength");
-    const gravityLabel = document.getElementById("gravityLabel");
-    const gasDriftInput = document.getElementById("gasDrift");
-    const gasDriftLabel = document.getElementById("gasDriftLabel");
-    const clearSandboxBtn = document.getElementById("clearSandbox");
-    const particleCountLabel = document.getElementById("particleCount");
-
-    const matterTabs = document.querySelectorAll(".matter-tab");
-    const matterPillsContainer = document.getElementById("matterPills");
-    const matterBackdrop = document.getElementById("matterBackdrop");
-
-    const toolDrawBtn = document.getElementById("toolDrawBtn");
-    const toolLighterBtn = document.getElementById("toolLighterBtn");
-    const toolEraserBtn = document.getElementById("toolEraserBtn");
-    const lighterStartBtn = document.getElementById("lighterStartBtn");
-    const rulerBtn = document.getElementById("rulerBtn");
-
-    let sandboxWidth;
-    let sandboxHeight;
-    let gridCols = 200;
-    let gridRows = 130;
-    let cellSize;
-
-    let sandboxGrid;
-    let sandboxParticles = [];
-    let sandboxGravity = parseFloat(gravityInput.value);
-    let gasDrift = parseFloat(gasDriftInput.value);
-    let sandboxBrushSize = parseInt(brushSizeInput.value, 10);
-
-    let currentState = "solid";
-    let currentMaterialKey = "mirror";
-    let currentTool = "draw"; // draw | lighter | eraser
+    function sandboxCanvasPos(evt) {
+      const rect = sandboxCanvas.getBoundingClientRect();
+      const x = ((evt.clientX - rect.left) / rect.width) * sandboxGridW;
+      const y = ((evt.clientY - rect.top) / rect.height) * sandboxGridH;
+      return { x: Math.floor(x), y: Math.floor(y) };
+    }
 
     let sandboxMouseDown = false;
-    let sandboxMouseButton = 0;
-
-    let effects = []; // sparks, flames, explosions
-    let lighterOn = false;
-
-    let lastPointerGridX = Math.floor(gridCols / 2);
-    let lastPointerGridY = Math.floor(gridRows / 2);
-
-    // Ruler state
-    let rulerMode = false;
-    let rulerDrawing = false;
-    let rulerStart = null;
-    let rulerEnd = null;
-
-    const MATERIALS = {
-      // SOLIDS
-      mirror: {
-        id: 1,
-        name: "Mirror",
-        state: "solid",
-        color: "#cfd9ff",
-        behavior: "solid",
-        flammable: false,
-        explosive: false
-      },
-      wood: {
-        id: 2,
-        name: "Wood",
-        state: "solid",
-        color: "#c28a4a",
-        behavior: "solid",
-        flammable: true,
-        explosive: false
-      },
-      metal: {
-        id: 3,
-        name: "Metal",
-        state: "solid",
-        color: "#a0a6b8",
-        behavior: "solid",
-        flammable: false,
-        explosive: false
-      },
-      sand: {
-        id: 4,
-        name: "Sand",
-        state: "solid",
-        color: "#f2d28a",
-        behavior: "solid",
-        flammable: false,
-        explosive: false
-      },
-      slime: {
-        id: 5,
-        name: "Slime",
-        state: "solid",
-        color: "#7cff6b",
-        behavior: "solid",
-        flammable: false,
-        explosive: false
-      },
-
-      // LIQUIDS
-      poison: {
-        id: 6,
-        name: "Poison",
-        state: "liquid",
-        color: "#7cff6b",
-        behavior: "liquid",
-        flammable: false,
-        explosive: false
-      },
-      gasoline: {
-        id: 7,
-        name: "Gasoline",
-        state: "liquid",
-        color: "#ffd27a",
-        behavior: "liquid",
-        flammable: true,
-        explosive: true
-      },
-      water: {
-        id: 8,
-        name: "Water",
-        state: "liquid",
-        color: "#4fc3ff",
-        behavior: "liquid",
-        flammable: false,
-        explosive: false
-      },
-      lava: {
-        id: 9,
-        name: "Lava",
-        state: "liquid",
-        color: "#ff6b3b",
-        behavior: "liquid",
-        flammable: false,
-        explosive: false,
-        hot: true
-      },
-      acid: {
-        id: 10,
-        name: "Acid",
-        state: "liquid",
-        color: "#b4ff4f",
-        behavior: "liquid",
-        flammable: false,
-        explosive: false
-      },
-
-      // GASES
-      poisonGas: {
-        id: 11,
-        name: "Poison Gas",
-        state: "gas",
-        color: "#9cff7a",
-        behavior: "gas",
-        flammable: false,
-        explosive: false
-      },
-      propane: {
-        id: 12,
-        name: "Propane",
-        state: "gas",
-        color: "#ffc47a",
-        behavior: "gas",
-        flammable: true,
-        explosive: true
-      },
-      explosiveGas: {
-        id: 13,
-        name: "Explosive Gas",
-        state: "gas",
-        color: "#ff9b7a",
-        behavior: "gas",
-        flammable: true,
-        explosive: true
-      },
-      sleepGas: {
-        id: 14,
-        name: "Sleep Gas",
-        state: "gas",
-        color: "#cfa4ff",
-        behavior: "gas",
-        flammable: false,
-        explosive: false
-      }
-    };
-
-    const MATERIAL_KEYS_BY_STATE = {
-      solid: ["mirror", "wood", "metal", "sand", "slime"],
-      liquid: ["poison", "gasoline", "water", "lava", "acid"],
-      gas: ["poisonGas", "propane", "explosiveGas", "sleepGas"]
-    };
-
-    const EXPLOSIVE_KEYS = ["gasoline", "propane", "explosiveGas"];
-
-    function resizeSandbox() {
-      const rect = sandboxCanvas.parentElement.getBoundingClientRect();
-      const maxWidth = rect.width - 4;
-      const maxHeight = rect.height - 60;
-
-      const scaleX = maxWidth / gridCols;
-      const scaleY = maxHeight / gridRows;
-
-      cellSize = Math.floor(Math.min(scaleX, scaleY));
-      cellSize = Math.max(cellSize, 3);
-
-      sandboxWidth = gridCols * cellSize;
-      sandboxHeight = gridRows * cellSize;
-
-      sandboxCanvas.width = sandboxWidth;
-      sandboxCanvas.height = sandboxHeight;
-    }
-
-    function initSandbox() {
-      sandboxGrid = [];
-      for (let y = 0; y < gridRows; y++) {
-        const row = new Array(gridCols).fill(0);
-        sandboxGrid.push(row);
-      }
-      sandboxParticles = [];
-      effects = [];
-      rulerDrawing = false;
-      rulerStart = null;
-      rulerEnd = null;
-    }
-
-    function addParticle(x, y, matKey) {
-      if (x < 0 || x >= gridCols || y < 0 || y >= gridRows) return;
-      if (sandboxGrid[y][x] !== 0) return;
-
-      const mat = MATERIALS[matKey];
-      sandboxGrid[y][x] = mat.id;
-      sandboxParticles.push({ x, y, matKey, vy: 0, life: 0 });
-    }
-
-    function eraseParticle(x, y) {
-      if (x < 0 || x >= gridCols || y < 0 || y >= gridRows) return;
-      if (sandboxGrid[y][x] === 0) return;
-
-      const id = sandboxGrid[y][x];
-      sandboxGrid[y][x] = 0;
-      sandboxParticles = sandboxParticles.filter(
-        p => !(p.x === x && p.y === y && MATERIALS[p.matKey].id === id)
-      );
-    }
-
-    function handleSandboxPointer(clientX, clientY) {
-      const rect = sandboxCanvas.getBoundingClientRect();
-      const cx = clientX - rect.left;
-      const cy = clientY - rect.top;
-
-      const gx = Math.floor(cx / cellSize);
-      const gy = Math.floor(cy / cellSize);
-
-      lastPointerGridX = gx;
-      lastPointerGridY = gy;
-
-      if (rulerMode) {
-        return;
-      }
-
-      const r = sandboxBrushSize;
-
-      if (currentTool === "lighter") {
-        if (!lighterOn) {
-          spawnSparkEffect(gx, gy);
-          return;
-        }
-        spawnStaticFlameAt(gx, gy);
-        igniteExplosivesAroundCell(gx, gy);
-        return;
-      }
-
-      for (let dy = -r; dy <= r; dy++) {
-        for (let dx = -r; dx <= r; dx++) {
-          if (dx * dx + dy * dy <= r * r) {
-            const x = gx + dx;
-            const y = gy + dy;
-
-            if (currentTool === "eraser" || sandboxMouseButton === 2) {
-              eraseParticle(x, y);
-            } else {
-              addParticle(x, y, currentMaterialKey);
-            }
-          }
-        }
-      }
-    }
-
-    // Ruler helpers
-
-    function gridFromClient(clientX, clientY) {
-      const rect = sandboxCanvas.getBoundingClientRect();
-      const cx = clientX - rect.left;
-      const cy = clientY - rect.top;
-      return {
-        gx: Math.floor(cx / cellSize),
-        gy: Math.floor(cy / cellSize)
-      };
-    }
-
-    function drawRulerPreview() {
-      if (!rulerDrawing || !rulerStart || !rulerEnd) return;
-
-      sandboxCtx.save();
-      sandboxCtx.strokeStyle = "rgba(255,255,255,0.9)";
-      sandboxCtx.lineWidth = 2;
-      sandboxCtx.setLineDash([6, 4]);
-      sandboxCtx.beginPath();
-      sandboxCtx.moveTo(
-        rulerStart.x * cellSize + cellSize / 2,
-        rulerStart.y * cellSize + cellSize / 2
-      );
-      sandboxCtx.lineTo(
-        rulerEnd.x * cellSize + cellSize / 2,
-        rulerEnd.y * cellSize + cellSize / 2
-      );
-      sandboxCtx.stroke();
-      sandboxCtx.restore();
-    }
-
-    function applyRulerLine() {
-      if (!rulerStart || !rulerEnd) return;
-
-      const x0 = rulerStart.x;
-      const y0 = rulerStart.y;
-      const x1 = rulerEnd.x;
-      const y1 = rulerEnd.y;
-
-      let dx = Math.abs(x1 - x0);
-      let sx = x0 < x1 ? 1 : -1;
-      let dy = -Math.abs(y1 - y0);
-      let sy = y0 < y1 ? 1 : -1;
-      let err = dx + dy;
-      let x = x0;
-      let y = y0;
-
-      while (true) {
-        addParticle(x, y, currentMaterialKey);
-        if (x === x1 && y === y1) break;
-
-        const e2 = 2 * err;
-        if (e2 >= dy) {
-          err += dy;
-          x += sx;
-        }
-        if (e2 <= dx) {
-          err += dx;
-          y += sy;
-        }
-      }
-    }
+    let sandboxRightDown = false;
 
     sandboxCanvas.addEventListener("mousedown", e => {
-      sandboxMouseDown = true;
-      sandboxMouseButton = e.button;
-
-      if (rulerMode && e.button === 0) {
-        const { gx, gy } = gridFromClient(e.clientX, e.clientY);
-        rulerDrawing = true;
-        rulerStart = { x: gx, y: gy };
-        rulerEnd = { x: gx, y: gy };
-        return;
+      e.preventDefault();
+      const pos = sandboxCanvasPos(e);
+      if (e.button === 2) {
+        sandboxRightDown = true;
+        sandboxPaint(pos.x, pos.y, true);
+      } else {
+        sandboxMouseDown = true;
+        sandboxPaint(pos.x, pos.y, false);
       }
-
-      handleSandboxPointer(e.clientX, e.clientY);
-    });
-
-    window.addEventListener("mouseup", e => {
-      if (rulerMode && rulerDrawing && e.button === 0) {
-        rulerDrawing = false;
-        applyRulerLine();
-      }
-      sandboxMouseDown = false;
-    });
-
-    sandboxCanvas.addEventListener("mousemove", e => {
-      if (!sandboxMouseDown && !rulerDrawing) return;
-
-      if (rulerMode && rulerDrawing) {
-        const { gx, gy } = gridFromClient(e.clientX, e.clientY);
-        rulerEnd = { x: gx, y: gy };
-        return;
-      }
-
-      handleSandboxPointer(e.clientX, e.clientY);
     });
 
     sandboxCanvas.addEventListener("contextmenu", e => e.preventDefault());
 
-    // Keyboard shortcuts
-
-    window.addEventListener("keydown", e => {
-      if (e.target.tagName === "INPUT") return;
-
-      if (e.key.toLowerCase() === "e") {
-        setTool("eraser");
-      }
-      if (e.key.toLowerCase() === "c") {
-        initSandbox();
-      }
+    sandboxCanvas.addEventListener("mousemove", e => {
+      if (!sandboxMouseDown && !sandboxRightDown) return;
+      const pos = sandboxCanvasPos(e);
+      sandboxPaint(pos.x, pos.y, sandboxRightDown);
     });
 
-    brushSizeInput.addEventListener("input", () => {
-      sandboxBrushSize = parseInt(brushSizeInput.value, 10);
-      brushSizeLabel.textContent = sandboxBrushSize;
+    window.addEventListener("mouseup", () => {
+      sandboxMouseDown = false;
+      sandboxRightDown = false;
+      if (sandboxTool === "ruler") sandboxRulerStart = null;
     });
 
-    gravityInput.addEventListener("input", () => {
-      sandboxGravity = parseFloat(gravityInput.value);
-      gravityLabel.textContent = sandboxGravity.toFixed(1);
-    });
+    function sandboxPaint(cx, cy, erase) {
+      if (cx < 0 || cy < 0 || cx >= sandboxGridW || cy >= sandboxGridH) return;
 
-    gasDriftInput.addEventListener("input", () => {
-      gasDrift = parseFloat(gasDriftInput.value);
-      gasDriftLabel.textContent = gasDrift.toFixed(1);
-    });
-
-    clearSandboxBtn.addEventListener("click", () => {
-      initSandbox();
-    });
-
-    // Matter UI
-
-    function renderMatterPills() {
-      matterPillsContainer.innerHTML = "";
-      const keys = MATERIAL_KEYS_BY_STATE[currentState];
-
-      keys.forEach(key => {
-        const mat = MATERIALS[key];
-        const pill = document.createElement("button");
-        pill.className = "matter-pill" + (key === currentMaterialKey ? " active" : "");
-        pill.dataset.key = key;
-
-        const dot = document.createElement("span");
-        dot.className = "matter-pill-dot";
-        dot.style.background = mat.color;
-        pill.appendChild(dot);
-
-        const label = document.createElement("span");
-        label.textContent = mat.name;
-        pill.appendChild(label);
-
-        matterPillsContainer.appendChild(pill);
-      });
-    }
-
-    matterTabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        matterTabs.forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
-
-        currentState = tab.dataset.state;
-        matterBackdrop.className = "matter-backdrop " + currentState;
-        currentMaterialKey = MATERIAL_KEYS_BY_STATE[currentState][0];
-
-        renderMatterPills();
-      });
-    });
-
-    matterPillsContainer.addEventListener("click", e => {
-      const pill = e.target.closest(".matter-pill");
-      if (!pill) return;
-      const key = pill.dataset.key;
-      currentMaterialKey = key;
-      renderMatterPills();
-    });
-
-    function setTool(tool) {
-      currentTool = tool;
-
-      [toolDrawBtn, toolLighterBtn, toolEraserBtn].forEach(btn =>
-        btn.classList.remove("active")
-      );
-
-      if (tool === "draw") toolDrawBtn.classList.add("active");
-      if (tool === "lighter") toolLighterBtn.classList.add("active");
-      if (tool === "eraser") toolEraserBtn.classList.add("active");
-
-      if (tool === "lighter") {
-        lighterStartBtn.style.display = "inline-flex";
-        rulerBtn.style.display = "none";
-        rulerMode = false;
-        rulerBtn.classList.remove("active");
-      } else if (tool === "draw") {
-        lighterStartBtn.style.display = "none";
-        lighterOn = false;
-        effects = effects.filter(e => e.type !== "flameStatic");
-        rulerBtn.style.display = "inline-flex";
-      } else {
-        lighterStartBtn.style.display = "none";
-        lighterOn = false;
-        effects = effects.filter(e => e.type !== "flameStatic");
-        rulerBtn.style.display = "none";
-        rulerMode = false;
-        rulerBtn.classList.remove("active");
-      }
-    }
-
-    toolDrawBtn.addEventListener("click", () => setTool("draw"));
-    toolLighterBtn.addEventListener("click", () => setTool("lighter"));
-    toolEraserBtn.addEventListener("click", () => setTool("eraser"));
-
-    // Ruler button
-
-    rulerBtn.addEventListener("click", () => {
-      rulerMode = !rulerMode;
-      rulerBtn.classList.toggle("active", rulerMode);
-      rulerDrawing = false;
-      rulerStart = null;
-      rulerEnd = null;
-    });
-
-    // Lighter Start button
-
-    lighterStartBtn.addEventListener("click", () => {
-      const success = Math.random() < 0.2;
-      const gx = lastPointerGridX;
-      const gy = lastPointerGridY;
-
-      lighterStartBtn.innerHTML = "";
-
-      if (!success) {
-        lighterOn = false;
-        const dot = document.createElement("span");
-        dot.className = "dot-soft-pink";
-        lighterStartBtn.appendChild(dot);
-        lighterStartBtn.append(" Start");
-        spawnSparkEffect(gx, gy);
-        effects = effects.filter(e => e.type !== "flameStatic");
-        return;
+      if (sandboxTool === "ruler" && !erase) {
+        if (!sandboxRulerStart) {
+          sandboxRulerStart = { x: cx, y: cy };
+          return;
+        } else {
+          const x0 = sandboxRulerStart.x;
+          const y0 = sandboxRulerStart.y;
+          const x1 = cx;
+          const y1 = cy;
+          const dx = Math.abs(x1 - x0);
+          const dy = Math.abs(y1 - y0);
+          const sx = x0 < x1 ? 1 : -1;
+          const sy = y0 < y1 ? 1 : -1;
+          let err = dx - dy;
+          let x = x0;
+          let y = y0;
+          while (true) {
+            sandboxGrid[y][x] = sandboxCurrentMaterial;
+            if (x === x1 && y === y1) break;
+            const e2 = 2 * err;
+            if (e2 > -dy) {
+              err -= dy;
+              x += sx;
+            }
+            if (e2 < dx) {
+              err += dx;
+              y += sy;
+            }
+          }
+          sandboxRulerStart = null;
+          return;
+        }
       }
 
-      lighterOn = true;
-      const dot = document.createElement("span");
-      dot.className = "dot-soft";
-      lighterStartBtn.appendChild(dot);
-      lighterStartBtn.append(" Flame On");
-      spawnStaticFlameAt(gx, gy);
-    });
-
-    // Lighter effects & explosions
-
-    function spawnSparkEffect(gx, gy) {
-      const px = gx * cellSize + cellSize / 2;
-      const py = gy * cellSize + cellSize / 2;
-      effects.push({
-        type: "spark",
-        x: px,
-        y: py,
-        life: 0,
-        maxLife: 300
-      });
-    }
-
-    function spawnStaticFlameAt(gx, gy) {
-      const px = gx * cellSize + cellSize / 2;
-      const py = gy * cellSize + cellSize / 2;
-      effects = effects.filter(e => e.type !== "flameStatic");
-      effects.push({
-        type: "flameStatic",
-        x: px,
-        y: py,
-        life: 0,
-        maxLife: Infinity
-      });
-    }
-
-    function spawnExplosionEffect(gx, gy) {
-      const px = gx * cellSize + cellSize / 2;
-      const py = gy * cellSize + cellSize / 2;
-      effects.push({
-        type: "explosion",
-        x: px,
-        y: py,
-        life: 0,
-        maxLife: 600
-      });
-    }
-
-    function igniteExplosivesAroundCell(cx, cy) {
-      const visited = new Set();
-
-      function key(x, y) {
-        return x + "," + y;
-      }
-
-      function isExplosiveCell(x, y) {
-        if (x < 0 || x >= gridCols || y < 0 || y >= gridRows) return false;
-        const id = sandboxGrid[y][x];
-        if (!id) return false;
-        const matKey = Object.keys(MATERIALS).find(k => MATERIALS[k].id === id);
-        if (!matKey) return false;
-        return EXPLOSIVE_KEYS.includes(matKey);
-      }
-
-      function triggerExplosion(x, y, depth) {
-        if (depth > 6) return;
-        const k = key(x, y);
-        if (visited.has(k)) return;
-        visited.add(k);
-        if (!isExplosiveCell(x, y)) return;
-
-        sandboxGrid[y][x] = 0;
-        sandboxParticles = sandboxParticles.filter(p => !(p.x === x && p.y === y));
-        spawnExplosionEffect(x, y);
-
-        const radius = 3;
-        for (let dy = -radius; dy <= radius; dy++) {
-          for (let dx = -radius; dx <= radius; dx++) {
-            const nx = x + dx;
-            const ny = y + dy;
-            if (isExplosiveCell(nx, ny)) {
-              triggerExplosion(nx, ny, depth + 1);
+      const r = sandboxBrushSize;
+      for (let y = cy - r; y <= cy + r; y++) {
+        for (let x = cx - r; x <= cx + r; x++) {
+          if (x < 0 || y < 0 || x >= sandboxGridW || y >= sandboxGridH) continue;
+          const dx = x - cx;
+          const dy = y - cy;
+          if (dx * dx + dy * dy <= r * r) {
+            if (erase) {
+              sandboxGrid[y][x] = null;
+            } else if (sandboxTool === "lighter") {
+              if (sandboxGrid[y][x] === "sand" || sandboxGrid[y][x] === "smoke") {
+                sandboxGrid[y][x] = "fire";
+              }
+            } else {
+              sandboxGrid[y][x] = sandboxCurrentMaterial;
             }
           }
         }
       }
-
-      const radius = 4;
-      for (let dy = -radius; dy <= radius; dy++) {
-        for (let dx = -radius; dx <= radius; dx++) {
-          const x = cx + dx;
-          const y = cy + dy;
-          triggerExplosion(x, y, 0);
-        }
-      }
     }
 
-    function igniteExplosivesAroundFlameEffect(eff) {
-      const gx = Math.floor(eff.x / cellSize);
-      const gy = Math.floor(eff.y / cellSize);
-      igniteExplosivesAroundCell(gx, gy);
-    }
+    function sandboxStep() {
+      for (let y = sandboxGridH - 1; y >= 0; y--) {
+        for (let x = 0; x < sandboxGridW; x++) {
+          const cell = sandboxGrid[y][x];
+          if (!cell) continue;
+          const mat = sandboxMaterials[cell];
+          if (!mat) continue;
 
-    function updateSandbox() {
-      const newGrid = [];
-      for (let y = 0; y < gridRows; y++) {
-        newGrid.push(sandboxGrid[y].slice());
-      }
-
-      const shuffled = sandboxParticles.slice();
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-
-      const updatedParticles = [];
-
-      for (const p of shuffled) {
-        let { x, y, matKey, vy, life } = p;
-        const mat = MATERIALS[matKey];
-        if (!mat) continue;
-        if (newGrid[y][x] !== mat.id) continue;
-
-        life += 16;
-        let moved = false;
-        const dir = Math.random() < 0.5 ? -1 : 1;
-
-        const tryMove = (nx, ny) => {
-          if (nx < 0 || nx >= gridCols || ny < 0 || ny >= gridRows) return false;
-          if (newGrid[ny][nx] === 0) {
-            newGrid[y][x] = 0;
-            newGrid[ny][nx] = mat.id;
-            x = nx;
-            y = ny;
-            moved = true;
-            return true;
-          }
-          return false;
-        };
-
-        if (mat.behavior === "solid" || mat.behavior === "liquid") {
-          vy += sandboxGravity * 0.1;
-          if (vy > 1.8) vy = 1.8;
-          const down = Math.floor(vy >= 1 ? 1 : 0);
-
-          if (down > 0) {
-            if (!tryMove(x, y + 1)) {
-              if (mat.behavior === "liquid") {
-                if (!tryMove(x + dir, y + 1)) {
-                  tryMove(x - dir, y + 1);
+          if (mat.type === "solid") {
+            if (y + 1 < sandboxGridH && !sandboxGrid[y + 1][x]) {
+              sandboxGrid[y + 1][x] = cell;
+              sandboxGrid[y][x] = null;
+            } else {
+              const dir = Math.random() < 0.5 ? -1 : 1;
+              if (y + 1 < sandboxGridH && x + dir >= 0 && x + dir < sandboxGridW && !sandboxGrid[y + 1][x + dir]) {
+                sandboxGrid[y + 1][x + dir] = cell;
+                sandboxGrid[y][x] = null;
+              }
+            }
+          } else if (mat.type === "liquid" || mat.type === "liquid-acid") {
+            if (y + 1 < sandboxGridH && !sandboxGrid[y + 1][x]) {
+              sandboxGrid[y + 1][x] = cell;
+              sandboxGrid[y][x] = null;
+            } else {
+              const dirs = [-1, 1];
+              for (const d of dirs) {
+                if (x + d >= 0 && x + d < sandboxGridW && !sandboxGrid[y][x + d]) {
+                  sandboxGrid[y][x + d] = cell;
+                  sandboxGrid[y][x] = null;
+                  break;
                 }
-              } else {
-                if (!tryMove(x + dir, y + 1) && !tryMove(x - dir, y + 1)) {
-                  // no-op
+              }
+            }
+            if (mat.type === "liquid-acid") {
+              const neighbors = [
+                [x + 1, y],
+                [x - 1, y],
+                [x, y + 1],
+                [x, y - 1],
+              ];
+              for (const [nx, ny] of neighbors) {
+                if (nx >= 0 && ny >= 0 && nx < sandboxGridW && ny < sandboxGridH) {
+                  if (sandboxGrid[ny][nx] && sandboxGrid[ny][nx] !== "acid") {
+                    sandboxGrid[ny][nx] = null;
+                  }
+                }
+              }
+            }
+          } else if (mat.type === "gas") {
+            if (y - 1 >= 0 && !sandboxGrid[y - 1][x]) {
+              sandboxGrid[y - 1][x] = cell;
+              sandboxGrid[y][x] = null;
+            } else {
+              const dir = Math.random() < 0.5 ? -1 : 1;
+              if (y - 1 >= 0 && x + dir >= 0 && x + dir < sandboxGridW && !sandboxGrid[y - 1][x + dir]) {
+                sandboxGrid[y - 1][x + dir] = cell;
+                sandboxGrid[y][x] = null;
+              }
+            }
+          } else if (mat.type === "fire") {
+            if (Math.random() < 0.02) {
+              sandboxGrid[y][x] = "smoke";
+            } else {
+              const neighbors = [
+                [x + 1, y],
+                [x - 1, y],
+                [x, y + 1],
+                [x, y - 1],
+              ];
+              for (const [nx, ny] of neighbors) {
+                if (nx >= 0 && ny >= 0 && nx < sandboxGridW && ny < sandboxGridH) {
+                  if (sandboxGrid[ny][nx] === "sand" || sandboxGrid[ny][nx] === "smoke") {
+                    sandboxGrid[ny][nx] = "fire";
+                  }
                 }
               }
             }
           }
-
-          if (!moved && mat.behavior === "liquid") {
-            if (!tryMove(x + dir, y)) {
-              tryMove(x - dir, y);
-            }
-          }
-        } else if (mat.behavior === "gas") {
-          vy -= gasDrift * 0.08;
-          if (vy < -1.5) vy = -1.5;
-          const up = Math.floor(vy <= -0.2 ? -1 : 0);
-
-          if (up < 0) {
-            if (!tryMove(x, y - 1)) {
-              if (!tryMove(x + dir, y - 1)) {
-                tryMove(x - dir, y - 1);
-              }
-            }
-          }
-
-          if (!moved) {
-            if (!tryMove(x + dir, y)) {
-              tryMove(x - dir, y);
-            }
-          }
         }
-
-        updatedParticles.push({ x, y, matKey, vy, life });
       }
-
-      sandboxParticles = updatedParticles;
-      sandboxGrid = newGrid;
-      particleCountLabel.textContent = sandboxParticles.length;
     }
 
-    function drawSandbox() {
+    function sandboxDraw() {
       sandboxCtx.clearRect(0, 0, sandboxWidth, sandboxHeight);
-
-      const imgData = sandboxCtx.createImageData(sandboxWidth, sandboxHeight);
-      const data = imgData.data;
-
-      function setPixel(px, py, r, g, b, a) {
-        if (px < 0 || px >= sandboxWidth || py < 0 || py >= sandboxHeight) return;
-        const idx = (py * sandboxWidth + px) * 4;
-        data[idx] = r;
-        data[idx + 1] = g;
-        data[idx + 2] = b;
-        data[idx + 3] = a;
-      }
-
-      for (let y = 0; y < gridRows; y++) {
-        for (let x = 0; x < gridCols; x++) {
-          const id = sandboxGrid[y][x];
-          if (!id) continue;
-
-          const matKey = Object.keys(MATERIALS).find(k => MATERIALS[k].id === id);
-          if (!matKey) continue;
-
-          const mat = MATERIALS[matKey];
-          const col = mat.color;
-          const r = parseInt(col.slice(1, 3), 16);
-          const g = parseInt(col.slice(3, 5), 16);
-          const b = parseInt(col.slice(5, 7), 16);
-
-          for (let py = 0; py < cellSize; py++) {
-            for (let px = 0; px < cellSize; px++) {
-              const gx = x * cellSize + px;
-              const gy = y * cellSize + py;
-              setPixel(gx, gy, r, g, b, 255);
-            }
-          }
-        }
-      }
-
-      sandboxCtx.putImageData(imgData, 0, 0);
-
-      // Glow border
-      sandboxCtx.save();
-      sandboxCtx.globalCompositeOperation = "lighter";
-      sandboxCtx.shadowBlur = 18;
-      sandboxCtx.shadowColor = "rgba(255,255,255,0.7)";
-      sandboxCtx.strokeStyle = "rgba(255,255,255,0.4)";
-      sandboxCtx.lineWidth = 1;
-      sandboxCtx.strokeRect(2, 2, sandboxWidth - 4, sandboxHeight - 4);
-      sandboxCtx.restore();
-
-      // Effects
-      const now = performance.now();
-      effects = effects.filter(e => e.life < e.maxLife);
-
-      for (const eff of effects) {
-        const t = eff.maxLife === Infinity ? 0 : eff.life / eff.maxLife;
-
-        if (eff.type === "spark") {
-          sandboxCtx.save();
-          sandboxCtx.globalCompositeOperation = "lighter";
-          sandboxCtx.strokeStyle = `rgba(255,255,200,${1 - t})`;
-          sandboxCtx.lineWidth = 2;
-          sandboxCtx.beginPath();
-          sandboxCtx.moveTo(eff.x - 4, eff.y);
-          sandboxCtx.lineTo(eff.x + 4, eff.y);
-          sandboxCtx.moveTo(eff.x, eff.y - 4);
-          sandboxCtx.lineTo(eff.x, eff.y + 4);
-          sandboxCtx.stroke();
-          sandboxCtx.restore();
-        } else if (eff.type === "flameStatic") {
-          const baseSize = cellSize * 1.2;
-          const flicker = 1 + Math.sin(now / 70 + eff.x * 0.03) * 0.2;
-          const size = baseSize * flicker;
-
-          sandboxCtx.save();
-          sandboxCtx.globalCompositeOperation = "lighter";
-
-          for (let i = 0; i < 4; i++) {
-            const level = i / 4;
-            const w = size * (1 - level * 0.4);
-            const h = size * 0.4;
-            const px = eff.x - w / 2 + (Math.random() - 0.5) * 2;
-            const py = eff.y - size * 0.6 + i * (h * 0.7);
-
-            let color;
-            if (i === 0) color = "rgba(255,240,210,0.95)";
-            else if (i === 1) color = "rgba(255,190,120,0.9)";
-            else if (i === 2) color = "rgba(255,120,60,0.85)";
-            else color = "rgba(200,60,40,0.7)";
-
-            sandboxCtx.fillStyle = color;
-            sandboxCtx.fillRect(
-              Math.round(px / 2) * 2,
-              Math.round(py / 2) * 2,
-              Math.round(w / 2) * 2,
-              Math.round(h / 2) * 2
-            );
-          }
-
-          sandboxCtx.restore();
-          igniteExplosivesAroundFlameEffect(eff);
-        } else if (eff.type === "explosion") {
-          const radius = cellSize * 4 * (0.3 + t);
-          const inner = radius * 0.4;
-
-          const grad = sandboxCtx.createRadialGradient(
-            eff.x,
-            eff.y,
-            0,
-            eff.x,
-            eff.y,
-            radius
+      for (let y = 0; y < sandboxGridH; y++) {
+        for (let x = 0; x < sandboxGridW; x++) {
+          const cell = sandboxGrid[y][x];
+          if (!cell) continue;
+          const mat = sandboxMaterials[cell];
+          if (!mat) continue;
+          sandboxCtx.fillStyle = mat.color;
+          sandboxCtx.fillRect(
+            x * sandboxCellSizeX,
+            y * sandboxCellSizeY,
+            sandboxCellSizeX + 0.5,
+            sandboxCellSizeY + 0.5
           );
-          grad.addColorStop(0, `rgba(255,255,220,${1 - t})`);
-          grad.addColorStop(0.3, `rgba(255,200,80,${0.9 - t})`);
-          grad.addColorStop(0.7, `rgba(255,80,40,${0.7 - t})`);
-          grad.addColorStop(1, "rgba(0,0,0,0)");
-
-          sandboxCtx.save();
-          sandboxCtx.globalCompositeOperation = "lighter";
-          sandboxCtx.fillStyle = grad;
-          sandboxCtx.beginPath();
-          sandboxCtx.arc(eff.x, eff.y, radius, 0, Math.PI * 2);
-          sandboxCtx.fill();
-
-          sandboxCtx.strokeStyle = `rgba(255,240,220,${0.8 - t})`;
-          sandboxCtx.lineWidth = 2;
-          sandboxCtx.beginPath();
-          sandboxCtx.arc(eff.x, eff.y, inner, 0, Math.PI * 2);
-          sandboxCtx.stroke();
-          sandboxCtx.restore();
-        }
-
-        if (eff.maxLife !== Infinity) {
-          eff.life += 16;
         }
       }
-
-      // Ruler preview
-      drawRulerPreview();
     }
 
     function sandboxLoop() {
-      updateSandbox();
-      drawSandbox();
+      if (sandboxRunning) sandboxStep();
+      sandboxDraw();
       requestAnimationFrame(sandboxLoop);
     }
+    sandboxLoop();
 
     // ---------- Neon Snake ----------
-
-    const snakeCanvas = document.getElementById("snakeCanvas");
+    const snakeCanvas = document.getElementById("snake-canvas");
     const snakeCtx = snakeCanvas.getContext("2d");
+    const snakeCols = 32;
+    const snakeRows = 24;
+    const snakeCellW = snakeCanvas.width / snakeCols;
+    const snakeCellH = snakeCanvas.height / snakeRows;
 
-    const snakeScoreLabel = document.getElementById("snakeScore");
-    const snakeBestLabel = document.getElementById("snakeBest");
-    const snakeSpeedSlider = document.getElementById("snakeSpeed");
-    const snakeSpeedLabel = document.getElementById("snakeSpeedLabel");
-    const snakeResetBtn = document.getElementById("snakeResetBtn");
-
-    let snakeGridSize = 36;
-    let snakeCellSize;
-    let snakeWidth;
-    let snakeHeight;
-
-    let snake;
-    let snakeDir;
-    let snakeNextDir;
-    let snakeFood;
+    let snake = [{ x: 5, y: 5 }];
+    let snakeDir = { x: 1, y: 0 };
+    let snakePendingDir = { x: 1, y: 0 };
+    let snakeFood = { x: 10, y: 10 };
     let snakeScore = 0;
-    let snakeBest = 0;
-
-    let snakeBaseSpeed = parseFloat(snakeSpeedSlider.value);
-    let snakeSpeed = 7;
+    let snakeHighScore = 0;
+    let snakeRunning = false;
     let snakeLastTime = 0;
-    let snakeAccum = 0;
-    let snakePaused = false;
+    const snakeStepInterval = 120;
 
-    function resizeSnake() {
-      const rect = snakeCanvas.parentElement.getBoundingClientRect();
-      const maxWidth = rect.width - 4;
-      const maxHeight = rect.height - 60;
-
-      const scaleX = maxWidth / snakeGridSize;
-      const scaleY = maxHeight / snakeGridSize;
-
-      snakeCellSize = Math.floor(Math.min(scaleX, scaleY));
-      snakeCellSize = Math.max(snakeCellSize, 18);
-
-      snakeWidth = snakeGridSize * snakeCellSize;
-      snakeHeight = snakeGridSize * snakeCellSize;
-
-      snakeCanvas.width = snakeWidth;
-      snakeCanvas.height = snakeHeight;
-    }
-
-    function resetSnake() {
-      snake = [
-        { x: 10, y: Math.floor(snakeGridSize / 2) },
-        { x: 9, y: Math.floor(snakeGridSize / 2) },
-        { x: 8, y: Math.floor(snakeGridSize / 2) }
-      ];
+    function snakeReset() {
+      snake = [{ x: 5, y: 5 }];
       snakeDir = { x: 1, y: 0 };
-      snakeNextDir = { x: 1, y: 0 };
+      snakePendingDir = { x: 1, y: 0 };
+      snakeFood = {
+        x: Math.floor(Math.random() * snakeCols),
+        y: Math.floor(Math.random() * snakeRows),
+      };
       snakeScore = 0;
-      snakeSpeed = 7 * snakeBaseSpeed;
-      spawnFood();
-      snakeScoreLabel.textContent = snakeScore;
-      snakeSpeedLabel.textContent = snakeBaseSpeed.toFixed(1) + "x";
+      document.getElementById("snake-score").textContent = snakeScore;
+      document.getElementById("snake-status").textContent = "Press any arrow key";
+      document.getElementById("snake-overlay").style.display = "flex";
+      snakeRunning = false;
     }
 
-    function spawnFood() {
-      while (true) {
-        const x = Math.floor(Math.random() * snakeGridSize);
-        const y = Math.floor(Math.random() * snakeGridSize);
-        if (!snake.some(seg => seg.x === x && seg.y === y)) {
-          snakeFood = { x, y };
-          break;
-        }
+    function snakeLoop(timestamp) {
+      if (!snakeLastTime) snakeLastTime = timestamp;
+      const delta = timestamp - snakeLastTime;
+      if (delta > snakeStepInterval) {
+        snakeLastTime = timestamp;
+        if (snakeRunning) snakeStep();
       }
+      snakeDraw();
+      requestAnimationFrame(snakeLoop);
     }
 
-    function updateSnake(dt) {
-      if (snakePaused) return;
-
-      snakeAccum += dt;
-      const stepTime = 1000 / snakeSpeed;
-      if (snakeAccum < stepTime) return;
-      snakeAccum -= stepTime;
-
-      snakeDir = snakeNextDir;
+    function snakeStep() {
+      snakeDir = snakePendingDir;
       const head = snake[0];
-      const nx = head.x + snakeDir.x;
-      const ny = head.y + snakeDir.y;
+      let nx = head.x + snakeDir.x;
+      let ny = head.y + snakeDir.y;
 
-      if (
-        nx < 0 ||
-        nx >= snakeGridSize ||
-        ny < 0 ||
-        ny >= snakeGridSize ||
-        snake.some(seg => seg.x === nx && seg.y === ny)
-      ) {
-        if (snakeScore > snakeBest) {
-          snakeBest = snakeScore;
-          snakeBestLabel.textContent = snakeBest;
+      if (nx < 0) nx = snakeCols - 1;
+      if (nx >= snakeCols) nx = 0;
+      if (ny < 0) ny = snakeRows - 1;
+      if (ny >= snakeRows) ny = 0;
+
+      for (const seg of snake) {
+        if (seg.x === nx && seg.y === ny) {
+          snakeReset();
+          return;
         }
-        resetSnake();
-        return;
       }
 
       snake.unshift({ x: nx, y: ny });
 
       if (nx === snakeFood.x && ny === snakeFood.y) {
         snakeScore++;
-        snakeScoreLabel.textContent = snakeScore;
-        snakeSpeed *= 1.03;
-        spawnFood();
+        if (snakeScore > snakeHighScore) snakeHighScore = snakeScore;
+        document.getElementById("snake-score").textContent = snakeScore;
+        document.getElementById("snake-highscore").textContent = snakeHighScore;
+        snakeFood = {
+          x: Math.floor(Math.random() * snakeCols),
+          y: Math.floor(Math.random() * snakeRows),
+        };
       } else {
         snake.pop();
       }
     }
 
-    function drawSnake() {
-      snakeCtx.clearRect(0, 0, snakeWidth, snakeHeight);
+    function snakeDraw() {
+      snakeCtx.fillStyle = "#050510";
+      snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
 
-      // Background grid
-      snakeCtx.fillStyle = "#000000";
-      snakeCtx.fillRect(0, 0, snakeWidth, snakeHeight);
+      const gradient = snakeCtx.createLinearGradient(0, 0, snakeCanvas.width, snakeCanvas.height);
+      gradient.addColorStop(0, "#00f5ff");
+      gradient.addColorStop(0.5, "#ff00ff");
+      gradient.addColorStop(1, "#00ff85");
+      snakeCtx.strokeStyle = gradient;
+      snakeCtx.lineWidth = 2;
+      snakeCtx.strokeRect(1, 1, snakeCanvas.width - 2, snakeCanvas.height - 2);
 
-      snakeCtx.strokeStyle = "rgba(255,255,255,0.04)";
-      snakeCtx.lineWidth = 1;
+      snakeCtx.fillStyle = "#ffcc00";
       snakeCtx.beginPath();
-      for (let i = 0; i <= snakeGridSize; i++) {
-        const p = i * snakeCellSize;
-        snakeCtx.moveTo(p, 0);
-        snakeCtx.lineTo(p, snakeHeight);
-        snakeCtx.moveTo(0, p);
-        snakeCtx.lineTo(snakeWidth, p);
-      }
-      snakeCtx.stroke();
-
-      // Fruit
-      const fx = snakeFood.x * snakeCellSize;
-      const fy = snakeFood.y * snakeCellSize;
-      snakeCtx.save();
-      snakeCtx.fillStyle = "#ff3bff";
-      snakeCtx.beginPath();
-      snakeCtx.roundRect(
-        fx + 3,
-        fy + 3,
-        snakeCellSize - 6,
-        snakeCellSize - 6,
-        6
+      snakeCtx.arc(
+        (snakeFood.x + 0.5) * snakeCellW,
+        (snakeFood.y + 0.5) * snakeCellH,
+        Math.min(snakeCellW, snakeCellH) * 0.35,
+        0,
+        Math.PI * 2
       );
       snakeCtx.fill();
-      snakeCtx.restore();
 
-      // Snake body (glow)
-      snakeCtx.save();
-      snakeCtx.shadowBlur = 18;
-      snakeCtx.shadowColor = "rgba(53,240,255,0.9)";
-
-      for (let i = snake.length - 1; i >= 1; i--) {
-        const seg = snake[i];
-        const px = seg.x * snakeCellSize;
-        const py = seg.y * snakeCellSize;
-        const t = i / (snake.length - 1 || 1);
-
-        const r = 53 + (124 - 53) * t;
-        const g = 240 + (255 - 240) * t;
-        const b = 255 + (107 - 255) * t;
-
-        snakeCtx.fillStyle = `rgb(${r | 0},${g | 0},${b | 0})`;
-        snakeCtx.beginPath();
-        snakeCtx.roundRect(
-          px + 3,
-          py + 3,
-          snakeCellSize - 6,
-          snakeCellSize - 6,
-          6
-        );
-        snakeCtx.fill();
-      }
-
-      snakeCtx.restore();
-
-      // Head (no glow)
-      const head = snake[0];
-      const hx = head.x * snakeCellSize;
-      const hy = head.y * snakeCellSize;
-      snakeCtx.save();
-      snakeCtx.fillStyle = "#35f0ff";
-      snakeCtx.beginPath();
-      snakeCtx.roundRect(
-        hx + 3,
-        hy + 3,
-        snakeCellSize - 6,
-        snakeCellSize - 6,
-        6
-      );
-      snakeCtx.fill();
-      snakeCtx.restore();
-
-      // Pause overlay
-      if (snakePaused) {
-        snakeCtx.fillStyle = "rgba(0,0,0,0.45)";
-        snakeCtx.fillRect(0, 0, snakeWidth, snakeHeight);
-        snakeCtx.fillStyle = "#ffffff";
-        snakeCtx.font = "bold 18px system-ui";
-        snakeCtx.textAlign = "center";
-        snakeCtx.fillText("Paused", snakeWidth / 2, snakeHeight / 2);
-      }
-    }
-
-    window.addEventListener("keydown", e => {
-      if (e.target.tagName === "INPUT") return;
-
-      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-        let dx = 0;
-        let dy = 0;
-        if (e.key === "ArrowUp") dy = -1;
-        if (e.key === "ArrowDown") dy = 1;
-        if (e.key === "ArrowLeft") dx = -1;
-        if (e.key === "ArrowRight") dx = 1;
-
-        if (dx === -snakeDir.x && dy === -snakeDir.y) return;
-        snakeNextDir = { x: dx, y: dy };
-      }
-
-      if (e.key === " " || e.code === "Space") {
-        if (document.activeElement === snakeSpeedSlider) return;
-        snakePaused = !snakePaused;
-      }
-
-      if (e.key.toLowerCase() === "r") {
-        resetSnake();
-      }
-    });
-
-    snakeSpeedSlider.addEventListener("input", () => {
-      snakeBaseSpeed = parseFloat(snakeSpeedSlider.value);
-      snakeSpeed = 7 * snakeBaseSpeed;
-      snakeSpeedLabel.textContent = snakeBaseSpeed.toFixed(1) + "x";
-    });
-
-    snakeResetBtn.addEventListener("click", () => {
-      resetSnake();
-    });
-
-    function snakeLoop(timestamp) {
-      const dt = timestamp - snakeLastTime;
-      snakeLastTime = timestamp;
-      updateSnake(dt);
-      drawSnake();
-      requestAnimationFrame(snakeLoop);
-    }
-
-    // ---------- Pablo Dash + Level Editor ----------
-
-    const dashCanvas = document.getElementById("dashCanvas");
-    const dashCtx = dashCanvas.getContext("2d");
-
-    const dashPalette = document.getElementById("dashPalette");
-    const dashEditorGrid = document.getElementById("dashEditorGrid");
-    const dashPlayBtn = document.getElementById("dashPlayBtn");
-    const dashRestartBtn = document.getElementById("dashRestartBtn");
-    const dashClearBtn = document.getElementById("dashClearBtn");
-    const dashFillGroundBtn = document.getElementById("dashFillGroundBtn");
-    const dashSaveBtn = document.getElementById("dashSaveBtn");
-    const dashLoadBtn = document.getElementById("dashLoadBtn");
-    const dashStatus = document.getElementById("dashStatus");
-    const dashJumpCountLabel = document.getElementById("dashJumpCount");
-    const dashAttemptsLabel = document.getElementById("dashAttempts");
-
-    let dashCols = 48;
-    let dashRows = 12;
-    let dashCellSize;
-    let dashWidth;
-    let dashHeight;
-
-    const DASH_TILES = ["empty", "ground", "spike", "start", "goal"];
-    let dashCurrentTile = "empty";
-
-    let dashLevel = [];
-    let dashPlayer = null;
-    let dashScrollX = 0;
-    let dashSpeed = 220;
-    let dashGravity = 1200;
-    let dashJumpVel = -420;
-    let dashIsPlaying = false;
-    let dashLastTime = 0;
-    let dashJumpCount = 0;
-    let dashAttempts = 0;
-
-    function resizeDash() {
-      const rect = dashCanvas.parentElement.getBoundingClientRect();
-      const maxWidth = rect.width - 4;
-      const maxHeight = rect.height - 60;
-
-      const scaleX = maxWidth / dashCols;
-      const scaleY = maxHeight / dashRows;
-
-      dashCellSize = Math.floor(Math.min(scaleX, scaleY));
-      dashCellSize = Math.max(dashCellSize, 16);
-
-      dashWidth = dashCols * dashCellSize;
-      dashHeight = dashRows * dashCellSize;
-
-      dashCanvas.width = dashWidth;
-      dashCanvas.height = dashHeight;
-    }
-
-    function initDashLevel() {
-      dashLevel = [];
-      for (let y = 0; y < dashRows; y++) {
-        const row = new Array(dashCols).fill("empty");
-        dashLevel.push(row);
-      }
-      // default: ground on bottom row
-      for (let x = 0; x < dashCols; x++) {
-        dashLevel[dashRows - 1][x] = "ground";
-      }
-      // default start & goal
-      dashLevel[dashRows - 2][2] = "start";
-      dashLevel[dashRows - 2][dashCols - 3] = "goal";
-    }
-
-    function buildDashEditorGrid() {
-      dashEditorGrid.innerHTML = "";
-      for (let y = 0; y < dashRows; y++) {
-        for (let x = 0; x < dashCols; x++) {
-          const cell = document.createElement("div");
-          cell.className = "dash-editor-cell";
-          cell.dataset.x = x;
-          cell.dataset.y = y;
-          dashEditorGrid.appendChild(cell);
-        }
-      }
-      refreshDashEditorGrid();
-    }
-
-    function refreshDashEditorGrid() {
-      const cells = dashEditorGrid.querySelectorAll(".dash-editor-cell");
-      cells.forEach(cell => {
-        const x = parseInt(cell.dataset.x, 10);
-        const y = parseInt(cell.dataset.y, 10);
-        const tile = dashLevel[y][x];
-        cell.classList.remove("active");
-        cell.style.borderColor = "rgba(255,255,255,0.16)";
-        cell.textContent = "";
-        if (tile === "ground") {
-          cell.style.background = "rgba(53,240,255,0.25)";
-          cell.textContent = "▢";
-        } else if (tile === "spike") {
-          cell.style.background = "rgba(255,59,255,0.25)";
-          cell.textContent = "▲";
-        } else if (tile === "start") {
-          cell.style.background = "rgba(124,255,107,0.25)";
-          cell.textContent = "S";
-        } else if (tile === "goal") {
-          cell.style.background = "rgba(255,210,122,0.25)";
-          cell.textContent = "G";
-        } else {
-          cell.style.background = "rgba(0,0,0,0.35)";
-        }
+      snake.forEach((seg, i) => {
+        const t = i / Math.max(1, snake.length - 1);
+        const r = Math.floor(0 + (255 - 0) * t);
+        const g = Math.floor(245 + (0 - 245) * t);
+        const b = Math.floor(255 + (255 - 255) * t);
+        snakeCtx.fillStyle = `rgb(${r},${g},${b})`;
+        snakeCtx.fillRect(seg.x * snakeCellW + 1, seg.y * snakeCellH + 1, snakeCellW - 2, snakeCellH - 2);
       });
     }
 
-    dashPalette.addEventListener("click", e => {
-      const item = e.target.closest(".dash-palette-item");
-      if (!item) return;
-      dashCurrentTile = item.dataset.tile;
-      dashPalette.querySelectorAll(".dash-palette-item").forEach(el =>
-        el.classList.remove("active")
-      );
-      item.classList.add("active");
+    window.addEventListener("keydown", e => {
+      let dx = snakeDir.x;
+      let dy = snakeDir.y;
+      if (e.key === "ArrowUp" || e.key === "w") {
+        dx = 0;
+        dy = -1;
+      } else if (e.key === "ArrowDown" || e.key === "s") {
+        dx = 0;
+        dy = 1;
+      } else if (e.key === "ArrowLeft" || e.key === "a") {
+        dx = -1;
+        dy = 0;
+      } else if (e.key === "ArrowRight" || e.key === "d") {
+        dx = 1;
+        dy = 0;
+      } else {
+        return;
+      }
+
+      if (!snakeRunning) {
+        snakeRunning = true;
+        document.getElementById("snake-status").textContent = "Running";
+        document.getElementById("snake-overlay").style.display = "none";
+      }
+
+      if (dx === -snakeDir.x && dy === -snakeDir.y) return;
+      snakePendingDir = { x: dx, y: dy };
     });
 
-    dashEditorGrid.addEventListener("mousedown", e => {
-      const cell = e.target.closest(".dash-editor-cell");
-      if (!cell) return;
-      const x = parseInt(cell.dataset.x, 10);
-      const y = parseInt(cell.dataset.y, 10);
+    document.getElementById("snake-restart").addEventListener("click", () => {
+      snakeReset();
+    });
 
-      if (dashCurrentTile === "start" || dashCurrentTile === "goal") {
-        // clear existing of that type
-        for (let yy = 0; yy < dashRows; yy++) {
-          for (let xx = 0; xx < dashCols; xx++) {
-            if (dashLevel[yy][xx] === dashCurrentTile) {
-              dashLevel[yy][xx] = "empty";
+    snakeReset();
+    requestAnimationFrame(snakeLoop);
+
+    // ---------- Pablo Dash (original-style with full editor) ----------
+    const dashCanvas = document.getElementById("dash-canvas");
+    const dashCtx = dashCanvas.getContext("2d");
+
+    const dashGridH = 12;
+    const dashGridWVisible = 48;
+    const dashCellW = dashCanvas.width / dashGridWVisible;
+    const dashCellH = dashCanvas.height / dashGridH;
+
+    const dashLevelLength = 256;
+    const dashGrid = [];
+    for (let y = 0; y < dashGridH; y++) {
+      const row = [];
+      for (let x = 0; x < dashLevelLength; x++) row.push(null);
+      dashGrid.push(row);
+    }
+
+    let dashScrollX = 0;
+    let dashMode = "edit";
+    let dashCurrentObject = "ground";
+    let dashPlatformDirection = "horizontal";
+    let dashCustomColor = "#00f5ff";
+
+    const dashPlayer = {
+      x: 1,
+      y: dashGridH - 3,
+      vx: 0.12,
+      vy: 0,
+      onGround: false,
+      gravity: 0.015,
+      jumpStrength: -0.35,
+      alive: true,
+      checkpointX: 1,
+      checkpointY: dashGridH - 3,
+      gravityDir: 1,
+      speedMultiplier: 1,
+    };
+
+    const dashObjects = {
+      ground: { color: "#4444ff" },
+      spike: { color: "#ff3366" },
+      jump: { color: "#00ff85" },
+      portal: { color: "#ffcc00" },
+      decor: { color: "#8888aa" },
+      platform: { color: "#00f5ff" },
+      gravity: { color: "#ff00ff" },
+      speed: { color: "#00ffff" },
+      checkpoint: { color: "#ffffff" },
+      color: { color: dashCustomColor },
+      end: { color: "#ffcc00" },
+    };
+
+    const dashObjectPalette = document.getElementById("dash-object-palette");
+    dashObjectPalette.querySelectorAll(".dash-object").forEach(btn => {
+      btn.addEventListener("click", () => {
+        dashObjectPalette.querySelectorAll(".dash-object").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        dashCurrentObject = btn.dataset.obj;
+      });
+    });
+
+    document.getElementById("dash-platform-direction").addEventListener("change", e => {
+      dashPlatformDirection = e.target.value;
+    });
+
+    document.getElementById("dash-color-picker").addEventListener("input", e => {
+      dashCustomColor = e.target.value;
+      dashObjects.color.color = dashCustomColor;
+    });
+
+    document.getElementById("dash-scroll-left").addEventListener("click", () => {
+      dashScrollX = Math.max(0, dashScrollX - 8);
+    });
+
+    document.getElementById("dash-scroll-right").addEventListener("click", () => {
+      dashScrollX = Math.min(dashLevelLength - dashGridWVisible, dashScrollX + 8);
+    });
+
+    document.getElementById("dash-play").addEventListener("click", () => {
+      dashMode = "play";
+      document.getElementById("dash-status").textContent = "Play Mode";
+      dashResetPlayer();
+    });
+
+    document.getElementById("dash-edit").addEventListener("click", () => {
+      dashMode = "edit";
+      document.getElementById("dash-status").textContent = "Editor Mode";
+    });
+
+    document.getElementById("dash-clear").addEventListener("click", () => {
+      for (let y = 0; y < dashGridH; y++) {
+        for (let x = 0; x < dashLevelLength; x++) dashGrid[y][x] = null;
+      }
+      dashResetPlayer();
+    });
+
+    function dashCanvasPos(evt) {
+      const rect = dashCanvas.getBoundingClientRect();
+      const x = ((evt.clientX - rect.left) / rect.width) * dashGridWVisible;
+      const y = ((evt.clientY - rect.top) / rect.height) * dashGridH;
+      return { x: Math.floor(x), y: Math.floor(y) };
+    }
+
+    let dashMouseDown = false;
+    let dashRightDown = false;
+
+    dashCanvas.addEventListener("mousedown", e => {
+      e.preventDefault();
+      if (dashMode !== "edit") return;
+      const pos = dashCanvasPos(e);
+      if (e.button === 2) {
+        dashRightDown = true;
+        dashPlace(pos.x, pos.y, true);
+      } else {
+        dashMouseDown = true;
+        dashPlace(pos.x, pos.y, false);
+      }
+    });
+
+    dashCanvas.addEventListener("contextmenu", e => e.preventDefault());
+
+    dashCanvas.addEventListener("mousemove", e => {
+      if (!dashMouseDown && !dashRightDown) return;
+      if (dashMode !== "edit") return;
+      const pos = dashCanvasPos(e);
+      dashPlace(pos.x, pos.y, dashRightDown);
+    });
+
+    window.addEventListener("mouseup", () => {
+      dashMouseDown = false;
+      dashRightDown = false;
+    });
+
+    function dashPlace(vx, vy, erase) {
+      const gx = vx + dashScrollX;
+      const gy = vy;
+      if (gx < 0 || gy < 0 || gx >= dashLevelLength || gy >= dashGridH) return;
+
+      if (erase || dashCurrentObject === "erase") {
+        dashGrid[gy][gx] = null;
+        return;
+      }
+
+      if (dashCurrentObject === "color") {
+        dashGrid[gy][gx] = { type: "color", color: dashCustomColor };
+      } else if (dashCurrentObject === "platform") {
+        dashGrid[gy][gx] = { type: "platform", dir: dashPlatformDirection, phase: 0 };
+      } else if (dashCurrentObject === "end") {
+        dashGrid[gy][gx] = { type: "end" };
+      } else {
+        dashGrid[gy][gx] = { type: dashCurrentObject };
+      }
+    }
+
+    function dashResetPlayer() {
+      dashPlayer.x = 1;
+      dashPlayer.y = dashGridH - 3;
+      dashPlayer.vx = 0.12;
+      dashPlayer.vy = 0;
+      dashPlayer.onGround = false;
+      dashPlayer.alive = true;
+      dashPlayer.gravityDir = 1;
+      dashPlayer.speedMultiplier = 1;
+      dashPlayer.checkpointX = dashPlayer.x;
+      dashPlayer.checkpointY = dashPlayer.y;
+      dashScrollX = 0;
+    }
+
+    function dashStep() {
+      if (dashMode !== "play") return;
+
+      if (!dashPlayer.alive) {
+        dashResetPlayer();
+        return;
+      }
+
+      dashPlayer.vy += dashPlayer.gravity * dashPlayer.gravityDir;
+      dashPlayer.x += dashPlayer.vx * dashPlayer.speedMultiplier;
+      dashPlayer.y += dashPlayer.vy;
+
+      if (dashPlayer.y > dashGridH - 1) {
+        dashPlayer.alive = false;
+        return;
+      }
+      if (dashPlayer.y < 0) {
+        dashPlayer.alive = false;
+        return;
+      }
+
+      const px = Math.floor(dashPlayer.x);
+      const py = Math.floor(dashPlayer.y);
+
+      dashPlayer.onGround = false;
+
+      const neighbors = [
+        [px, py],
+        [px, py + 1],
+        [px, py - 1],
+        [px + 1, py],
+        [px - 1, py],
+      ];
+
+      for (const [nx, ny] of neighbors) {
+        if (nx < 0 || ny < 0 || nx >= dashLevelLength || ny >= dashGridH) continue;
+        const cell = dashGrid[ny][nx];
+        if (!cell) continue;
+
+        if (cell.type === "ground" || cell.type === "decor" || cell.type === "color") {
+          if (dashPlayer.y >= ny - 0.01 && dashPlayer.y <= ny + 1.01 && dashPlayer.vy > 0) {
+            dashPlayer.y = ny - 0.01;
+            dashPlayer.vy = 0;
+            dashPlayer.onGround = true;
+          }
+        }
+
+        if (cell.type === "spike") {
+          dashPlayer.alive = false;
+          return;
+        }
+
+        if (cell.type === "jump") {
+          dashPlayer.vy = dashPlayer.jumpStrength * dashPlayer.gravityDir;
+        }
+
+        if (cell.type === "gravity") {
+          dashPlayer.gravityDir *= -1;
+          dashPlayer.vy = dashPlayer.jumpStrength * dashPlayer.gravityDir * 0.5;
+        }
+
+        if (cell.type === "speed") {
+          dashPlayer.speedMultiplier = 1.6;
+        }
+
+        if (cell.type === "checkpoint") {
+          dashPlayer.checkpointX = dashPlayer.x;
+          dashPlayer.checkpointY = dashPlayer.y;
+        }
+
+        if (cell.type === "portal") {
+          dashPlayer.x = nx + 1;
+        }
+
+        if (cell.type === "end") {
+          dashPlayer.alive = false;
+          dashResetPlayer();
+          return;
+        }
+      }
+
+      for (let y = 0; y < dashGridH; y++) {
+        for (let x = 0; x < dashLevelLength; x++) {
+          const cell = dashGrid[y][x];
+          if (!cell || cell.type !== "platform") continue;
+          const speed = 0.03;
+          if (cell.dir === "horizontal") {
+            const offset = Math.sin((Date.now() / 400) + cell.phase) * 1.2;
+            const baseX = x + offset;
+            if (Math.abs(dashPlayer.x - baseX) < 0.6 && Math.abs(dashPlayer.y - y) < 0.6) {
+              dashPlayer.x += offset * 0.1;
+            }
+          } else {
+            const offset = Math.sin((Date.now() / 400) + cell.phase) * 0.8;
+            const baseY = y + offset;
+            if (Math.abs(dashPlayer.x - x) < 0.6 && Math.abs(dashPlayer.y - baseY) < 0.6) {
+              dashPlayer.y += offset * 0.1;
             }
           }
         }
       }
 
-      dashLevel[y][x] = dashCurrentTile;
-      refreshDashEditorGrid();
-    });
-
-    function findDashStart() {
-      for (let y = 0; y < dashRows; y++) {
-        for (let x = 0; x < dashCols; x++) {
-          if (dashLevel[y][x] === "start") {
-            return { x, y };
-          }
-        }
-      }
-      return { x: 2, y: dashRows - 2 };
-    }
-
-    function findDashGoal() {
-      for (let y = 0; y < dashRows; y++) {
-        for (let x = 0; x < dashCols; x++) {
-          if (dashLevel[y][x] === "goal") {
-            return { x, y };
-          }
-        }
-      }
-      return { x: dashCols - 3, y: dashRows - 2 };
-    }
-
-    function resetDashPlayer() {
-      const start = findDashStart();
-      dashPlayer = {
-        x: start.x * dashCellSize + dashCellSize * 0.25,
-        y: start.y * dashCellSize + dashCellSize * 0.25,
-        w: dashCellSize * 0.5,
-        h: dashCellSize * 0.5,
-        vy: 0,
-        onGround: false
-      };
-      dashScrollX = Math.max(0, dashPlayer.x - dashWidth * 0.3);
-      dashJumpCount = 0;
-      dashJumpCountLabel.textContent = dashJumpCount;
-    }
-
-    function dashJump() {
-      if (!dashPlayer) return;
-      if (!dashPlayer.onGround) return;
-      dashPlayer.vy = dashJumpVel;
-      dashPlayer.onGround = false;
-      dashJumpCount++;
-      dashJumpCountLabel.textContent = dashJumpCount;
-    }
-
-    function dashTileAt(px, py) {
-      const gx = Math.floor(px / dashCellSize);
-      const gy = Math.floor(py / dashCellSize);
-      if (gx < 0 || gx >= dashCols || gy < 0 || gy >= dashRows) return "empty";
-      return dashLevel[gy][gx];
-    }
-
-    function dashRectCollidesWithTileType(rect, types) {
-      const samples = 4;
-      for (let i = 0; i <= samples; i++) {
-        const t = i / samples;
-        const px = rect.x + rect.w * t;
-        const pyTop = rect.y;
-        const pyBottom = rect.y + rect.h;
-        const pyMid = rect.y + rect.h * t;
-
-        const points = [
-          { x: px, y: pyTop },
-          { x: px, y: pyBottom },
-          { x: rect.x, y: pyMid },
-          { x: rect.x + rect.w, y: pyMid }
-        ];
-
-        for (const p of points) {
-          const tile = dashTileAt(p.x, p.y);
-          if (types.includes(tile)) return true;
-        }
-      }
-      return false;
-    }
-
-    function updateDash(dt) {
-      if (!dashIsPlaying || !dashPlayer) return;
-
-      const dtSec = dt / 1000;
-
-      dashPlayer.vy += dashGravity * dtSec;
-      dashPlayer.y += dashPlayer.vy * dtSec;
-      dashPlayer.x += dashSpeed * dtSec;
-
-      dashScrollX = Math.max(dashScrollX, dashPlayer.x - dashWidth * 0.3);
-
-      // ground collision
-      const rect = {
-        x: dashPlayer.x,
-        y: dashPlayer.y,
-        w: dashPlayer.w,
-        h: dashPlayer.h
-      };
-
-      dashPlayer.onGround = false;
-
-      // vertical collision with ground
-      if (dashRectCollidesWithTileType(rect, ["ground"])) {
-        // move up until not colliding
-        while (dashRectCollidesWithTileType(rect, ["ground"])) {
-          rect.y -= 1;
-        }
-        dashPlayer.y = rect.y;
-        dashPlayer.vy = 0;
-        dashPlayer.onGround = true;
-      }
-
-      // spike collision
-      if (dashRectCollidesWithTileType(rect, ["spike"])) {
-        dashAttempts++;
-        dashAttemptsLabel.textContent = dashAttempts;
-        dashStatus.textContent = "Hit spike! Restarting...";
-        resetDashPlayer();
-        return;
-      }
-
-      // goal check
-      if (dashRectCollidesWithTileType(rect, ["goal"])) {
-        dashStatus.textContent = "Goal reached! 🎉";
-        dashIsPlaying = false;
-        return;
-      }
-
-      // out of bounds
-      if (dashPlayer.y > dashHeight + 200 || dashPlayer.x > dashCols * dashCellSize + 200) {
-        dashAttempts++;
-        dashAttemptsLabel.textContent = dashAttempts;
-        dashStatus.textContent = "Fell off! Restarting...";
-        resetDashPlayer();
+      const centerX = dashScrollX + dashGridWVisible * 0.4;
+      if (dashPlayer.x > centerX) {
+        dashScrollX = Math.min(dashLevelLength - dashGridWVisible, Math.floor(dashPlayer.x - dashGridWVisible * 0.4));
       }
     }
-
-    function drawDash() {
-      dashCtx.clearRect(0, 0, dashWidth, dashHeight);
-
-      // background
-      dashCtx.fillStyle = "#000000";
-      dashCtx.fillRect(0, 0, dashWidth, dashHeight);
-
-      // subtle grid
-      dashCtx.strokeStyle = "rgba(255,255,255,0.04)";
-      dashCtx.lineWidth = 1;
-      dashCtx.beginPath();
-      for (let x = 0; x <= dashCols; x++) {
-        const px = x * dashCellSize - dashScrollX;
-        dashCtx.moveTo(px, 0);
-        dashCtx.lineTo(px, dashHeight);
-      }
-      for (let y = 0; y <= dashRows; y++) {
-        const py = y * dashCellSize;
-        dashCtx.moveTo(-dashScrollX, py);
-        dashCtx.lineTo(dashWidth - dashScrollX, py);
-      }
-      dashCtx.stroke();
-
-      // tiles
-      for (let y = 0; y < dashRows; y++) {
-        for (let x = 0; x < dashCols; x++) {
-          const tile = dashLevel[y][x];
-          const px = x * dashCellSize - dashScrollX;
-          const py = y * dashCellSize;
-          if (px + dashCellSize < 0 || px > dashWidth) continue;
-
-          if (tile === "ground") {
-            dashCtx.fillStyle = "#35f0ff";
-            dashCtx.beginPath();
-            dashCtx.roundRect(
-              px + 2,
-              py + 2,
-              dashCellSize - 4,
-              dashCellSize - 4,
-              6
-            );
-            dashCtx.fill();
-          } else if (tile === "spike") {
-            dashCtx.fillStyle = "#ff3bff";
-            dashCtx.beginPath();
-            dashCtx.moveTo(px + dashCellSize * 0.5, py + 4);
-            dashCtx.lineTo(px + dashCellSize - 4, py + dashCellSize - 4);
-            dashCtx.lineTo(px + 4, py + dashCellSize - 4);
-            dashCtx.closePath();
-            dashCtx.fill();
-          } else if (tile === "start") {
-            dashCtx.fillStyle = "#7cff6b";
-            dashCtx.beginPath();
-            dashCtx.roundRect(
-              px + 4,
-              py + 4,
-              dashCellSize - 8,
-              dashCellSize - 8,
-              6
-            );
-            dashCtx.fill();
-          } else if (tile === "goal") {
-            dashCtx.fillStyle = "#ffd27a";
-            dashCtx.beginPath();
-            dashCtx.roundRect(
-              px + 4,
-              py + 4,
-              dashCellSize - 8,
-              dashCellSize - 8,
-              6
-            );
-            dashCtx.fill();
-          }
-        }
-      }
-
-      // player
-      if (dashPlayer) {
-        dashCtx.save();
-        dashCtx.shadowBlur = 18;
-        dashCtx.shadowColor = "rgba(53,240,255,0.9)";
-        dashCtx.fillStyle = "#35f0ff";
-        dashCtx.beginPath();
-        dashCtx.roundRect(
-          dashPlayer.x - dashScrollX,
-          dashPlayer.y,
-          dashPlayer.w,
-          dashPlayer.h,
-          6
-        );
-        dashCtx.fill();
-        dashCtx.restore();
-      }
-
-      // status overlay
-      if (!dashIsPlaying) {
-        dashCtx.fillStyle = "rgba(0,0,0,0.45)";
-        dashCtx.fillRect(0, 0, dashWidth, dashHeight);
-        dashCtx.fillStyle = "#ffffff";
-        dashCtx.font = "bold 16px system-ui";
-        dashCtx.textAlign = "center";
-        dashCtx.fillText("Press Play or Space to run", dashWidth / 2, dashHeight / 2);
-      }
-    }
-
-    function dashLoop(timestamp) {
-      const dt = timestamp - dashLastTime;
-      dashLastTime = timestamp;
-      updateDash(dt);
-      drawDash();
-      requestAnimationFrame(dashLoop);
-    }
-
-    dashPlayBtn.addEventListener("click", () => {
-      dashIsPlaying = !dashIsPlaying;
-      dashStatus.textContent = dashIsPlaying ? "Running..." : "Paused";
-    });
-
-    dashRestartBtn.addEventListener("click", () => {
-      dashAttempts++;
-      dashAttemptsLabel.textContent = dashAttempts;
-      resetDashPlayer();
-      dashIsPlaying = true;
-      dashStatus.textContent = "Running...";
-    });
-
-    dashClearBtn.addEventListener("click", () => {
-      initDashLevel();
-      refreshDashEditorGrid();
-      resetDashPlayer();
-      dashIsPlaying = false;
-      dashStatus.textContent = "Level cleared.";
-    });
-
-    dashFillGroundBtn.addEventListener("click", () => {
-      for (let x = 0; x < dashCols; x++) {
-        dashLevel[dashRows - 1][x] = "ground";
-      }
-      refreshDashEditorGrid();
-    });
-
-    dashSaveBtn.addEventListener("click", () => {
-      try {
-        const data = JSON.stringify(dashLevel);
-        localStorage.setItem("pabloDashLevel", data);
-        dashStatus.textContent = "Level saved.";
-      } catch {
-        dashStatus.textContent = "Save failed.";
-      }
-    });
-
-    dashLoadBtn.addEventListener("click", () => {
-      try {
-        const data = localStorage.getItem("pabloDashLevel");
-        if (!data) {
-          dashStatus.textContent = "No saved level.";
-          return;
-        }
-        const parsed = JSON.parse(data);
-        if (!Array.isArray(parsed) || parsed.length !== dashRows) {
-          dashStatus.textContent = "Invalid level data.";
-          return;
-        }
-        dashLevel = parsed;
-        refreshDashEditorGrid();
-        resetDashPlayer();
-        dashStatus.textContent = "Level loaded.";
-      } catch {
-        dashStatus.textContent = "Load failed.";
-      }
-    });
-
-    dashCanvas.addEventListener("mousedown", () => {
-      if (!dashIsPlaying) {
-        dashIsPlaying = true;
-        dashStatus.textContent = "Running...";
-      } else {
-        dashJump();
-      }
-    });
 
     window.addEventListener("keydown", e => {
-      if (e.target.tagName === "INPUT") return;
+      if (dashMode !== "play") return;
+      if (e.code === "Space" || e.key === "ArrowUp" || e.key === "w") {
+        if (dashPlayer.onGround) {
+          dashPlayer.vy = dashPlayer.jumpStrength * dashPlayer.gravityDir;
+          dashPlayer.onGround = false;
+        }
+      }
+    });
 
-      if (e.key === " " || e.code === "Space") {
-        if (panels[2].classList.contains("active")) {
-          if (!dashIsPlaying) {
-            dashIsPlaying = true;
-            dashStatus.textContent = "Running...";
-          } else {
-            dashJump();
+    function dashDraw() {
+      dashCtx.fillStyle = "#050510";
+      dashCtx.fillRect(0, 0, dashCanvas.width, dashCanvas.height);
+
+      dashCtx.strokeStyle = "rgba(255,255,255,0.12)";
+      dashCtx.lineWidth = 1;
+      for (let x = 0; x <= dashGridWVisible; x++) {
+        dashCtx.beginPath();
+        dashCtx.moveTo(x * dashCellW + 0.5, 0);
+        dashCtx.lineTo(x * dashCellW + 0.5, dashCanvas.height);
+        dashCtx.stroke();
+      }
+      for (let y = 0; y <= dashGridH; y++) {
+        dashCtx.beginPath();
+        dashCtx.moveTo(0, y * dashCellH + 0.5);
+        dashCtx.lineTo(dashCanvas.width, y * dashCellH + 0.5);
+        dashCtx.stroke();
+      }
+
+      const barrierY = dashGridH - 1;
+      dashCtx.strokeStyle = "rgba(0,255,133,0.7)";
+      dashCtx.lineWidth = 2;
+      dashCtx.beginPath();
+      dashCtx.moveTo(0, barrierY * dashCellH + 0.5);
+      dashCtx.lineTo(dashCanvas.width, barrierY * dashCellH + 0.5);
+      dashCtx.stroke();
+
+      dashCtx.strokeStyle = "rgba(0,245,255,0.7)";
+      dashCtx.beginPath();
+      dashCtx.moveTo(0.5, 0);
+      dashCtx.lineTo(0.5, dashCanvas.height);
+      dashCtx.stroke();
+
+      const endX = dashLevelLength - 2 - dashScrollX;
+      if (endX >= 0 && endX <= dashGridWVisible) {
+        dashCtx.strokeStyle = "rgba(255,204,0,0.9)";
+        dashCtx.beginPath();
+        dashCtx.moveTo(endX * dashCellW + dashCellW * 0.5, 0);
+        dashCtx.lineTo(endX * dashCellW + dashCellW * 0.5, dashCanvas.height);
+        dashCtx.stroke();
+      }
+
+      for (let y = 0; y < dashGridH; y++) {
+        for (let x = 0; x < dashGridWVisible; x++) {
+          const gx = x + dashScrollX;
+          const cell = dashGrid[y][gx];
+          if (!cell) continue;
+          let color = "#ffffff";
+          if (cell.type === "color") color = cell.color;
+          else if (dashObjects[cell.type]) color = dashObjects[cell.type].color;
+          dashCtx.fillStyle = color;
+          const px = x * dashCellW;
+          const py = y * dashCellH;
+          dashCtx.fillRect(px + 2, py + 2, dashCellW - 4, dashCellH - 4);
+
+          if (cell.type === "spike") {
+            dashCtx.fillStyle = "#ff99aa";
+            dashCtx.beginPath();
+            dashCtx.moveTo(px + dashCellW * 0.2, py + dashCellH - 2);
+            dashCtx.lineTo(px + dashCellW * 0.5, py + 2);
+            dashCtx.lineTo(px + dashCellW * 0.8, py + dashCellH - 2);
+            dashCtx.closePath();
+            dashCtx.fill();
           }
-          e.preventDefault();
+
+          if (cell.type === "platform") {
+            dashCtx.fillStyle = "#00f5ff";
+            dashCtx.fillRect(px + 2, py + dashCellH * 0.4, dashCellW - 4, dashCellH * 0.2);
+          }
+
+          if (cell.type === "gravity") {
+            dashCtx.fillStyle = "#ff00ff";
+            dashCtx.beginPath();
+            dashCtx.arc(px + dashCellW * 0.5, py + dashCellH * 0.5, Math.min(dashCellW, dashCellH) * 0.25, 0, Math.PI * 2);
+            dashCtx.fill();
+          }
+
+          if (cell.type === "speed") {
+            dashCtx.fillStyle = "#00ffff";
+            dashCtx.fillRect(px + dashCellW * 0.2, py + dashCellH * 0.3, dashCellW * 0.6, dashCellH * 0.4);
+          }
+
+          if (cell.type === "checkpoint") {
+            dashCtx.fillStyle = "#ffffff";
+            dashCtx.fillRect(px + dashCellW * 0.4, py + dashCellH * 0.2, dashCellW * 0.2, dashCellH * 0.6);
+          }
+
+          if (cell.type === "portal" || cell.type === "end") {
+            dashCtx.strokeStyle = "#ffcc00";
+            dashCtx.lineWidth = 2;
+            dashCtx.beginPath();
+            dashCtx.arc(px + dashCellW * 0.5, py + dashCellH * 0.5, Math.min(dashCellW, dashCellH) * 0.35, 0, Math.PI * 2);
+            dashCtx.stroke();
+          }
         }
       }
 
-      if (e.key.toLowerCase() === "r" && panels[2].classList.contains("active")) {
-        dashAttempts++;
-        dashAttemptsLabel.textContent = dashAttempts;
-        resetDashPlayer();
-        dashIsPlaying = true;
-        dashStatus.textContent = "Running...";
+      if (dashMode === "play") {
+        dashCtx.fillStyle = "#ffffff";
+        const vx = (dashPlayer.x - dashScrollX) * dashCellW;
+        const vy = dashPlayer.y * dashCellH;
+        dashCtx.fillRect(vx + dashCellW * 0.2, vy + dashCellH * 0.2, dashCellW * 0.6, dashCellH * 0.6);
       }
-    });
+    }
 
-    // ---------- Init ----------
-
-    function initAll() {
-      // Sandbox
-      resizeSandbox();
-      initSandbox();
-      renderMatterPills();
-      sandboxLoop();
-
-      // Snake
-      resizeSnake();
-      resetSnake();
-      requestAnimationFrame(snakeLoop);
-
-      // Dash
-      resizeDash();
-      initDashLevel();
-      buildDashEditorGrid();
-      resetDashPlayer();
+    function dashLoop() {
+      dashStep();
+      dashDraw();
       requestAnimationFrame(dashLoop);
     }
 
-    window.addEventListener("resize", () => {
-      resizeSandbox();
-      resizeSnake();
-      resizeDash();
-    });
-
-    initAll();
+    dashResetPlayer();
+    dashLoop();
   </script>
 </body>
 </html>
