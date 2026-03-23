@@ -357,6 +357,13 @@ body {
   overflow: hidden;
 }
 
+/* ensure visible height */
+.sandbox-canvas-wrap,
+.snake-wrap,
+.pdash-canvas-wrap {
+  min-height: 260px;
+}
+
 .sandbox-canvas-wrap::before,
 .sandbox-tools::before,
 .pdash-editor-wrap::before,
@@ -868,7 +875,6 @@ window.addEventListener("keydown", e => {
   }
 
   function updatePhysics() {
-    // simple falling sand / water
     for (let y = rows - 2; y >= 0; y--) {
       for (let x = 0; x < cols; x++) {
         const cell = grid[y][x];
@@ -953,7 +959,7 @@ window.addEventListener("keydown", e => {
   const ctx = canvas.getContext("2d");
   const scoreEl = document.getElementById("snakeScore");
 
-  let width, height, cols, rows, cellSize;
+  let cols, rows, cellSize;
   let snake, dir, food, score, speed, lastTime;
 
   function resize() {
@@ -961,8 +967,8 @@ window.addEventListener("keydown", e => {
     canvas.width = rect.width;
     canvas.height = rect.height;
     cellSize = 16;
-    cols = Math.floor(canvas.width / cellSize);
-    rows = Math.floor(canvas.height / cellSize);
+    cols = Math.max(10, Math.floor(canvas.width / cellSize));
+    rows = Math.max(10, Math.floor(canvas.height / cellSize));
     reset();
   }
 
@@ -973,6 +979,7 @@ window.addEventListener("keydown", e => {
     speed = 7;
     placeFood();
     scoreEl.textContent = score;
+    lastTime = 0;
   }
 
   function placeFood() {
@@ -1018,15 +1025,12 @@ window.addEventListener("keydown", e => {
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // grid glow
     ctx.fillStyle = "#050712";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // food
     ctx.fillStyle = "#ff4af2";
     ctx.fillRect(food.x * cellSize, food.y * cellSize, cellSize, cellSize);
 
-    // snake
     for (let i = 0; i < snake.length; i++) {
       const seg = snake[i];
       const t = i / snake.length;
@@ -1096,7 +1100,7 @@ window.addEventListener("keydown", e => {
   let mode = "edit"; // "edit" or "play"
 
   // runner state
-  let runnerX, runnerY, runnerVy, runnerOnGround, cameraX, playing;
+  let runnerX, runnerY, runnerVy, runnerOnGround, cameraX = 0, playing;
 
   function resize() {
     const rect = canvas.parentElement.getBoundingClientRect();
@@ -1107,6 +1111,7 @@ window.addEventListener("keydown", e => {
     widthStat.textContent = cols;
     heightStat.textContent = rows;
     initGrid();
+    cameraX = 0;
   }
 
   function initGrid() {
@@ -1214,7 +1219,7 @@ window.addEventListener("keydown", e => {
     }
   });
 
-  canvas.addEventListener("click", e => {
+  canvas.addEventListener("click", () => {
     if (mode === "play") {
       if (runnerOnGround) {
         runnerVy = -cellSize * 0.6;
@@ -1243,7 +1248,6 @@ window.addEventListener("keydown", e => {
 
     runnerOnGround = false;
 
-    // ground collision
     const tilesToCheck = [
       { x: leftX, y: footY },
       { x: rightX, y: footY }
@@ -1261,7 +1265,6 @@ window.addEventListener("keydown", e => {
       }
     }
 
-    // spike collision at body
     const bodyCheck = [
       { x: leftX, y: headY + cellSize * 0.3 },
       { x: rightX, y: headY + cellSize * 0.3 }
@@ -1289,7 +1292,6 @@ window.addEventListener("keydown", e => {
     ctx.fillStyle = "#050712";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // tiles
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
         const tile = grid[y][x];
@@ -1313,7 +1315,6 @@ window.addEventListener("keydown", e => {
       }
     }
 
-    // grid lines
     ctx.strokeStyle = "rgba(255,255,255,0.05)";
     ctx.lineWidth = 1;
     for (let x = 0; x <= cols; x++) {
