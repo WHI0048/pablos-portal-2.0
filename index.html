@@ -519,7 +519,7 @@ const world = {};
 // Camera for editor and play
 let cameraX = 0; // in pixels
 let cameraY = 0;
-let cameraScrollSpeed = 40;
+const CAMERA_STEP = 40; // fixed step per wheel notch
 
 // Editor state
 let editorMode = 'edit'; // 'edit' | 'play'
@@ -615,13 +615,18 @@ dashEditorCanvas.addEventListener('mousemove', (e) => {
     }
 });
 
-// Infinite smooth scroll with wheel
-dashEditorCanvas.addEventListener('wheel', (e) => {
+// 🔧 FIXED: smooth, consistent infinite scroll
+// Listen on the whole window so it always works while in editor
+window.addEventListener('wheel', (e) => {
+    if (currentMode !== 'dash' || editorMode !== 'edit') return;
+
+    // prevent page scroll while editing
     e.preventDefault();
-    const delta = e.deltaY;
-    const speed = e.shiftKey ? cameraScrollSpeed * 2 : cameraScrollSpeed;
-    cameraX += delta * speed * 0.02; // smooth
-});
+
+    const direction = Math.sign(e.deltaY); // -1 up, +1 down
+    const speedMultiplier = e.shiftKey ? 2 : 1;
+    cameraX += direction * CAMERA_STEP * speedMultiplier;
+}, { passive: false });
 
 // Editor click -> place tiles in infinite world
 function handleEditorClick(e) {
