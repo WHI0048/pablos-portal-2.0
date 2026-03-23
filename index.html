@@ -360,6 +360,7 @@
                         <button class="tool-button" data-dash-tool="pad">⤴ Jump Pad</button>
                         <button class="tool-button" data-dash-tool="ring">◯ Ring</button>
                         <button class="tool-button" data-dash-tool="spawn">│ Spawn</button>
+                        <button class="tool-button" data-dash-tool="endportal">⧉ EndPortal</button>
                         <button class="tool-button" data-dash-tool="erase">⌫ Erase</button>
                         <button class="tool-button danger" data-dash-tool="clear">🗑 Clear</button>
                     </div>
@@ -520,8 +521,14 @@ const PLAYER_HEIGHT = 18;
 // tileType: 'ground', 'spike', 'pad', 'ring'
 const world = {};
 
-// Spawn line (world X in pixels)
+// Spawn line (world X in pixels) – movable
 let spawnX = 100; // default spawn position
+
+// Barrier line – fixed at initial spawnX on load
+const barrierX = spawnX;
+
+// End portal (only one)
+let endPortal = null; // { x: worldX, y: worldY }
 
 // Camera for editor and play
 let cameraX = 0; // in pixels
@@ -530,7 +537,7 @@ const CAMERA_STEP = 80; // step per button press
 
 // Editor state
 let editorMode = 'edit'; // 'edit' | 'play'
-let currentTool = 'ground'; // 'ground' | 'spike' | 'pad' | 'ring' | 'spawn' | 'erase'
+let currentTool = 'ground'; // 'ground' | 'spike' | 'pad' | 'ring' | 'spawn' | 'endportal' | 'erase'
 let isMouseDown = false;
 
 // Player state
@@ -540,7 +547,8 @@ let player = {
     vx: 4,
     vy: 0,
     onGround: false,
-    alive: true
+    alive: true,
+    levelComplete: false
 };
 
 let isPlayingDash = false;
@@ -589,25 +597,23 @@ dashToolbarButtons.forEach(btn => {
             stopDashPlaytest();
             dashToolbarButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            // keep currentTool as last drawing tool
+            const toolBtn = document.querySelector(`[data-dash-tool="${currentTool}"]`);
+            if (toolBtn && !['play','edit','clear'].includes(currentTool)) {
+                toolBtn.classList.add('active');
+            }
             updateDashStatus();
             return;
         }
 
         if (tool === 'clear') {
             for (const k in world) delete world[k];
+            endPortal = null;
             return;
         }
 
-        // drawing tools
         currentTool = tool;
         dashToolbarButtons.forEach(b => {
-            if (b.dataset.dashTool === 'ground' ||
-                b.dataset.dashTool === 'spike' ||
-                b.dataset.dashTool === 'pad' ||
-                b.dataset.dashTool === 'ring' ||
-                b.dataset.dashTool === 'spawn' ||
-                b.dataset.dashTool === 'erase') {
+            if (['ground','spike','pad','ring','spawn','endportal','erase'].includes(b.dataset.dashTool)) {
                 b.classList.toggle('active', b === btn);
             }
         });
@@ -625,7 +631,13 @@ function updateDashStatus() {
         dashStatusRight.textContent =
             `Tool: ${currentTool.toUpperCase()} • Use scroll buttons to move camera, click to place tiles.`;
     } else {
-        dashStatusRight.textContent = 'Space/Click to jump. ESC to return to editor.';
+        if (player.levelComplete) {
+            dashStatusRight.textContent = 'LEVEL COMPLETE – Press Edit to return.';
+        } else if (!player.alive) {
+            dashStatusRight.textContent = 'You died – Press Playtest to retry or Edit to modify.';
+        } else {
+            dashStatusRight.textContent = 'Space/Click to jump. ESC to return to editor.';
+        }
     }
 }
 updateDashStatus();
@@ -638,8 +650,7 @@ dashScrollButtons.forEach(btn => {
         if (dir === 'left') {
             cameraX -= CAMERA_STEP; // infinite left
         } else if (dir === 'right') {
-            // clamp at spawn line
-            cameraX = Math.min(cameraX + CAMERA_STEP, spawnX);
+            cameraX = Math.min(cameraX + CAMERA_STEP, barrierX); // clamp at barrier
         }
     });
 });
@@ -661,7 +672,7 @@ dashEditorCanvas.addEventListener('mousemove', (e) => {
     }
 });
 
-// Editor click -> place tiles or move spawn line
+// Editor click -> place tiles, move spawn line, or place end portal
 function handleEditorClick(e) {
     if (editorMode !== 'edit') return;
 
@@ -677,6 +688,9 @@ function handleEditorClick(e) {
 
     if (currentTool === 'erase') {
         setTile(tx, ty, null);
+        if (endPortal && endPortal.tx === tx && endPortal.ty === ty) {
+            endPortal = null;
+        }
     } else if (currentTool === 'ground') {
         setTile(tx, ty, 'ground');
     } else if (currentTool === 'spike') {
@@ -687,6 +701,13 @@ function handleEditorClick(e) {
         setTile(tx, ty, 'ring');
     } else if (currentTool === 'spawn') {
         spawnX = tx * TILE_SIZE;
+    } else if (currentTool === 'endportal') {
+        endPortal = {
+            tx,
+            ty,
+            x: tx * TILE_SIZE,
+            y: ty * TILE_SIZE
+        };
     }
 }
 
@@ -699,6 +720,8 @@ function startDashPlaytest() {
     player.vy = 0;
     player.alive = true;
     player.onGround = false;
+    player.levelComplete = false;
+    updateDashStatus();
 }
 
 function stopDashPlaytest() {
@@ -710,11 +733,10 @@ window.addEventListener('keydown', (e) => {
     if (currentMode !== 'dash') return;
 
     if (e.code === 'Space') {
-        // prevent page scroll / button activation
         e.preventDefault();
         jumpHeld = true;
         if (!isPlayingDash) return;
-        if (player.onGround && player.alive) {
+        if (player.onGround && player.alive && !player.levelComplete) {
             player.vy = JUMP_VELOCITY;
             player.onGround = false;
         }
@@ -723,9 +745,10 @@ window.addEventListener('keydown', (e) => {
         stopDashPlaytest();
         dashToolbarButtons.forEach(b => b.classList.remove('active'));
         document.querySelector('[data-dash-tool="edit"]').classList.add('active');
-        // keep last drawing tool active
         const toolBtn = document.querySelector(`[data-dash-tool="${currentTool}"]`);
-        if (toolBtn) toolBtn.classList.add('active');
+        if (toolBtn && !['play','edit','clear'].includes(currentTool)) {
+            toolBtn.classList.add('active');
+        }
         updateDashStatus();
     }
 });
@@ -740,7 +763,7 @@ window.addEventListener('mousedown', (e) => {
     if (currentMode !== 'dash') return;
     if (e.target === dashCanvas && isPlayingDash) {
         jumpHeld = true;
-        if (player.onGround && player.alive) {
+        if (player.onGround && player.alive && !player.levelComplete) {
             player.vy = JUMP_VELOCITY;
             player.onGround = false;
         }
@@ -756,6 +779,7 @@ window.addEventListener('mouseup', (e) => {
 // ----- Physics + collision -----
 function updatePlayer() {
     if (!isPlayingDash) return;
+    if (!player.alive || player.levelComplete) return;
 
     player.vy += GRAVITY;
     player.x += player.vx;
@@ -800,6 +824,7 @@ function updatePlayer() {
                 if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
                                 tileRect.x, tileRect.y, tileRect.w, tileRect.h)) {
                     player.alive = false;
+                    updateDashStatus();
                 }
             } else if (tile === 'pad') {
                 if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
@@ -817,8 +842,26 @@ function updatePlayer() {
         }
     }
 
+    // End portal collision
+    if (endPortal) {
+        const portalRect = {
+            x: endPortal.x,
+            y: endPortal.y,
+            w: TILE_SIZE,
+            h: TILE_SIZE * 2
+        };
+        if (rectOverlap(px1, py1, PLAYER_WIDTH, PLAYER_HEIGHT,
+                        portalRect.x, portalRect.y, portalRect.w, portalRect.h)) {
+            player.levelComplete = true;
+            player.vx = 0;
+            player.vy = 0;
+            updateDashStatus();
+        }
+    }
+
     if (player.y > dashCanvas.height + 200) {
         player.alive = false;
+        updateDashStatus();
     }
 
     if (!player.alive) {
@@ -906,7 +949,7 @@ function renderDashEditor() {
         }
     }
 
-    // Spawn line (white)
+    // Spawn line (white, movable)
     const spawnScreenX = spawnX - cameraX;
     dashEditorCtx.strokeStyle = '#ffffff';
     dashEditorCtx.lineWidth = 2;
@@ -914,6 +957,57 @@ function renderDashEditor() {
     dashEditorCtx.moveTo(spawnScreenX, 0);
     dashEditorCtx.lineTo(spawnScreenX, dashEditorCanvas.height);
     dashEditorCtx.stroke();
+
+    // Barrier line (red, fixed at barrierX, with label)
+    const barrierScreenX = barrierX - cameraX;
+    dashEditorCtx.strokeStyle = '#ff4b6e';
+    dashEditorCtx.lineWidth = 2;
+    dashEditorCtx.beginPath();
+    dashEditorCtx.moveTo(barrierScreenX, 0);
+    dashEditorCtx.lineTo(barrierScreenX, dashEditorCanvas.height);
+    dashEditorCtx.stroke();
+
+    dashEditorCtx.fillStyle = '#ff4b6e';
+    dashEditorCtx.font = '12px system-ui';
+    dashEditorCtx.textAlign = 'center';
+    dashEditorCtx.fillText('BARRIER', barrierScreenX, 14);
+
+    // End portal (neon cyber‑glass gate)
+    if (endPortal) {
+        const portalScreenX = endPortal.x - cameraX;
+        const portalScreenY = endPortal.y - cameraY;
+
+        if (!(portalScreenX + TILE_SIZE < 0 || portalScreenX > dashEditorCanvas.width ||
+              portalScreenY + TILE_SIZE * 2 < 0 || portalScreenY > dashEditorCanvas.height)) {
+
+            const w = TILE_SIZE;
+            const h = TILE_SIZE * 2;
+
+            // Outer glow
+            const gradient = dashEditorCtx.createLinearGradient(
+                portalScreenX, portalScreenY,
+                portalScreenX + w, portalScreenY + h
+            );
+            gradient.addColorStop(0, '#4af2c5');
+            gradient.addColorStop(0.5, '#7b5cff');
+            gradient.addColorStop(1, '#ff4b6e');
+
+            dashEditorCtx.save();
+            dashEditorCtx.shadowColor = 'rgba(122, 255, 255, 0.8)';
+            dashEditorCtx.shadowBlur = 18;
+
+            // Border
+            dashEditorCtx.strokeStyle = gradient;
+            dashEditorCtx.lineWidth = 3;
+            dashEditorCtx.strokeRect(portalScreenX, portalScreenY, w, h);
+
+            dashEditorCtx.restore();
+
+            // Frosted glass center
+            dashEditorCtx.fillStyle = 'rgba(255, 255, 255, 0.18)';
+            dashEditorCtx.fillRect(portalScreenX + 3, portalScreenY + 3, w - 6, h - 6);
+        }
+    }
 }
 
 function renderDashPlay() {
@@ -971,13 +1065,52 @@ function renderDashPlay() {
         }
     }
 
-    dashCtx.fillStyle = player.alive ? '#ffffff' : '#888888';
+    // End portal in play
+    if (endPortal) {
+        const portalScreenX = endPortal.x - playCameraX;
+        const portalScreenY = endPortal.y - playCameraY;
+        const w = TILE_SIZE;
+        const h = TILE_SIZE * 2;
+
+        const gradient = dashCtx.createLinearGradient(
+            portalScreenX, portalScreenY,
+            portalScreenX + w, portalScreenY + h
+        );
+        gradient.addColorStop(0, '#4af2c5');
+        gradient.addColorStop(0.5, '#7b5cff');
+        gradient.addColorStop(1, '#ff4b6e');
+
+        dashCtx.save();
+        dashCtx.shadowColor = 'rgba(122, 255, 255, 0.8)';
+        dashCtx.shadowBlur = 18;
+
+        dashCtx.strokeStyle = gradient;
+        dashCtx.lineWidth = 3;
+        dashCtx.strokeRect(portalScreenX, portalScreenY, w, h);
+
+        dashCtx.restore();
+
+        dashCtx.fillStyle = 'rgba(255, 255, 255, 0.18)';
+        dashCtx.fillRect(portalScreenX + 3, portalScreenY + 3, w - 6, h - 6);
+    }
+
+    // Player
+    dashCtx.fillStyle = player.levelComplete
+        ? '#4af2c5'
+        : (player.alive ? '#ffffff' : '#888888');
     dashCtx.fillRect(
         player.x - playCameraX,
         player.y - playCameraY,
         PLAYER_WIDTH,
         PLAYER_HEIGHT
     );
+
+    if (player.levelComplete) {
+        dashCtx.fillStyle = '#4af2c5';
+        dashCtx.font = '24px system-ui';
+        dashCtx.textAlign = 'center';
+        dashCtx.fillText('LEVEL COMPLETE', dashCanvas.width / 2, 60);
+    }
 }
 
 // ----- Main loop -----
@@ -1042,6 +1175,36 @@ function loop() {
                 dashCtx.stroke();
             }
         }
+
+        // End portal preview
+        if (endPortal) {
+            const portalScreenX = endPortal.x - previewCameraX;
+            const portalScreenY = endPortal.y - previewCameraY;
+            const w = TILE_SIZE;
+            const h = TILE_SIZE * 2;
+
+            const gradient = dashCtx.createLinearGradient(
+                portalScreenX, portalScreenY,
+                portalScreenX + w, portalScreenY + h
+            );
+            gradient.addColorStop(0, '#4af2c5');
+            gradient.addColorStop(0.5, '#7b5cff');
+            gradient.addColorStop(1, '#ff4b6e');
+
+            dashCtx.save();
+            dashCtx.shadowColor = 'rgba(122, 255, 255, 0.8)';
+            dashCtx.shadowBlur = 18;
+
+            dashCtx.strokeStyle = gradient;
+            dashCtx.lineWidth = 3;
+            dashCtx.strokeRect(portalScreenX, portalScreenY, w, h);
+
+            dashCtx.restore();
+
+            dashCtx.fillStyle = 'rgba(255, 255, 255, 0.18)';
+            dashCtx.fillRect(portalScreenX + 3, portalScreenY + 3, w - 6, h - 6);
+        }
+
         dashCtx.globalAlpha = 1.0;
     }
 }
