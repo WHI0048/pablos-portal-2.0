@@ -1,1711 +1,894 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Pablo's Portal 2.0 — Hyper Neon</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        :root {
-            --bg: #020617;
-            --panel: rgba(15, 23, 42, 0.85);
-            --panel-soft: rgba(15, 23, 42, 0.7);
-            --accent: #38bdf8;
-            --accent-soft: rgba(56, 189, 248, 0.35);
-            --accent-strong: #0ea5e9;
-            --accent-danger: #f97373;
-            --accent-success: #4ade80;
-            --text-main: #e5e7eb;
-            --text-soft: #9ca3af;
-            --border-soft: rgba(148, 163, 184, 0.35);
-            --shadow-strong: 0 0 40px rgba(56, 189, 248, 0.35);
-            --shadow-soft: 0 0 25px rgba(15, 23, 42, 0.9);
-            --radius-lg: 18px;
-            --radius-md: 12px;
-            --radius-sm: 8px;
-            --transition-fast: 150ms ease-out;
-            --transition-med: 220ms ease-out;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
-            background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #000 100%);
-            color: var(--text-main);
-            overflow: hidden;
-        }
-
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .portal-shell {
-            width: min(1200px, 100vw - 32px);
-            height: min(720px, 100vh - 32px);
-            background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 55%),
-                        radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.12), transparent 55%),
-                        linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.98));
-            border-radius: 28px;
-            border: 1px solid rgba(148, 163, 184, 0.35);
-            box-shadow:
-                0 0 0 1px rgba(15, 23, 42, 0.9),
-                0 0 60px rgba(15, 23, 42, 0.95),
-                0 0 80px rgba(56, 189, 248, 0.25);
-            padding: 18px 20px 20px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .portal-shell::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background:
-                radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.18), transparent 55%),
-                radial-gradient(circle at 100% 100%, rgba(129, 140, 248, 0.18), transparent 55%);
-            mix-blend-mode: screen;
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        .portal-shell-inner {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .portal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-        }
-
-        .portal-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .portal-logo {
-            width: 32px;
-            height: 32px;
-            border-radius: 999px;
-            background: radial-gradient(circle at 30% 20%, #e5e7eb, #38bdf8 40%, #0f172a 100%);
-            box-shadow:
-                0 0 0 1px rgba(15, 23, 42, 0.9),
-                0 0 18px rgba(56, 189, 248, 0.7);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .portal-logo::before {
-            content: "";
-            position: absolute;
-            inset: 4px;
-            border-radius: inherit;
-            border: 1px solid rgba(15, 23, 42, 0.85);
-            box-shadow: inset 0 0 10px rgba(15, 23, 42, 0.9);
-        }
-
-        .portal-logo::after {
-            content: "P";
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 18px;
-            color: #0f172a;
-            text-shadow: 0 0 10px rgba(248, 250, 252, 0.7);
-        }
-
-        .portal-title-text {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .portal-title-main {
-            font-weight: 700;
-            letter-spacing: 0.03em;
-            font-size: 18px;
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-        }
-
-        .portal-title-main span.version-pill {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 7px;
-            border-radius: 999px;
-            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.35), rgba(15, 23, 42, 0.95));
-            border: 1px solid rgba(56, 189, 248, 0.6);
-            color: #e0f2fe;
-            text-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
-        }
-
-        .portal-title-sub {
-            font-size: 12px;
-            color: var(--text-soft);
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-        }
-
-        .portal-header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .status-pill {
-            font-size: 11px;
-            padding: 3px 9px;
-            border-radius: 999px;
-            border: 1px solid rgba(52, 211, 153, 0.6);
-            background: radial-gradient(circle at top, rgba(52, 211, 153, 0.35), rgba(15, 23, 42, 0.95));
-            color: #bbf7d0;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .status-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 999px;
-            background: #22c55e;
-            box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
-        }
-
-        .portal-nav {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.98));
-            border: 1px solid rgba(148, 163, 184, 0.45);
-            box-shadow: var(--shadow-soft);
-        }
-
-        .nav-btn {
-            position: relative;
-            border: none;
-            outline: none;
-            padding: 7px 14px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            color: var(--text-soft);
-            background: transparent;
-            cursor: pointer;
-            transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
-        }
-
-        .nav-btn::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.25), transparent 60%);
-            opacity: 0;
-            transition: opacity var(--transition-fast);
-            pointer-events: none;
-        }
-
-        .nav-btn:hover {
-            color: #e5e7eb;
-            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95));
-            transform: translateY(-0.5px);
-        }
-
-        .nav-btn:hover::before {
-            opacity: 1;
-        }
-
-        .nav-btn.active {
-            color: #e0f2fe;
-            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.35), rgba(15, 23, 42, 0.98));
-            box-shadow: 0 0 18px rgba(56, 189, 248, 0.6);
-        }
-
-        .nav-btn.active::before {
-            opacity: 1;
-        }
-
-        .portal-main {
-            flex: 1;
-            margin-top: 12px;
-            border-radius: 22px;
-            background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.99));
-            border: 1px solid rgba(148, 163, 184, 0.4);
-            box-shadow:
-                inset 0 0 0 1px rgba(15, 23, 42, 0.9),
-                0 0 40px rgba(15, 23, 42, 0.95);
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .portal-main-inner {
-            flex: 1;
-            border-radius: 18px;
-            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
-            border: 1px solid rgba(30, 64, 175, 0.6);
-            box-shadow:
-                inset 0 0 0 1px rgba(15, 23, 42, 0.9),
-                0 0 40px rgba(30, 64, 175, 0.45);
-            padding: 14px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .view {
-            position: absolute;
-            inset: 14px;
-            border-radius: 16px;
-            background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
-            border: 1px solid rgba(51, 65, 85, 0.9);
-            box-shadow:
-                inset 0 0 0 1px rgba(15, 23, 42, 0.9),
-                0 0 30px rgba(15, 23, 42, 0.95);
-            padding: 14px;
-            display: none;
-        }
-
-        .view.active {
-            display: flex;
-        }
-
-        .view-inner {
-            flex: 1;
-            border-radius: 14px;
-            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
-            border: 1px solid rgba(30, 64, 175, 0.7);
-            box-shadow:
-                inset 0 0 0 1px rgba(15, 23, 42, 0.9),
-                0 0 30px rgba(30, 64, 175, 0.5);
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .view-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .view-title {
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: #e5e7eb;
-        }
-
-        .view-subtitle {
-            font-size: 11px;
-            color: var(--text-soft);
-        }
-
-        .view-badge {
-            font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 999px;
-            border: 1px solid rgba(56, 189, 248, 0.6);
-            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.25), rgba(15, 23, 42, 0.98));
-            color: #e0f2fe;
-        }
-
-        .view-body {
-            flex: 1;
-            display: flex;
-            gap: 10px;
-            overflow: hidden;
-        }
-
-        .panel-soft {
-            border-radius: 12px;
-            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
-            border: 1px solid rgba(51, 65, 85, 0.9);
-            box-shadow:
-                inset 0 0 0 1px rgba(15, 23, 42, 0.9),
-                0 0 24px rgba(15, 23, 42, 0.95);
-        }
-
-        .panel-soft-header {
-            padding: 8px 10px;
-            border-bottom: 1px solid rgba(30, 64, 175, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .panel-soft-title {
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: #e5e7eb;
-        }
-
-        .panel-soft-body {
-            padding: 10px;
-            font-size: 13px;
-            color: var(--text-soft);
-        }
-
-        /* MENU VIEW */
-        #view-menu .view-body {
-            flex-direction: row;
-        }
-
-        #view-menu .view-body-left {
-            flex: 1.2;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        #view-menu .view-body-right {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .hero-panel {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-panel::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.25), transparent 55%),
-                radial-gradient(circle at 100% 100%, rgba(129, 140, 248, 0.25), transparent 55%);
-            opacity: 0.7;
-            mix-blend-mode: screen;
-            pointer-events: none;
-        }
-
-        .hero-panel-inner {
-            position: relative;
-            z-index: 1;
-            padding: 14px;
-        }
-
-        .hero-title {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .hero-subtitle {
-            font-size: 12px;
-            color: var(--text-soft);
-            margin-bottom: 12px;
-        }
-
-        .hero-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
-
-        .hero-tag {
-            font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 999px;
-            border: 1px solid rgba(148, 163, 184, 0.6);
-            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
-            color: var(--text-soft);
-        }
-
-        .hero-footer {
-            font-size: 11px;
-            color: var(--text-soft);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* SANDBOX VIEW (placeholder) */
-        #view-sandbox .view-body {
-            flex-direction: row;
-        }
-
-        #view-sandbox .sandbox-sidebar {
-            width: 260px;
-            min-width: 260px;
-            max-width: 260px;
-        }
-
-        #view-sandbox .sandbox-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sandbox-canvas-wrapper {
-            flex: 1;
-            border-radius: 12px;
-            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
-            border: 1px solid rgba(30, 64, 175, 0.7);
-            box-shadow:
-                inset 0 0 0 1px rgba(15, 23, 42, 0.9),
-                0 0 24px rgba(30, 64, 175, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .sandbox-footer {
-            margin-top: 8px;
-            font-size: 11px;
-            color: var(--text-soft);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        /* SNAKE VIEW (placeholder) */
-        #view-snake .view-body {
-            flex-direction: row;
-        }
-
-        #view-snake .snake-sidebar {
-            width: 220px;
-            min-width: 220px;
-            max-width: 220px;
-        }
-
-        #view-snake .snake-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .snake-canvas-wrapper {
-            flex: 1;
-            border-radius: 12px;
-            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
-            border: 1px solid rgba(30, 64, 175, 0.7);
-            box-shadow:
-                inset 0 0 0 1px rgba(15, 23, 42, 0.9),
-                0 0 24px rgba(30, 64, 175, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .snake-footer {
-            margin-top: 8px;
-            font-size: 11px;
-            color: var(--text-soft);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        /* DASH VIEW */
-        #view-dash .view-body {
-            flex-direction: row;
-        }
-
-        .dash-sidebar {
-            width: 200px;
-            min-width: 200px;
-            max-width: 200px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .dash-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .dash-tools-list {
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .dash-tool-btn {
-            width: 100%;
-            border-radius: 999px;
-            border: 1px solid rgba(148, 163, 184, 0.6);
-            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
-            color: var(--text-soft);
-            font-size: 12px;
-            padding: 6px 10px;
-            text-align: left;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
-        }
-
-        .dash-tool-btn span.label {
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            font-size: 11px;
-        }
-
-        .dash-tool-btn span.key {
-            font-size: 10px;
-            color: var(--text-soft);
-        }
-
-        .dash-tool-btn:hover {
-            color: #e5e7eb;
-            border-color: rgba(56, 189, 248, 0.7);
-            transform: translateY(-0.5px);
-        }
-
-        .dash-tool-btn.active {
-            color: #e0f2fe;
-            border-color: rgba(56, 189, 248, 0.9);
-            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.25), rgba(15, 23, 42, 0.98));
-            box-shadow: 0 0 16px rgba(56, 189, 248, 0.6);
-        }
-
-        .dash-mode-toggle {
-            margin-top: 8px;
-            padding: 8px;
-            border-top: 1px solid rgba(30, 64, 175, 0.7);
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .dash-mode-btn {
-            border-radius: 999px;
-            border: 1px solid rgba(148, 163, 184, 0.6);
-            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
-            color: var(--text-soft);
-            font-size: 11px;
-            padding: 5px 9px;
-            text-align: center;
-            cursor: pointer;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
-        }
-
-        .dash-mode-btn:hover {
-            color: #e5e7eb;
-            border-color: rgba(56, 189, 248, 0.7);
-            transform: translateY(-0.5px);
-        }
-
-        .dash-mode-btn.active {
-            color: #e0f2fe;
-            border-color: rgba(56, 189, 248, 0.9);
-            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.25), rgba(15, 23, 42, 0.98));
-            box-shadow: 0 0 16px rgba(56, 189, 248, 0.6);
-        }
-
-        .dash-sidebar-footer {
-            margin-top: auto;
-            padding: 8px;
-            border-top: 1px solid rgba(30, 64, 175, 0.7);
-            font-size: 10px;
-            color: var(--text-soft);
-        }
-
-        .dash-sidebar-footer span.key {
-            font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            font-size: 10px;
-            color: #e5e7eb;
-        }
-
-        .dash-canvas-wrapper {
-            flex: 1;
-            border-radius: 12px;
-            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
-            border: 1px solid rgba(30, 64, 175, 0.7);
-            box-shadow:
-                inset 0 0 0 1px rgba(15, 23, 42, 0.9),
-                0 0 24px rgba(30, 64, 175, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #dash-canvas {
-            background: linear-gradient(to bottom, #020617, #020617 40%, #0b1120 40%, #020617 100%);
-            border-radius: 10px;
-            border: 1px solid rgba(15, 23, 42, 0.9);
-            box-shadow:
-                0 0 0 1px rgba(15, 23, 42, 0.9),
-                0 0 30px rgba(15, 23, 42, 0.95);
-        }
-
-        .dash-overlay-info {
-            position: absolute;
-            left: 10px;
-            top: 10px;
-            font-size: 11px;
-            color: var(--text-soft);
-            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
-            border-radius: 999px;
-            padding: 4px 8px;
-            border: 1px solid rgba(30, 64, 175, 0.7);
-        }
-
-        .dash-overlay-status {
-            position: absolute;
-            right: 10px;
-            top: 10px;
-            font-size: 11px;
-            color: var(--text-soft);
-            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
-            border-radius: 999px;
-            padding: 4px 8px;
-            border: 1px solid rgba(30, 64, 175, 0.7);
-        }
-
-        .dash-scroll-btn {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border-radius: 999px;
-            border: 1px solid rgba(56, 189, 248, 0.7);
-            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.25), rgba(15, 23, 42, 0.98));
-            box-shadow: 0 0 16px rgba(56, 189, 248, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #e0f2fe;
-            font-size: 16px;
-            cursor: pointer;
-            transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
-            user-select: none;
-        }
-
-        .dash-scroll-btn-left {
-            left: 18px;
-            bottom: 24px;
-        }
-
-        .dash-scroll-btn-right {
-            right: 18px;
-            bottom: 24px;
-        }
-
-        .dash-scroll-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 0 22px rgba(56, 189, 248, 0.9);
-            border-color: rgba(56, 189, 248, 1);
-            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.35), rgba(15, 23, 42, 0.98));
-        }
-
-        .dash-scroll-btn:active {
-            transform: translateY(1px) scale(0.97);
-            box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
-        }
-
-        .dash-footer {
-            margin-top: 8px;
-            font-size: 11px;
-            color: var(--text-soft);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        /* CREDITS VIEW */
-        #view-credits .view-body {
-            flex-direction: row;
-        }
-
-        #view-credits .credits-main {
-            flex: 1.4;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #view-credits .credits-side {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .credits-list {
-            padding: 10px;
-            font-size: 13px;
-            color: var(--text-soft);
-        }
-
-        .credits-item {
-            margin-bottom: 8px;
-        }
-
-        .credits-item-title {
-            font-size: 12px;
-            font-weight: 500;
-            color: #e5e7eb;
-        }
-
-        .credits-item-sub {
-            font-size: 11px;
-            color: var(--text-soft);
-        }
-
-        .credits-footer {
-            margin-top: auto;
-            padding: 8px 10px;
-            font-size: 11px;
-            color: var(--text-soft);
-            border-top: 1px solid rgba(30, 64, 175, 0.7);
-        }
-
-        /* Scrollbars */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.95);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(51, 65, 85, 0.9);
-            border-radius: 999px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(71, 85, 105, 0.95);
-        }
-    </style>
+<meta charset="UTF-8" />
+<title>Pablo's Portal 2.0 — Hyper Neon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+html, body {
+    height: 100%;
+    background: radial-gradient(circle at 0% 0%, #00ffff 0, transparent 55%),
+                radial-gradient(circle at 100% 100%, #ff00ff 0, transparent 55%),
+                #050510;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    overflow: hidden;
+    color: #f5f7ff;
+}
+body {
+    animation: hueShift 18s linear infinite;
+}
+@keyframes hueShift {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+/* NAVBAR */
+.navbar {
+    height: 56px;
+    background: rgba(5,5,20,0.9);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(255,255,255,0.18);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 8px;
+    box-shadow: 0 0 24px rgba(0,0,0,0.6);
+}
+.nav-title {
+    font-size: 16px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-right: auto;
+    text-shadow: 0 0 12px cyan, 0 0 24px magenta;
+}
+.nav-btn {
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: radial-gradient(circle at 0 0, rgba(0,255,255,0.4), transparent 60%),
+                rgba(20,20,40,0.9);
+    cursor: pointer;
+    color: #f5f7ff;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+.nav-btn.active {
+    background: radial-gradient(circle at 100% 100%, rgba(255,0,255,0.4), transparent 60%),
+                rgba(40,40,80,0.95);
+}
+
+/* VIEWS */
+.view {
+    position: absolute;
+    inset: 56px 0 0 0;
+    display: none;
+}
+.view.active {
+    display: block;
+}
+
+/* MENU */
+.menu-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 20% 0%, rgba(0,255,255,0.5), transparent 60%),
+                radial-gradient(circle at 80% 100%, rgba(255,0,200,0.5), transparent 60%),
+                radial-gradient(circle at 50% 50%, rgba(255,255,0,0.4), transparent 60%),
+                #050510;
+    animation: menuPulse 10s ease-in-out infinite alternate;
+}
+@keyframes menuPulse {
+    0% { transform: scale(1); filter: blur(0px); opacity: 0.8; }
+    100% { transform: scale(1.08); filter: blur(4px); opacity: 1; }
+}
+.menu-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 24px;
+}
+.menu-title {
+    padding: 16px 28px;
+    border-radius: 24px;
+    background: rgba(10,10,30,0.9);
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.06),
+                0 0 40px rgba(0,255,255,0.9),
+                0 0 80px rgba(255,0,128,0.9),
+                0 0 140px rgba(0,255,255,1);
+    text-align: center;
+}
+.menu-title-main {
+    font-size: 24px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+.menu-title-sub {
+    margin-top: 6px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+.menu-btn {
+    min-width: 220px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(20,20,40,0.95);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.06),
+                0 0 30px rgba(0,255,255,0.9),
+                0 0 60px rgba(255,0,128,0.9),
+                0 0 120px rgba(0,255,255,1);
+}
+.menu-btn:hover {
+    background: rgba(30,30,60,0.98);
+}
+
+/* EDITOR LAYOUT */
+.editor-root {
+    position: absolute;
+    inset: 0;
+    display: flex;
+}
+
+/* Left cyber-glass panel */
+.editor-panel {
+    width: 260px;
+    background: rgba(5,10,30,0.92);
+    backdrop-filter: blur(18px);
+    border-right: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 0 40px rgba(0,255,255,0.4);
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 10px;
+}
+.editor-panel-title {
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.9;
+    margin-bottom: 4px;
+}
+.editor-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+.editor-tab {
+    flex: 1;
+    padding: 6px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(15,20,40,0.9);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+}
+.editor-tab.active {
+    background: radial-gradient(circle at 100% 0, rgba(0,255,255,0.5), transparent 60%),
+                rgba(40,50,90,0.98);
+}
+.editor-section {
+    flex: 1;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: radial-gradient(circle at 0 0, rgba(0,255,255,0.18), transparent 60%),
+                rgba(10,10,30,0.9);
+    padding: 10px;
+    overflow: auto;
+    font-size: 11px;
+}
+.editor-section.hidden {
+    display: none;
+}
+.editor-palette-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+.editor-palette-item {
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(20,25,50,0.95);
+    cursor: pointer;
+    text-align: center;
+    font-size: 11px;
+}
+.editor-palette-item.active {
+    box-shadow: 0 0 18px rgba(0,255,255,0.9);
+    border-color: rgba(0,255,255,0.9);
+}
+.editor-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    gap: 6px;
+}
+.editor-row label {
+    font-size: 11px;
+    opacity: 0.85;
+}
+.editor-row input[type="number"],
+.editor-row input[type="range"] {
+    flex: 1;
+}
+.editor-btn {
+    width: 100%;
+    margin-top: 6px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(20,20,40,0.95);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+.editor-btn:hover {
+    background: rgba(30,30,60,0.98);
+}
+
+/* Editor canvas area */
+.editor-canvas-wrap {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+#editorCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: radial-gradient(circle at 0% 0%, rgba(0,255,255,0.15), transparent 55%),
+                radial-gradient(circle at 100% 100%, rgba(255,0,255,0.15), transparent 55%),
+                #050510;
+}
+
+/* CREDITS */
+.credits-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 18px;
+    text-shadow: 0 0 12px cyan, 0 0 24px magenta;
+}
+
+/* SNAKE (simple neon snake placeholder) */
+#snakeCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: radial-gradient(circle at 0% 0%, rgba(0,255,255,0.15), transparent 55%),
+                radial-gradient(circle at 100% 100%, rgba(255,0,255,0.15), transparent 55%),
+                #050510;
+}
+</style>
 </head>
 <body>
-<div class="portal-shell">
-    <div class="portal-shell-inner">
-        <div class="portal-header">
-            <div class="portal-title">
-                <div class="portal-logo"></div>
-                <div class="portal-title-text">
-                    <div class="portal-title-main">
-                        <span>Pablo's Portal</span>
-                        <span class="version-pill">2.0 · Hyper Neon</span>
-                    </div>
-                    <div class="portal-title-sub">A tiny universe of mini‑games and experiments</div>
-                </div>
+
+<div class="navbar">
+    <div class="nav-title">Pablo's Portal 2.0</div>
+
+    <!-- Link to 1.0 -->
+    <a href="https://whi0048.github.io/pablos-portal/" class="nav-btn">1.0</a>
+
+    <button class="nav-btn active" data-view="menu">Menu</button>
+    <button class="nav-btn" data-view="editor">Pablo‑Dash Editor</button>
+    <button class="nav-btn" data-view="snake">Neon Snake</button>
+    <button class="nav-btn" data-view="credits">Credits</button>
+</div>
+
+<!-- MENU VIEW -->
+<div class="view active" id="view-menu">
+    <div class="menu-bg"></div>
+    <div class="menu-center">
+        <div class="menu-title">
+            <div class="menu-title-main">Pablo's Portal 2.0</div>
+            <div class="menu-title-sub">Hyper‑Neon Physics Playground</div>
+        </div>
+        <button class="menu-btn" data-view="editor">Pablo‑Dash Editor</button>
+        <button class="menu-btn" data-view="snake">Neon Snake</button>
+        <button class="menu-btn" data-view="credits">Credits</button>
+    </div>
+</div>
+
+<!-- EDITOR VIEW (replaces sandbox) -->
+<div class="view" id="view-editor">
+    <div class="editor-root">
+        <div class="editor-panel">
+            <div class="editor-panel-title">Pablo‑Dash Editor</div>
+
+            <div class="editor-tabs">
+                <div class="editor-tab active" data-tab="objects">Objects</div>
+                <div class="editor-tab" data-tab="tools">Tools</div>
+                <div class="editor-tab" data-tab="settings">Settings</div>
             </div>
-            <div class="portal-header-right">
-                <div class="status-pill">
-                    <span class="status-dot"></span>
-                    <span>Live build</span>
+
+            <div class="editor-section" id="tab-objects">
+                <div class="editor-palette-grid">
+                    <div class="editor-palette-item active" data-object-type="block">Block</div>
+                    <div class="editor-palette-item" data-object-type="spike">Spike</div>
+                    <div class="editor-palette-item" data-object-type="pad">Jump Pad</div>
+                    <div class="editor-palette-item" data-object-type="decor">Decor</div>
                 </div>
-                <div class="portal-nav">
-                    <button class="nav-btn active" data-view="menu">Menu</button>
-                    <button class="nav-btn" data-view="sandbox">Sandbox</button>
-                    <button class="nav-btn" data-view="snake">Neon Snake</button>
-                    <button class="nav-btn" data-view="dash">Pablo Dash</button>
-                    <button class="nav-btn" data-view="credits">Credits</button>
+                <button class="editor-btn" id="btnPlaytest">Playtest</button>
+                <button class="editor-btn" id="btnStopPlaytest">Stop</button>
+            </div>
+
+            <div class="editor-section hidden" id="tab-tools">
+                <div class="editor-palette-grid">
+                    <div class="editor-palette-item" data-tool="place">Place</div>
+                    <div class="editor-palette-item" data-tool="delete">Delete</div>
+                    <div class="editor-palette-item" data-tool="spawn">Spawn Line</div>
+                    <div class="editor-palette-item" data-tool="pan">Pan</div>
                 </div>
+                <button class="editor-btn" id="btnClearLevel">Clear Level</button>
+            </div>
+
+            <div class="editor-section hidden" id="tab-settings">
+                <div class="editor-row">
+                    <label>Grid Size</label>
+                    <input type="number" id="gridSizeInput" value="40" min="10" max="200" />
+                </div>
+                <div class="editor-row">
+                    <label>Scroll Speed</label>
+                    <input type="range" id="scrollSpeedInput" min="5" max="40" value="18" />
+                </div>
+                <div class="editor-row">
+                    <label>Gravity</label>
+                    <input type="range" id="gravityInput" min="0.2" max="2.0" step="0.1" value="1.0" />
+                </div>
+                <button class="editor-btn" id="btnExport">Export JSON</button>
+                <button class="editor-btn" id="btnImport">Import JSON</button>
             </div>
         </div>
 
-        <div class="portal-main">
-            <div class="portal-main-inner">
-                <!-- MENU VIEW -->
-                <div class="view active" id="view-menu">
-                    <div class="view-inner">
-                        <div class="view-header">
-                            <div>
-                                <div class="view-title">Main Menu</div>
-                                <div class="view-subtitle">Choose a mode from the navigation bar above</div>
-                            </div>
-                            <div class="view-badge">Portal Hub</div>
-                        </div>
-                        <div class="view-body">
-                            <div class="view-body-left">
-                                <div class="panel-soft hero-panel">
-                                    <div class="hero-panel-inner">
-                                        <div class="hero-title">Welcome to Pablo's Portal 2.0</div>
-                                        <div class="hero-subtitle">
-                                            A hyper‑neon playground of tiny experiments, arcade games, and physics toys.
-                                        </div>
-                                        <div class="hero-tags">
-                                            <div class="hero-tag">Sandbox</div>
-                                            <div class="hero-tag">Neon Snake</div>
-                                            <div class="hero-tag">Pablo Dash</div>
-                                            <div class="hero-tag">Pixel‑perfect UI</div>
-                                            <div class="hero-tag">Infinite worlds</div>
-                                        </div>
-                                        <div class="hero-footer">
-                                            <span>Use the navigation bar to switch between modes.</span>
-                                            <span>New: Pablo Dash · Infinite Geometry‑Dash‑style editor</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="panel-soft">
-                                    <div class="panel-soft-header">
-                                        <div class="panel-soft-title">Quick Controls</div>
-                                    </div>
-                                    <div class="panel-soft-body">
-                                        <div>• <strong>Sandbox:</strong> Build and experiment with blocks.</div>
-                                        <div>• <strong>Neon Snake:</strong> Classic snake with a neon twist.</div>
-                                        <div>• <strong>Pablo Dash:</strong> Geometry‑Dash‑style infinite runner with an editor.</div>
-                                        <div style="margin-top:8px;font-size:11px;color:var(--text-soft);">
-                                            Pablo Dash: Space to jump · Left‑click to place blocks · Right‑click to move spawn line · A/D or circles to scroll.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="view-body-right">
-                                <div class="panel-soft" style="flex:1;">
-                                    <div class="panel-soft-header">
-                                        <div class="panel-soft-title">Build Info</div>
-                                    </div>
-                                    <div class="panel-soft-body">
-                                        <div>Version: 2.0 · Hyper Neon</div>
-                                        <div>Dash Mode: Geometry‑Dash‑style, infinite world, flat ground.</div>
-                                        <div>Canvas: 960×540 · Auto‑run speed: fast.</div>
-                                        <div style="margin-top:8px;font-size:11px;color:var(--text-soft);">
-                                            Camera is fully manual in Pablo Dash: scroll with A/D or the circular buttons.
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="panel-soft" style="margin-top:10px;">
-                                    <div class="panel-soft-header">
-                                        <div class="panel-soft-title">Hint</div>
-                                    </div>
-                                    <div class="panel-soft-body">
-                                        Pablo Dash has two modes:
-                                        <br>• Editor mode — place blocks, spikes, pads, hazards, goal.
-                                        <br>• Playtest mode — run the level with GD‑style physics.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SANDBOX VIEW (placeholder shell) -->
-                <div class="view" id="view-sandbox">
-                    <div class="view-inner">
-                        <div class="view-header">
-                            <div>
-                                <div class="view-title">Sandbox</div>
-                                <div class="view-subtitle">A tiny physics playground</div>
-                            </div>
-                            <div class="view-badge">Mode</div>
-                        </div>
-                        <div class="view-body">
-                            <div class="panel-soft sandbox-sidebar">
-                                <div class="panel-soft-header">
-                                    <div class="panel-soft-title">Tools</div>
-                                </div>
-                                <div class="panel-soft-body">
-                                    <div style="font-size:12px;color:var(--text-soft);">
-                                        This is a placeholder shell for your existing Sandbox logic.
-                                        <br><br>
-                                        You can wire your original Sandbox script into this panel and the canvas on the right.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="sandbox-main">
-                                <div class="sandbox-canvas-wrapper">
-                                    <div style="font-size:12px;color:var(--text-soft);">
-                                        Sandbox canvas goes here.
-                                    </div>
-                                </div>
-                                <div class="sandbox-footer">
-                                    <span>Sandbox: build, stack, and experiment.</span>
-                                    <span>Replace this placeholder with your original Sandbox engine.</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SNAKE VIEW (placeholder shell) -->
-                <div class="view" id="view-snake">
-                    <div class="view-inner">
-                        <div class="view-header">
-                            <div>
-                                <div class="view-title">Neon Snake</div>
-                                <div class="view-subtitle">Classic snake with a neon twist</div>
-                            </div>
-                            <div class="view-badge">Mode</div>
-                        </div>
-                        <div class="view-body">
-                            <div class="panel-soft snake-sidebar">
-                                <div class="panel-soft-header">
-                                    <div class="panel-soft-title">Game Info</div>
-                                </div>
-                                <div class="panel-soft-body">
-                                    <div style="font-size:12px;color:var(--text-soft);">
-                                        This is a placeholder shell for your existing Neon Snake logic.
-                                        <br><br>
-                                        You can wire your original Snake script into this panel and the canvas on the right.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="snake-main">
-                                <div class="snake-canvas-wrapper">
-                                    <div style="font-size:12px;color:var(--text-soft);">
-                                        Neon Snake canvas goes here.
-                                    </div>
-                                </div>
-                                <div class="snake-footer">
-                                    <span>Use arrow keys to move.</span>
-                                    <span>Replace this placeholder with your original Snake engine.</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PABLO DASH VIEW -->
-                <div class="view" id="view-dash">
-                    <div class="view-inner">
-                        <div class="view-header">
-                            <div>
-                                <div class="view-title">Pablo Dash</div>
-                                <div class="view-subtitle">Geometry‑Dash‑style infinite runner with an editor</div>
-                            </div>
-                            <div class="view-badge">New · Infinite</div>
-                        </div>
-                        <div class="view-body">
-                            <div class="panel-soft dash-sidebar">
-                                <div class="panel-soft-header">
-                                    <div class="panel-soft-title">Editor Tools</div>
-                                </div>
-                                <div class="dash-tools-list">
-                                    <button class="dash-tool-btn active" data-tool="solid">
-                                        <span class="label">Solid Block</span>
-                                        <span class="key">1</span>
-                                    </button>
-                                    <button class="dash-tool-btn" data-tool="spike">
-                                        <span class="label">Spike</span>
-                                        <span class="key">2</span>
-                                    </button>
-                                    <button class="dash-tool-btn" data-tool="jump">
-                                        <span class="label">Jump Pad</span>
-                                        <span class="key">3</span>
-                                    </button>
-                                    <button class="dash-tool-btn" data-tool="bounce">
-                                        <span class="label">Bounce Pad</span>
-                                        <span class="key">4</span>
-                                    </button>
-                                    <button class="dash-tool-btn" data-tool="hazard">
-                                        <span class="label">Hazard</span>
-                                        <span class="key">5</span>
-                                    </button>
-                                    <button class="dash-tool-btn" data-tool="goal">
-                                        <span class="label">Goal</span>
-                                        <span class="key">6</span>
-                                    </button>
-                                    <button class="dash-tool-btn" data-tool="erase">
-                                        <span class="label">Erase</span>
-                                        <span class="key">E</span>
-                                    </button>
-                                </div>
-                                <div class="dash-mode-toggle">
-                                    <button class="dash-mode-btn active" data-mode="edit">Editor Mode</button>
-                                    <button class="dash-mode-btn" data-mode="play">Playtest Mode</button>
-                                </div>
-                                <div class="dash-sidebar-footer">
-                                    <div>Left‑click: place block</div>
-                                    <div>Right‑click: move <span class="key">spawn line</span></div>
-                                    <div>A/D or circles: scroll</div>
-                                    <div>Space: jump (playtest)</div>
-                                </div>
-                            </div>
-                            <div class="dash-main">
-                                <div class="dash-canvas-wrapper">
-                                    <canvas id="dash-canvas" width="960" height="540"></canvas>
-                                    <div class="dash-overlay-info">
-                                        Editor: <span id="dash-mode-label">Edit</span> · Tool: <span id="dash-tool-label">Solid</span>
-                                    </div>
-                                    <div class="dash-overlay-status">
-                                        <span id="dash-status-label">Ready</span>
-                                    </div>
-                                    <div class="dash-scroll-btn dash-scroll-btn-left" id="dash-scroll-left">◀</div>
-                                    <div class="dash-scroll-btn dash-scroll-btn-right" id="dash-scroll-right">▶</div>
-                                </div>
-                                <div class="dash-footer">
-                                    <span>Infinite world · Flat ground · Geometry‑Dash‑style physics.</span>
-                                    <span>Manual camera: A/D or circular buttons · Canvas: 960×540.</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CREDITS VIEW -->
-                <div class="view" id="view-credits">
-                    <div class="view-inner">
-                        <div class="view-header">
-                            <div>
-                                <div class="view-title">Credits</div>
-                                <div class="view-subtitle">Who made this tiny neon universe</div>
-                            </div>
-                            <div class="view-badge">Thanks</div>
-                        </div>
-                        <div class="view-body">
-                            <div class="panel-soft credits-main">
-                                <div class="panel-soft-header">
-                                    <div class="panel-soft-title">Pablo's Portal 2.0</div>
-                                </div>
-                                <div class="credits-list">
-                                    <div class="credits-item">
-                                        <div class="credits-item-title">Design & Development</div>
-                                        <div class="credits-item-sub">Pablo · Hyper‑neon UI, mini‑games, and overall vibe.</div>
-                                    </div>
-                                    <div class="credits-item">
-                                        <div class="credits-item-title">Pablo Dash</div>
-                                        <div class="credits-item-sub">
-                                            Geometry‑Dash‑style infinite runner with an editor, integrated into the 2.0 UI.
-                                        </div>
-                                    </div>
-                                    <div class="credits-item">
-                                        <div class="credits-item-title">Special Thanks</div>
-                                        <div class="credits-item-sub">
-                                            Everyone who poked, prodded, and broke things until they felt just right.
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="credits-footer">
-                                    Pablo's Portal 2.0 · Hyper Neon · A tiny universe of experiments.
-                                </div>
-                            </div>
-                            <div class="panel-soft credits-side">
-                                <div class="panel-soft-header">
-                                    <div class="panel-soft-title">Build Notes</div>
-                                </div>
-                                <div class="panel-soft-body">
-                                    <div>• UI: soft‑glass, neon, pixel‑perfect layout.</div>
-                                    <div>• Pablo Dash: infinite world, flat ground, fast auto‑run.</div>
-                                    <div>• Editor: left‑click to place, right‑click to move spawn line.</div>
-                                    <div>• Camera: manual A/D + circular buttons, clamped at barrier.</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+        <div class="editor-canvas-wrap">
+            <canvas id="editorCanvas"></canvas>
         </div>
     </div>
 </div>
 
+<!-- SNAKE VIEW (simple neon snake) -->
+<div class="view" id="view-snake">
+    <canvas id="snakeCanvas"></canvas>
+</div>
+
+<!-- CREDITS VIEW -->
+<div class="view" id="view-credits">
+    <div class="credits-center">Designed by Rebecca — Hyper Neon Edition</div>
+</div>
+
 <script>
-    // Basic view switching
-    (function () {
-        const navButtons = document.querySelectorAll('.nav-btn');
-        const views = document.querySelectorAll('.view');
+/* VIEW SWITCHING */
+const navButtons = document.querySelectorAll('.nav-btn[data-view]');
+const views = document.querySelectorAll('.view');
+const menuButtons = document.querySelectorAll('.menu-btn[data-view]');
 
-        function showView(name) {
-            views.forEach(v => {
-                v.classList.toggle('active', v.id === 'view-' + name);
-            });
-            navButtons.forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.view === name);
-            });
+function showView(id) {
+    views.forEach(v => v.classList.toggle('active', v.id === 'view-' + id));
+    navButtons.forEach(b => b.classList.toggle('active', b.dataset.view === id));
+}
+
+navButtons.forEach(btn => {
+    btn.addEventListener('click', () => showView(btn.dataset.view));
+});
+menuButtons.forEach(btn => {
+    btn.addEventListener('click', () => showView(btn.dataset.view));
+});
+
+/* EDITOR TABS */
+const editorTabs = document.querySelectorAll('.editor-tab');
+const editorSections = {
+    objects: document.getElementById('tab-objects'),
+    tools: document.getElementById('tab-tools'),
+    settings: document.getElementById('tab-settings')
+};
+editorTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        editorTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        Object.keys(editorSections).forEach(k => {
+            editorSections[k].classList.toggle('hidden', k !== tab.dataset.tab);
+        });
+    });
+});
+
+/* EDITOR STATE */
+const editorCanvas = document.getElementById('editorCanvas');
+const ectx = editorCanvas.getContext('2d');
+
+let editorWidth = 0;
+let editorHeight = 0;
+
+function resizeEditorCanvas() {
+    const rect = editorCanvas.getBoundingClientRect();
+    editorCanvas.width = rect.width;
+    editorCanvas.height = rect.height;
+    editorWidth = rect.width;
+    editorHeight = rect.height;
+}
+window.addEventListener('resize', resizeEditorCanvas);
+resizeEditorCanvas();
+
+/* Level data */
+let gridSize = 40;
+let scrollSpeed = 18;
+let gravity = 1.0;
+
+const gridSizeInput = document.getElementById('gridSizeInput');
+const scrollSpeedInput = document.getElementById('scrollSpeedInput');
+const gravityInput = document.getElementById('gravityInput');
+
+gridSizeInput.addEventListener('change', () => {
+    gridSize = Math.max(10, Math.min(200, parseInt(gridSizeInput.value) || 40));
+});
+scrollSpeedInput.addEventListener('input', () => {
+    scrollSpeed = parseInt(scrollSpeedInput.value) || 18;
+});
+gravityInput.addEventListener('input', () => {
+    gravity = parseFloat(gravityInput.value) || 1.0;
+});
+
+let objects = []; // {type, x, y, w, h}
+let spawnLineX = 100;
+let killBarrierX = -40;
+
+let cameraX = 0;
+let cameraY = 0;
+let zoom = 1;
+
+let currentObjectType = 'block';
+let currentTool = 'place';
+
+const paletteItems = document.querySelectorAll('.editor-palette-item[data-object-type]');
+paletteItems.forEach(item => {
+    item.addEventListener('click', () => {
+        paletteItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        currentObjectType = item.dataset.objectType;
+        currentTool = 'place';
+    });
+});
+
+const toolItems = document.querySelectorAll('.editor-palette-item[data-tool]');
+toolItems.forEach(item => {
+    item.addEventListener('click', () => {
+        toolItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        currentTool = item.dataset.tool;
+    });
+});
+
+/* Mouse handling */
+let isMouseDown = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
+
+editorCanvas.addEventListener('mousedown', e => {
+    const rect = editorCanvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    isMouseDown = true;
+    lastMouseX = mx;
+    lastMouseY = my;
+
+    const world = screenToWorld(mx, my);
+
+    if (currentTool === 'place') {
+        placeObject(world.x, world.y);
+    } else if (currentTool === 'delete') {
+        deleteObject(world.x, world.y);
+    } else if (currentTool === 'spawn') {
+        spawnLineX = snap(world.x);
+    }
+});
+
+editorCanvas.addEventListener('mousemove', e => {
+    if (!isMouseDown) return;
+    const rect = editorCanvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    if (currentTool === 'pan') {
+        const dx = (mx - lastMouseX) / zoom;
+        const dy = (my - lastMouseY) / zoom;
+        cameraX -= dx;
+        cameraY -= dy;
+    }
+
+    lastMouseX = mx;
+    lastMouseY = my;
+});
+
+editorCanvas.addEventListener('mouseup', () => {
+    isMouseDown = false;
+});
+editorCanvas.addEventListener('mouseleave', () => {
+    isMouseDown = false;
+});
+
+editorCanvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    const delta = -Math.sign(e.deltaY) * 0.1;
+    zoom = Math.max(0.4, Math.min(2.5, zoom + delta));
+}, { passive: false });
+
+function snap(v) {
+    return Math.round(v / gridSize) * gridSize;
+}
+
+function screenToWorld(sx, sy) {
+    const wx = (sx / zoom) + cameraX;
+    const wy = (sy / zoom) + cameraY;
+    return { x: wx, y: wy };
+}
+
+function placeObject(wx, wy) {
+    const x = snap(wx);
+    const y = snap(wy);
+    const size = gridSize;
+
+    if (currentObjectType === 'block') {
+        objects.push({ type: 'block', x, y, w: size, h: size });
+    } else if (currentObjectType === 'spike') {
+        objects.push({ type: 'spike', x, y, w: size, h: size });
+    } else if (currentObjectType === 'pad') {
+        objects.push({ type: 'pad', x, y, w: size, h: size / 2 });
+    } else if (currentObjectType === 'decor') {
+        objects.push({ type: 'decor', x, y, w: size, h: size });
+    }
+}
+
+function deleteObject(wx, wy) {
+    for (let i = objects.length - 1; i >= 0; i--) {
+        const o = objects[i];
+        if (wx >= o.x && wx <= o.x + o.w && wy >= o.y && wy <= o.y + o.h) {
+            objects.splice(i, 1);
+            return;
+        }
+    }
+}
+
+/* Playtest */
+let playtest = false;
+let cube = null;
+
+const btnPlaytest = document.getElementById('btnPlaytest');
+const btnStopPlaytest = document.getElementById('btnStopPlaytest');
+const btnClearLevel = document.getElementById('btnClearLevel');
+const btnExport = document.getElementById('btnExport');
+const btnImport = document.getElementById('btnImport');
+
+btnPlaytest.addEventListener('click', () => {
+    startPlaytest();
+});
+btnStopPlaytest.addEventListener('click', () => {
+    stopPlaytest();
+});
+btnClearLevel.addEventListener('click', () => {
+    objects = [];
+});
+btnExport.addEventListener('click', () => {
+    const data = {
+        objects,
+        spawnLineX,
+        killBarrierX,
+        gridSize,
+        scrollSpeed,
+        gravity
+    };
+    const json = JSON.stringify(data);
+    window.prompt('Level JSON:', json);
+});
+btnImport.addEventListener('click', () => {
+    const json = window.prompt('Paste level JSON:');
+    if (!json) return;
+    try {
+        const data = JSON.parse(json);
+        objects = data.objects || [];
+        spawnLineX = data.spawnLineX ?? spawnLineX;
+        killBarrierX = data.killBarrierX ?? killBarrierX;
+        gridSize = data.gridSize || gridSize;
+        scrollSpeed = data.scrollSpeed || scrollSpeed;
+        gravity = data.gravity || gravity;
+        gridSizeInput.value = gridSize;
+        scrollSpeedInput.value = scrollSpeed;
+        gravityInput.value = gravity;
+    } catch (e) {
+        alert('Invalid JSON');
+    }
+});
+
+function startPlaytest() {
+    playtest = true;
+    cube = {
+        x: spawnLineX + 10,
+        y: 0,
+        w: gridSize * 0.6,
+        h: gridSize * 0.6,
+        vx: scrollSpeed,
+        vy: 0,
+        onGround: false
+    };
+}
+
+function stopPlaytest() {
+    playtest = false;
+    cube = null;
+}
+
+/* Keyboard for jump */
+let jumpPressed = false;
+window.addEventListener('keydown', e => {
+    if (e.code === 'Space') {
+        jumpPressed = true;
+    }
+});
+window.addEventListener('keyup', e => {
+    if (e.code === 'Space') {
+        jumpPressed = false;
+    }
+});
+
+/* Physics helpers */
+function rectIntersect(a, b) {
+    return a.x < b.x + b.w &&
+           a.x + a.w > b.x &&
+           a.y < b.y + b.h &&
+           a.y + a.h > b.y;
+}
+
+/* EDITOR RENDER LOOP */
+function renderEditor(dt) {
+    ectx.setTransform(1, 0, 0, 1, 0, 0);
+    ectx.clearRect(0, 0, editorWidth, editorHeight);
+
+    ectx.save();
+    ectx.scale(zoom, zoom);
+    ectx.translate(-cameraX, -cameraY);
+
+    // Blue neon grid
+    ectx.strokeStyle = 'rgba(0,255,255,0.25)';
+    ectx.lineWidth = 1;
+    const startX = Math.floor((cameraX) / gridSize) * gridSize - gridSize * 2;
+    const endX = (cameraX + editorWidth / zoom) + gridSize * 2;
+    const startY = Math.floor((cameraY) / gridSize) * gridSize - gridSize * 2;
+    const endY = (cameraY + editorHeight / zoom) + gridSize * 2;
+
+    ectx.beginPath();
+    for (let x = startX; x < endX; x += gridSize) {
+        ectx.moveTo(x, startY);
+        ectx.lineTo(x, endY);
+    }
+    for (let y = startY; y < endY; y += gridSize) {
+        ectx.moveTo(startX, y);
+        ectx.lineTo(endX, y);
+    }
+    ectx.stroke();
+
+    // Spawn line
+    ectx.strokeStyle = 'rgba(0,255,255,0.9)';
+    ectx.lineWidth = 2;
+    ectx.beginPath();
+    ectx.moveTo(spawnLineX, startY);
+    ectx.lineTo(spawnLineX, endY);
+    ectx.stroke();
+
+    // Kill barrier
+    ectx.strokeStyle = 'rgba(255,0,0,0.9)';
+    ectx.lineWidth = 3;
+    ectx.beginPath();
+    ectx.moveTo(killBarrierX, startY);
+    ectx.lineTo(killBarrierX, endY);
+    ectx.stroke();
+
+    // Objects
+    for (const o of objects) {
+        if (o.type === 'block') {
+            ectx.fillStyle = 'rgba(0,255,255,0.6)';
+            ectx.strokeStyle = 'rgba(255,255,255,0.8)';
+            ectx.lineWidth = 1.5;
+            ectx.fillRect(o.x, o.y, o.w, o.h);
+            ectx.strokeRect(o.x, o.y, o.w, o.h);
+        } else if (o.type === 'spike') {
+            ectx.fillStyle = 'rgba(255,0,128,0.8)';
+            ectx.beginPath();
+            ectx.moveTo(o.x, o.y + o.h);
+            ectx.lineTo(o.x + o.w / 2, o.y);
+            ectx.lineTo(o.x + o.w, o.y + o.h);
+            ectx.closePath();
+            ectx.fill();
+        } else if (o.type === 'pad') {
+            ectx.fillStyle = 'rgba(0,255,0,0.8)';
+            ectx.fillRect(o.x, o.y + o.h / 2, o.w, o.h / 2);
+        } else if (o.type === 'decor') {
+            ectx.strokeStyle = 'rgba(255,255,255,0.4)';
+            ectx.strokeRect(o.x, o.y, o.w, o.h);
+        }
+    }
+
+    // Playtest cube
+    if (playtest && cube) {
+        // Physics
+        cube.vy += gravity;
+        cube.x += cube.vx * (dt / 16.67);
+        cube.y += cube.vy * (dt / 16.67);
+        cube.onGround = false;
+
+        const cubeRect = { x: cube.x, y: cube.y, w: cube.w, h: cube.h };
+
+        // Kill barrier
+        if (cube.x + cube.w < killBarrierX) {
+            cube.x = spawnLineX + 10;
+            cube.y = 0;
+            cube.vx = scrollSpeed;
+            cube.vy = 0;
         }
 
-        navButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const view = btn.dataset.view;
-                showView(view);
-            });
-        });
-
-        showView('menu');
-    })();
-
-    // Pablo Dash engine (manual camera, barrier, spawn line, A/D + buttons)
-    (function () {
-        const canvas = document.getElementById('dash-canvas');
-        const ctx = canvas.getContext('2d');
-
-        const modeLabel = document.getElementById('dash-mode-label');
-        const toolLabel = document.getElementById('dash-tool-label');
-        const statusLabel = document.getElementById('dash-status-label');
-
-        const toolButtons = Array.from(document.querySelectorAll('.dash-tool-btn'));
-        const modeButtons = Array.from(document.querySelectorAll('.dash-mode-btn'));
-
-        const scrollLeftBtn = document.getElementById('dash-scroll-left');
-        const scrollRightBtn = document.getElementById('dash-scroll-right');
-
-        const TILE_SIZE = 30; // 960 / 32 = 30, 540 / 18 = 30
-        const TILES_X = Math.floor(canvas.width / TILE_SIZE);
-        const TILES_Y = Math.floor(canvas.height / TILE_SIZE);
-
-        const PLAYER_SIZE = TILE_SIZE * 0.7;
-        const GRAVITY = 0.9;
-        const JUMP_VELOCITY = -14;
-        const RUN_SPEED = 10; // fast
-        const SCROLL_SPEED = 20; // camera scroll speed (pixels per frame unit)
-
-        let currentTool = 'solid';
-        let currentMode = 'edit'; // 'edit' or 'play'
-
-        // Manual camera
-        let cameraX = 0;
-        let scrollDir = 0; // -1 left, 1 right, 0 none
-
-        // Barrier at world x = 0
-        const BARRIER_X = 0;
-
-        // Spawn line
-        let spawnX = TILE_SIZE * 4;
-        let spawnY = TILE_SIZE * (TILES_Y - 4);
-
-        let player = {
-            x: spawnX,
-            y: spawnY,
-            vx: RUN_SPEED,
-            vy: 0,
-            onGround: false,
-            alive: true,
-            won: false
-        };
-
-        // Infinite world: store tiles in a map keyed by "x,y"
-        const tiles = new Map();
-
-        function keyFor(tx, ty) {
-            return tx + ',' + ty;
-        }
-
-        function setTile(tx, ty, type) {
-            const worldX = tx * TILE_SIZE;
-            if (worldX < BARRIER_X) return; // don't place behind barrier
-
-            const key = keyFor(tx, ty);
-            if (type === null) {
-                tiles.delete(key);
-            } else {
-                tiles.set(key, { x: tx, y: ty, type });
-            }
-        }
-
-        function getTile(tx, ty) {
-            return tiles.get(keyFor(tx, ty)) || null;
-        }
-
-        // Auto-generate flat ground
-        function generateFlatGroundAround(xStart, xEnd) {
-            const groundY = TILES_Y - 2;
-            for (let tx = xStart; tx <= xEnd; tx++) {
-                const worldX = tx * TILE_SIZE;
-                if (worldX < BARRIER_X) continue;
-                if (!getTile(tx, groundY)) {
-                    setTile(tx, groundY, 'solid');
-                }
-            }
-        }
-
-        generateFlatGroundAround(0, 200);
-
-        function resetPlayer() {
-            player.x = spawnX;
-            player.y = spawnY;
-            player.vx = RUN_SPEED;
-            player.vy = 0;
-            player.onGround = false;
-            player.alive = true;
-            player.won = false;
-            statusLabel.textContent = 'Ready';
-        }
-
-        function setMode(mode) {
-            currentMode = mode;
-            modeLabel.textContent = mode === 'edit' ? 'Edit' : 'Play';
-            modeButtons.forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.mode === mode);
-            });
-            if (mode === 'play') {
-                resetPlayer();
-            }
-        }
-
-        function setTool(tool) {
-            currentTool = tool;
-            toolLabel.textContent = {
-                solid: 'Solid',
-                spike: 'Spike',
-                jump: 'Jump Pad',
-                bounce: 'Bounce Pad',
-                hazard: 'Hazard',
-                goal: 'Goal',
-                erase: 'Erase'
-            }[tool] || 'Solid';
-
-            toolButtons.forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.tool === tool);
-            });
-        }
-
-        toolButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                setTool(btn.dataset.tool);
-            });
-        });
-
-        modeButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                setMode(btn.dataset.mode);
-            });
-        });
-
-        setTool('solid');
-        setMode('edit');
-
-        // Input
-        let keys = {};
-        window.addEventListener('keydown', (e) => {
-            keys[e.code] = true;
-
-            if (e.code === 'Space') {
-                if (currentMode === 'play') {
-                    if (player.onGround && player.alive && !player.won) {
-                        player.vy = JUMP_VELOCITY;
-                        player.onGround = false;
-                    }
-                    e.preventDefault();
-                }
-            }
-
-            if (e.code === 'Digit1') setTool('solid');
-            if (e.code === 'Digit2') setTool('spike');
-            if (e.code === 'Digit3') setTool('jump');
-            if (e.code === 'Digit4') setTool('bounce');
-            if (e.code === 'Digit5') setTool('hazard');
-            if (e.code === 'Digit6') setTool('goal');
-            if (e.code === 'KeyE') setTool('erase');
-
-            if (e.code === 'KeyA') {
-                scrollDir = -1;
-            }
-            if (e.code === 'KeyD') {
-                scrollDir = 1;
-            }
-        });
-
-        window.addEventListener('keyup', (e) => {
-            keys[e.code] = false;
-
-            if (e.code === 'KeyA' && scrollDir === -1) {
-                scrollDir = keys['KeyD'] ? 1 : 0;
-            }
-            if (e.code === 'KeyD' && scrollDir === 1) {
-                scrollDir = keys['KeyA'] ? -1 : 0;
-            }
-        });
-
-        // Mouse for editor
-        let isMouseDown = false;
-        let mouseButton = 0;
-
-        canvas.addEventListener('mousedown', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const mx = e.clientX - rect.left;
-            const my = e.clientY - rect.top;
-            mouseButton = e.button;
-            isMouseDown = true;
-            handleEditorClick(mx, my, e.button);
-        });
-
-        canvas.addEventListener('mouseup', () => {
-            isMouseDown = false;
-        });
-
-        canvas.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        });
-
-        canvas.addEventListener('mousemove', (e) => {
-            if (!isMouseDown || currentMode !== 'edit') return;
-            if (mouseButton !== 0) return; // only drag with left
-            const rect = canvas.getBoundingClientRect();
-            const mx = e.clientX - rect.left;
-            const my = e.clientY - rect.top;
-            handleEditorClick(mx, my, 0, true);
-        });
-
-        function handleEditorClick(mx, my, button, isDrag = false) {
-            if (currentMode !== 'edit') return;
-
-            const worldX = mx + cameraX;
-            const worldY = my;
-
-            if (worldX < BARRIER_X) return; // can't edit behind barrier
-
-            const tx = Math.floor(worldX / TILE_SIZE);
-            const ty = Math.floor(worldY / TILE_SIZE);
-
-            if (button === 2) {
-                // Right-click: move spawn line
-                if (worldX <= BARRIER_X) return;
-                spawnX = tx * TILE_SIZE + TILE_SIZE * 0.5;
-                spawnY = ty * TILE_SIZE + TILE_SIZE * 0.5;
-                resetPlayer();
-                statusLabel.textContent = 'Spawn moved';
-                return;
-            }
-
-            if (button === 0) {
-                if (currentTool === 'erase') {
-                    setTile(tx, ty, null);
-                    return;
-                }
-
-                if (currentTool === 'solid') setTile(tx, ty, 'solid');
-                if (currentTool === 'spike') setTile(tx, ty, 'spike');
-                if (currentTool === 'jump') setTile(tx, ty, 'jump');
-                if (currentTool === 'bounce') setTile(tx, ty, 'bounce');
-                if (currentTool === 'hazard') setTile(tx, ty, 'hazard');
-                if (currentTool === 'goal') setTile(tx, ty, 'goal');
-
-                const extendStart = tx - 10;
-                const extendEnd = tx + 50;
-                generateFlatGroundAround(extendStart, extendEnd);
-            }
-        }
-
-        // Scroll buttons (press-and-hold)
-        let mouseScrollDir = 0;
-
-        function updateScrollDir() {
-            if (mouseScrollDir !== 0) {
-                scrollDir = mouseScrollDir;
-            } else {
-                // if mouse not scrolling, keep keyboard scrollDir
-                if (!keys['KeyA'] && !keys['KeyD']) {
-                    scrollDir = 0;
-                } else if (keys['KeyA'] && !keys['KeyD']) {
-                    scrollDir = -1;
-                } else if (!keys['KeyA'] && keys['KeyD']) {
-                    scrollDir = 1;
-                } else {
-                    scrollDir = 0;
-                }
-            }
-        }
-
-        scrollLeftBtn.addEventListener('mousedown', () => {
-            mouseScrollDir = -1;
-            updateScrollDir();
-        });
-        scrollRightBtn.addEventListener('mousedown', () => {
-            mouseScrollDir = 1;
-            updateScrollDir();
-        });
-
-        window.addEventListener('mouseup', () => {
-            mouseScrollDir = 0;
-            updateScrollDir();
-        });
-
-        // Physics helpers
-        function rectIntersect(ax, ay, aw, ah, bx, by, bw, bh) {
-            return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
-        }
-
-        function updatePlayer(dt) {
-            if (!player.alive || player.won) return;
-
-            player.vx = RUN_SPEED;
-            player.x += player.vx * dt;
-            player.vy += GRAVITY;
-            player.y += player.vy * dt;
-
-            player.onGround = false;
-
-            const px = player.x;
-            const py = player.y;
-            const half = PLAYER_SIZE / 2;
-
-            const minTx = Math.floor((px - half) / TILE_SIZE) - 2;
-            const maxTx = Math.floor((px + half) / TILE_SIZE) + 2;
-            const minTy = Math.floor((py - half) / TILE_SIZE) - 2;
-            const maxTy = Math.floor((py + half) / TILE_SIZE) + 2;
-
-            generateFlatGroundAround(Math.max(0, minTx - 20), maxTx + 50);
-
-            const tilesToCheck = [];
-            for (let ty = minTy; ty <= maxTy; ty++) {
-                for (let tx = minTx; tx <= maxTx; tx++) {
-                    const t = getTile(tx, ty);
-                    if (t) tilesToCheck.push(t);
-                }
-            }
-
-            let playerRect = {
-                x: px - half,
-                y: py - half,
-                w: PLAYER_SIZE,
-                h: PLAYER_SIZE
-            };
-
-            for (const t of tilesToCheck) {
-                const tx = t.x * TILE_SIZE;
-                const ty = t.y * TILE_SIZE;
-                const tw = TILE_SIZE;
-                const th = TILE_SIZE;
-
-                if (!rectIntersect(playerRect.x, playerRect.y, playerRect.w, playerRect.h, tx, ty, tw, th)) {
-                    continue;
-                }
-
-                if (t.type === 'solid' || t.type === 'jump' || t.type === 'bounce') {
-                    const overlapX1 = (playerRect.x + playerRect.w) - tx;
-                    const overlapX2 = (tx + tw) - playerRect.x;
-                    const overlapY1 = (playerRect.y + playerRect.h) - ty;
-                    const overlapY2 = (ty + th) - playerRect.y;
-
-                    const minOverlapX = Math.min(overlapX1, overlapX2);
-                    const minOverlapY = Math.min(overlapY1, overlapY2);
-
-                    if (minOverlapX < minOverlapY) {
-                        if (overlapX1 < overlapX2) {
-                            player.x -= overlapX1;
-                        } else {
-                            player.x += overlapX2;
-                        }
-                        playerRect.x = player.x - half;
-                        player.vx = RUN_SPEED;
+        // Collisions
+        for (const o of objects) {
+            const oRect = { x: o.x, y: o.y, w: o.w, h: o.h };
+            if (o.type === 'block') {
+                if (rectIntersect(cubeRect, oRect)) {
+                    // Simple resolution: place cube on top if falling
+                    if (cube.vy > 0 && cube.y + cube.h <= o.y + cube.vy + 2) {
+                        cube.y = o.y - cube.h;
+                        cube.vy = 0;
+                        cube.onGround = true;
+                        cubeRect.y = cube.y;
                     } else {
-                        if (overlapY1 < overlapY2) {
-                            player.y -= overlapY1;
-                            player.vy = 0;
-                        } else {
-                            player.y += overlapY2;
-                            player.vy = 0;
-                        }
-                        playerRect.y = player.y - half;
-
-                        if (playerRect.y + playerRect.h <= ty + 4) {
-                            player.onGround = true;
-                        }
+                        // Horizontal collision: stop
+                        cube.x = o.x - cube.w;
+                        cube.vx = scrollSpeed;
+                        cubeRect.x = cube.x;
                     }
-
-                    if (t.type === 'jump' && player.onGround) {
-                        player.vy = JUMP_VELOCITY * 1.2;
-                        player.onGround = false;
-                    }
-
-                    if (t.type === 'bounce') {
-                        player.vy = JUMP_VELOCITY * 1.6;
-                        player.onGround = false;
-                    }
-                } else if (t.type === 'spike' || t.type === 'hazard') {
-                    player.alive = false;
-                    statusLabel.textContent = 'You died · Click Playtest to retry';
-                } else if (t.type === 'goal') {
-                    player.won = true;
-                    statusLabel.textContent = 'Goal reached · GG!';
                 }
-            }
-
-            if (player.y - half > canvas.height + 200) {
-                player.alive = false;
-                statusLabel.textContent = 'You fell · Click Playtest to retry';
-            }
-        }
-
-        function drawGrid() {
-            ctx.save();
-            ctx.strokeStyle = 'rgba(30, 64, 175, 0.35)';
-            ctx.lineWidth = 1;
-
-            const startX = Math.floor(cameraX / TILE_SIZE) * TILE_SIZE - cameraX;
-            for (let x = startX; x < canvas.width; x += TILE_SIZE) {
-                ctx.beginPath();
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, canvas.height);
-                ctx.stroke();
-            }
-
-            for (let y = 0; y < canvas.height; y += TILE_SIZE) {
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(canvas.width, y);
-                ctx.stroke();
-            }
-
-            ctx.restore();
-        }
-
-        function drawTiles() {
-            const minTx = Math.floor(cameraX / TILE_SIZE) - 2;
-            const maxTx = Math.floor((cameraX + canvas.width) / TILE_SIZE) + 2;
-            const minTy = 0;
-            const maxTy = TILES_Y + 5;
-
-            for (let ty = minTy; ty <= maxTy; ty++) {
-                for (let tx = minTx; tx <= maxTx; tx++) {
-                    const t = getTile(tx, ty);
-                    if (!t) continue;
-
-                    const x = tx * TILE_SIZE - cameraX;
-                    const y = ty * TILE_SIZE;
-
-                    if (x + TILE_SIZE < 0 || x > canvas.width) continue;
-
-                    if (t.type === 'solid') {
-                        ctx.fillStyle = '#0f172a';
-                        ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-                        ctx.strokeStyle = 'rgba(148, 163, 184, 0.6)';
-                        ctx.strokeRect(x + 0.5, y + 0.5, TILE_SIZE - 1, TILE_SIZE - 1);
-                    } else if (t.type === 'spike') {
-                        ctx.fillStyle = '#f97373';
-                        ctx.beginPath();
-                        ctx.moveTo(x + TILE_SIZE * 0.5, y);
-                        ctx.lineTo(x, y + TILE_SIZE);
-                        ctx.lineTo(x + TILE_SIZE, y + TILE_SIZE);
-                        ctx.closePath();
-                        ctx.fill();
-                    } else if (t.type === 'jump') {
-                        ctx.fillStyle = '#22c55e';
-                        ctx.fillRect(x, y + TILE_SIZE * 0.4, TILE_SIZE, TILE_SIZE * 0.6);
-                        ctx.fillStyle = '#4ade80';
-                        ctx.fillRect(x + 4, y + TILE_SIZE * 0.4 - 4, TILE_SIZE - 8, 4);
-                    } else if (t.type === 'bounce') {
-                        ctx.fillStyle = '#38bdf8';
-                        ctx.fillRect(x, y + TILE_SIZE * 0.4, TILE_SIZE, TILE_SIZE * 0.6);
-                        ctx.fillStyle = '#0ea5e9';
-                        ctx.beginPath();
-                        ctx.arc(x + TILE_SIZE * 0.5, y + TILE_SIZE * 0.4, TILE_SIZE * 0.3, 0, Math.PI, true);
-                        ctx.fill();
-                    } else if (t.type === 'hazard') {
-                        ctx.fillStyle = '#f97373';
-                        ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-                        ctx.strokeStyle = '#fecaca';
-                        ctx.beginPath();
-                        ctx.moveTo(x + 4, y + 4);
-                        ctx.lineTo(x + TILE_SIZE - 4, y + TILE_SIZE - 4);
-                        ctx.moveTo(x + TILE_SIZE - 4, y + 4);
-                        ctx.lineTo(x + 4, y + TILE_SIZE - 4);
-                        ctx.stroke();
-                    } else if (t.type === 'goal') {
-                        ctx.fillStyle = '#22c55e';
-                        ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-                        ctx.fillStyle = '#bbf7d0';
-                        ctx.beginPath();
-                        ctx.arc(x + TILE_SIZE * 0.5, y + TILE_SIZE * 0.5, TILE_SIZE * 0.3, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
+            } else if (o.type === 'spike') {
+                if (rectIntersect(cubeRect, oRect)) {
+                    // Death
+                    cube.x = spawnLineX + 10;
+                    cube.y = 0;
+                    cube.vx = scrollSpeed;
+                    cube.vy = 0;
+                    cubeRect.x = cube.x;
+                    cubeRect.y = cube.y;
+                }
+            } else if (o.type === 'pad') {
+                if (rectIntersect(cubeRect, oRect)) {
+                    cube.vy = -18;
                 }
             }
         }
 
-        function drawPlayer() {
-            const half = PLAYER_SIZE / 2;
-            const screenX = player.x - cameraX;
-            const screenY = player.y;
-
-            ctx.save();
-            ctx.translate(screenX, screenY);
-            ctx.fillStyle = '#e5e7eb';
-            ctx.fillRect(-half, -half, PLAYER_SIZE, PLAYER_SIZE);
-            ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(-half + 1, -half + 1, PLAYER_SIZE - 2, PLAYER_SIZE - 2);
-            ctx.restore();
+        // Jump
+        if (jumpPressed && cube.onGround) {
+            cube.vy = -16;
+            cube.onGround = false;
         }
 
-        function drawBarrierAndSpawn() {
-            ctx.save();
-            // Barrier at world x = 0
-            const barrierScreenX = BARRIER_X - cameraX;
-            ctx.strokeStyle = 'rgba(248, 113, 113, 0.9)';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(barrierScreenX, 0);
-            ctx.lineTo(barrierScreenX, canvas.height);
-            ctx.stroke();
+        // Camera follow
+        cameraX = cube.x - editorWidth / (2 * zoom);
 
-            // Spawn line
-            const spawnScreenX = spawnX - cameraX;
-            ctx.strokeStyle = 'rgba(248, 250, 252, 0.9)';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(spawnScreenX, 0);
-            ctx.lineTo(spawnScreenX, canvas.height);
-            ctx.stroke();
+        // Draw cube
+        ectx.fillStyle = 'rgba(255,255,255,0.95)';
+        ectx.fillRect(cube.x, cube.y, cube.w, cube.h);
+        ectx.strokeStyle = 'rgba(0,255,255,1)';
+        ectx.lineWidth = 2;
+        ectx.strokeRect(cube.x, cube.y, cube.w, cube.h);
+    }
 
-            ctx.restore();
-        }
+    ectx.restore();
+}
 
-        let lastTime = performance.now();
+/* SNAKE GAME (simple) */
+const snakeCanvas = document.getElementById('snakeCanvas');
+const sctx = snakeCanvas.getContext('2d');
+let snakeWidth = 0;
+let snakeHeight = 0;
 
-        function loop(now) {
-            const dt = Math.min((now - lastTime) / 16.67, 2);
-            lastTime = now;
+function resizeSnakeCanvas() {
+    const rect = snakeCanvas.getBoundingClientRect();
+    snakeCanvas.width = rect.width;
+    snakeCanvas.height = rect.height;
+    snakeWidth = rect.width;
+    snakeHeight = rect.height;
+}
+window.addEventListener('resize', resizeSnakeCanvas);
+resizeSnakeCanvas();
 
-            // Update scroll direction from mouse/keys
-            updateScrollDir();
+let snake = [{ x: 10, y: 10 }];
+let snakeDir = { x: 1, y: 0 };
+let food = { x: 15, y: 10 };
+let snakeCellSize = 20;
+let snakeTimer = 0;
 
-            // Update camera
-            if (scrollDir !== 0) {
-                cameraX += scrollDir * SCROLL_SPEED * dt;
-                if (cameraX < 0) cameraX = 0; // clamp at barrier
-            }
+window.addEventListener('keydown', e => {
+    if (e.code === 'ArrowUp' && snakeDir.y === 0) snakeDir = { x: 0, y: -1 };
+    if (e.code === 'ArrowDown' && snakeDir.y === 0) snakeDir = { x: 0, y: 1 };
+    if (e.code === 'ArrowLeft' && snakeDir.x === 0) snakeDir = { x: -1, y: 0 };
+    if (e.code === 'ArrowRight' && snakeDir.x === 0) snakeDir = { x: 1, y: 0 };
+});
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+function updateSnake(dt) {
+    snakeTimer += dt;
+    if (snakeTimer < 120) return;
+    snakeTimer = 0;
 
-            const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            grad.addColorStop(0, '#020617');
-            grad.addColorStop(0.4, '#020617');
-            grad.addColorStop(0.4, '#0b1120');
-            grad.addColorStop(1, '#020617');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const head = { x: snake[0].x + snakeDir.x, y: snake[0].y + snakeDir.y };
+    if (head.x < 0) head.x = Math.floor(snakeWidth / snakeCellSize) - 1;
+    if (head.y < 0) head.y = Math.floor(snakeHeight / snakeCellSize) - 1;
+    if (head.x >= Math.floor(snakeWidth / snakeCellSize)) head.x = 0;
+    if (head.y >= Math.floor(snakeHeight / snakeCellSize)) head.y = 0;
 
-            drawGrid();
-            drawTiles();
-            drawBarrierAndSpawn();
+    snake.unshift(head);
 
-            if (currentMode === 'play') {
-                updatePlayer(dt);
-                drawPlayer();
-            }
+    if (head.x === food.x && head.y === food.y) {
+        food.x = Math.floor(Math.random() * (snakeWidth / snakeCellSize));
+        food.y = Math.floor(Math.random() * (snakeHeight / snakeCellSize));
+    } else {
+        snake.pop();
+    }
+}
 
-            requestAnimationFrame(loop);
-        }
+function renderSnake() {
+    sctx.setTransform(1, 0, 0, 1, 0, 0);
+    sctx.clearRect(0, 0, snakeWidth, snakeHeight);
 
-        requestAnimationFrame(loop);
-    })();
+    // Background glow
+    sctx.fillStyle = '#050510';
+    sctx.fillRect(0, 0, snakeWidth, snakeHeight);
+
+    // Food
+    sctx.fillStyle = 'rgba(255,0,255,0.9)';
+    sctx.shadowColor = 'rgba(255,0,255,0.9)';
+    sctx.shadowBlur = 12;
+    sctx.fillRect(food.x * snakeCellSize, food.y * snakeCellSize, snakeCellSize, snakeCellSize);
+
+    // Snake
+    sctx.fillStyle = 'rgba(0,255,255,0.9)';
+    sctx.shadowColor = 'rgba(0,255,255,0.9)';
+    sctx.shadowBlur = 12;
+    for (const seg of snake) {
+        sctx.fillRect(seg.x * snakeCellSize, seg.y * snakeCellSize, snakeCellSize, snakeCellSize);
+    }
+}
+
+/* MAIN LOOP */
+let lastTime = performance.now();
+function loop(now) {
+    const dt = now - lastTime;
+    lastTime = now;
+
+    renderEditor(dt);
+    updateSnake(dt);
+    renderSnake();
+
+    requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
 </script>
+
 </body>
 </html>
