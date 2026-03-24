@@ -1,1301 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Pablo's Portal 2.0 — Neon Shell + GD Editor</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    :root {
-      --bg: #05060a;
-      --panel-bg: rgba(10, 12, 20, 0.85);
-      --panel-border: rgba(255, 255, 255, 0.12);
-      --accent: #4fd1ff;
-      --accent-soft: rgba(79, 209, 255, 0.3);
-      --accent-strong: #00e0ff;
-      --danger: #ff4b6e;
-      --ok: #4bff9c;
-      --text-main: #f5f7ff;
-      --text-soft: #a7b0d9;
-      --grid-line: rgba(255, 255, 255, 0.06);
-      --button-bg: rgba(20, 24, 40, 0.9);
-      --button-hover: rgba(40, 48, 80, 0.95);
-      --button-active: rgba(60, 80, 120, 1);
-      --shadow-strong: 0 0 30px rgba(0, 224, 255, 0.35);
-      --shadow-soft: 0 0 18px rgba(0, 224, 255, 0.18);
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-sm: 8px;
-      --transition-fast: 0.15s ease-out;
-      --transition-med: 0.25s ease-out;
-    }
+<meta charset="UTF-8" />
+<title>Pablo's Portal 2.0 — Hyper Neon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: radial-gradient(circle at 0% 0%, #00ffff 0, transparent 55%), radial-gradient(circle at 100% 100%, #ff00ff 0, transparent 55%), #050510; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; overflow: hidden; color: #f5f7ff; }
+body { animation: hueShift 18s linear infinite; }
+@keyframes hueShift { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Segoe UI", sans-serif;
-    }
+/* NAVBAR */
+.navbar { height: 56px; background: rgba(5,5,20,0.9); backdrop-filter: blur(18px); border-bottom: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; padding: 0 16px; gap: 8px; box-shadow: 0 0 24px rgba(0,0,0,0.6); }
+.nav-title { font-size: 16px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; margin-right: auto; text-shadow: 0 0 12px cyan, 0 0 24px magenta; }
+.nav-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.3); background: radial-gradient(circle at 0 0, rgba(0,255,255,0.4), transparent 60%), rgba(20,20,40,0.9); cursor: pointer; color: #f5f7ff; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+.nav-btn.active { background: radial-gradient(circle at 100% 100%, rgba(255,0,255,0.4), transparent 60%), rgba(40,40,80,0.95); }
 
-    body {
-      background: radial-gradient(circle at top, #151a2f 0, #05060a 55%, #020308 100%);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 20px;
-      gap: 16px;
-    }
+/* VIEWS */
+.view { position: absolute; inset: 56px 0 0 0; display: none; }
+.view.active { display: block; }
 
-    h1, h2, h3 {
-      font-weight: 650;
-      letter-spacing: 0.04em;
-    }
+/* MENU */
+.menu-bg { position: absolute; inset: 0; background: radial-gradient(circle at 20% 0%, rgba(0,255,255,0.5), transparent 60%), radial-gradient(circle at 80% 100%, rgba(255,0,200,0.5), transparent 60%), radial-gradient(circle at 50% 50%, rgba(255,255,0,0.4), transparent 60%), #050510; animation: menuPulse 10s ease-in-out infinite alternate; }
+@keyframes menuPulse { 0% { transform: scale(1); filter: blur(0px); opacity: 0.8; } 100% { transform: scale(1.08); filter: blur(4px); opacity: 1; } }
+.menu-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
+.menu-title { padding: 16px 28px; border-radius: 24px; background: rgba(10,10,30,0.9); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 0 40px rgba(0,255,255,0.9), 0 0 80px rgba(255,0,128,0.9), 0 0 140px rgba(0,255,255,1); text-align: center; }
+.menu-title-main { font-size: 24px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 800; }
+.menu-title-sub { margin-top: 6px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.8; }
+.menu-btn { min-width: 220px; padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.3); background: rgba(20,20,40,0.95); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 0 30px rgba(0,255,255,0.9), 0 0 60px rgba(255,0,128,0.9), 0 0 120px rgba(0,255,255,1); }
+.menu-btn:hover { background: rgba(30,30,60,0.98); }
 
-    #shell {
-      width: 100%;
-      max-width: 1200px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+/* SANDBOX */
+.sandbox-wrapper { display: flex; height: 100%; }
+.tools { width: 290px; background: rgba(5,5,20,0.9); backdrop-filter: blur(18px); border-right: 1px solid rgba(255,255,255,0.18); padding: 10px; overflow-y: auto; }
+.tool-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; opacity: 0.8; margin: 8px 0 4px; }
+.tool-btn { padding: 6px 10px; margin: 3px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.3); background: rgba(30,30,60,0.9); cursor: pointer; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+.tool-btn.active { background: rgba(255,255,255,0.25); }
+.slider-row { display: flex; align-items: center; gap: 8px; margin: 4px 0 10px; }
+.slider-row span { font-size: 11px; opacity: 0.8; }
+#brushSlider { width: 100%; }
+.sandbox-canvas-box { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
+.sandbox-frame { position: relative; padding: 12px; border-radius: 22px; background: radial-gradient(circle at 0% 0%, rgba(0,255,255,0.25), transparent 60%), radial-gradient(circle at 100% 100%, rgba(255,0,255,0.25), transparent 60%), rgba(5,5,20,0.9); box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 0 40px rgba(0,255,255,1), 0 0 80px rgba(255,0,128,1), 0 0 140px rgba(0,255,255,1); overflow: hidden; }
+.sandbox-frame::before { content: ""; position: absolute; inset: -40%; background: conic-gradient(from 0deg, rgba(0,255,255,0.7), rgba(255,0,255,0.7), rgba(255,255,0,0.7), rgba(0,255,255,0.7)); opacity: 0.5; mix-blend-mode: screen; animation: frameSpin 10s linear infinite; pointer-events: none; z-index: -1; }
+@keyframes frameSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+#sandboxCanvas { image-rendering: pixelated; background: black; width: 95vw; height: 80vh; display: block; position: relative; z-index: 10; }
 
-    /* Top bar */
-    #top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 18px;
-      border-radius: var(--radius-lg);
-      background: linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.06),
-          rgba(255, 255, 255, 0.02)
-        ),
-        radial-gradient(circle at top left, rgba(0, 224, 255, 0.18), transparent 55%);
-      border: 1px solid var(--panel-border);
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(18px);
-    }
+/* SNAKE */
+.snake-center { display: flex; justify-content: center; align-items: center; height: 100%; }
+.snake-frame { position: relative; padding: 12px; border-radius: 22px; background: radial-gradient(circle at 0% 0%, rgba(0,255,255,0.25), transparent 60%), radial-gradient(circle at 100% 100%, rgba(255,0,255,0.25), transparent 60%), rgba(5,5,20,0.9); box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 0 40px rgba(0,255,255,1), 0 0 80px rgba(255,0,128,1), 0 0 140px rgba(0,255,255,1); overflow: hidden; }
+.snake-frame::before { content: ""; position: absolute; inset: -40%; background: conic-gradient(from 0deg, rgba(0,255,255,0.7), rgba(255,0,255,0.7), rgba(255,255,0,0.7), rgba(0,255,255,0.7)); opacity: 0.5; mix-blend-mode: screen; animation: frameSpin 10s linear infinite; pointer-events: none; z-index: -1; }
+#snakeCanvas { background: #050515; image-rendering: pixelated; width: 95vw; height: 80vh; display: block; position: relative; z-index: 10; }
+.snake-overlay { position: absolute; inset: 56px 0 0 0; display: flex; justify-content: center; align-items: center; pointer-events: none; font-size: 18px; text-shadow: 0 0 12px cyan, 0 0 24px magenta; z-index: 5; }
 
-    #title-block {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    #title-block h1 {
-      font-size: 20px;
-    }
-
-    #title-block span {
-      font-size: 11px;
-      text-transform: uppercase;
-      color: var(--text-soft);
-    }
-
-    #mode-buttons {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .mode-btn {
-      border-radius: 999px;
-      padding: 6px 14px;
-      font-size: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: var(--button-bg);
-      color: var(--text-soft);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background var(--transition-fast), color var(--transition-fast),
-        box-shadow var(--transition-fast), border-color var(--transition-fast),
-        transform var(--transition-fast);
-    }
-
-    .mode-btn span.key {
-      padding: 1px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      font-size: 10px;
-      color: var(--accent-strong);
-      background: rgba(0, 0, 0, 0.4);
-    }
-
-    .mode-btn.active {
-      color: var(--accent-strong);
-      border-color: var(--accent-strong);
-      box-shadow: var(--shadow-soft);
-      background: linear-gradient(
-        135deg,
-        rgba(0, 224, 255, 0.18),
-        rgba(0, 224, 255, 0.04)
-      );
-      transform: translateY(-1px);
-    }
-
-    .mode-btn:hover {
-      background: var(--button-hover);
-    }
-
-    /* Main layout */
-    #main {
-      display: grid;
-      grid-template-columns: minmax(0, 2.2fr) minmax(260px, 1fr);
-      gap: 12px;
-      align-items: stretch;
-    }
-
-    @media (max-width: 900px) {
-      #main {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .panel {
-      border-radius: var(--radius-lg);
-      background: var(--panel-bg);
-      border: 1px solid var(--panel-border);
-      box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(18px);
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-height: 260px;
-    }
-
-    .panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .panel-header h2 {
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .pill {
-      font-size: 10px;
-      text-transform: uppercase;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      color: var(--text-soft);
-    }
-
-    .pill.accent {
-      border-color: var(--accent-strong);
-      color: var(--accent-strong);
-    }
-
-    .panel-body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    canvas {
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: radial-gradient(circle at top, #151a2f 0, #05060a 55%, #020308 100%);
-    }
-
-    /* Controls */
-    .control-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-    }
-
-    .label {
-      font-size: 11px;
-      color: var(--text-soft);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    select, input[type="range"], input[type="number"] {
-      background: rgba(10, 12, 20, 0.9);
-      border-radius: var(--radius-sm);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      color: var(--text-main);
-      font-size: 12px;
-      padding: 4px 8px;
-      outline: none;
-    }
-
-    input[type="range"] {
-      width: 120px;
-    }
-
-    .btn {
-      border-radius: var(--radius-sm);
-      padding: 4px 10px;
-      font-size: 11px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: var(--button-bg);
-      color: var(--text-soft);
-      cursor: pointer;
-      transition: background var(--transition-fast), color var(--transition-fast),
-        border-color var(--transition-fast), box-shadow var(--transition-fast),
-        transform var(--transition-fast);
-    }
-
-    .btn:hover {
-      background: var(--button-hover);
-      color: var(--accent-strong);
-    }
-
-    .btn.primary {
-      border-color: var(--accent-strong);
-      color: var(--accent-strong);
-    }
-
-    .btn.primary:hover {
-      background: var(--button-active);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .btn.danger {
-      border-color: var(--danger);
-      color: var(--danger);
-    }
-
-    .btn.small {
-      padding: 2px 8px;
-      font-size: 10px;
-    }
-
-    /* Right panel sections */
-    .section {
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 8px;
-      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.04), transparent 55%);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .section h3 {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-soft);
-    }
-
-    ul {
-      list-style: none;
-      font-size: 11px;
-      color: var(--text-soft);
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    code {
-      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
-        Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 11px;
-      color: var(--accent-strong);
-    }
-
-    /* Mode visibility */
-    .mode-panel {
-      display: none;
-      flex: 1;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .mode-panel.active {
-      display: flex;
-    }
-
-    /* Pablo-Dash editor UI */
-    #dash-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    #dash-left-controls,
-    #dash-right-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-    }
-
-    #object-palette {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-
-    .palette-item {
-      border-radius: 6px;
-      padding: 3px 8px;
-      font-size: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(10, 12, 20, 0.9);
-      color: var(--text-soft);
-      cursor: pointer;
-      transition: background var(--transition-fast), color var(--transition-fast),
-        border-color var(--transition-fast), transform var(--transition-fast);
-    }
-
-    .palette-item.active {
-      border-color: var(--accent-strong);
-      color: var(--accent-strong);
-      background: rgba(0, 224, 255, 0.12);
-      box-shadow: var(--shadow-soft);
-      transform: translateY(-1px);
-    }
-
-    #dash-status {
-      font-size: 11px;
-      color: var(--text-soft);
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    #dash-status span {
-      opacity: 0.9;
-    }
-
-    /* Footer */
-    #footer {
-      width: 100%;
-      max-width: 1200px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      color: var(--text-soft);
-      opacity: 0.8;
-    }
-
-    @media (max-width: 700px) {
-      #footer {
-        flex-direction: column;
-        gap: 4px;
-        align-items: flex-start;
-      }
-    }
-  </style>
+/* CREDITS */
+.credits-center { display: flex; justify-content: center; align-items: center; height: 100%; font-size: 18px; text-shadow: 0 0 12px cyan, 0 0 24px magenta; }
+</style>
 </head>
 <body>
-  <div id="shell">
-    <div id="top-bar">
-      <div id="title-block">
-        <h1>Pablo's Portal 2.0</h1>
-        <span>Neon Shell · Physics Sandbox · Neon Snake · Pablo‑Dash + GD Editor</span>
-      </div>
-      <div id="mode-buttons">
-        <button class="mode-btn active" data-mode="sandbox">
-          <span class="key">1</span> Sandbox
-        </button>
-        <button class="mode-btn" data-mode="snake">
-          <span class="key">2</span> Neon Snake
-        </button>
-        <button class="mode-btn" data-mode="dash">
-          <span class="key">3</span> Pablo‑Dash
-        </button>
-        <button class="mode-btn" data-mode="dash-editor">
-          <span class="key">E</span> Dash Editor
-        </button>
-      </div>
-    </div>
 
-    <div id="main">
-      <!-- Left: main canvas panel -->
-      <div class="panel">
-        <div class="panel-header">
-          <h2 id="main-title">Physics Sandbox</h2>
-          <div class="pill accent" id="main-pill">Mode · Sandbox</div>
-        </div>
-        <div class="panel-body">
-          <!-- Sandbox -->
-          <div id="sandbox-panel" class="mode-panel active">
-            <canvas id="sandbox-canvas" width="640" height="360"></canvas>
-            <div class="control-row">
-              <span class="label">Material</span>
-              <select id="material-select">
-                <option value="sand">Sand</option>
-                <option value="water">Water</option>
-                <option value="stone">Stone</option>
-                <option value="fire">Fire</option>
-              </select>
-              <span class="label">Brush</span>
-              <input type="range" id="brush-size" min="1" max="12" value="4" />
-              <button class="btn small" id="sandbox-eraser">Eraser</button>
-              <button class="btn small" id="sandbox-lighter">Lighter</button>
-              <button class="btn small" id="sandbox-ruler">Ruler</button>
-              <button class="btn small danger" id="sandbox-clear">Clear</button>
-              <button class="btn small" id="sandbox-random">Random Fill</button>
-              <button class="btn small" id="sandbox-pause">Pause</button>
-            </div>
-          </div>
-
-          <!-- Neon Snake -->
-          <div id="snake-panel" class="mode-panel">
-            <canvas id="snake-canvas" width="640" height="360"></canvas>
-            <div class="control-row">
-              <span class="label">Controls</span>
-              <span style="font-size:11px;color:var(--text-soft);">
-                WASD / Arrow Keys · <code>Space</code> to start / pause
-              </span>
-              <span style="margin-left:auto;font-size:11px;color:var(--accent-strong);">
-                Score: <span id="snake-score">0</span>
-              </span>
-            </div>
-          </div>
-
-          <!-- Pablo-Dash Runner -->
-          <div id="dash-panel" class="mode-panel">
-            <canvas id="dash-canvas" width="640" height="360"></canvas>
-            <div class="control-row">
-              <span class="label">Controls</span>
-              <span style="font-size:11px;color:var(--text-soft);">
-                <code>Space</code> jump · <code>P</code> play / stop · Level from editor
-              </span>
-              <span style="margin-left:auto;font-size:11px;color:var(--accent-strong);">
-                Attempts: <span id="dash-attempts">0</span>
-              </span>
-            </div>
-          </div>
-
-          <!-- Pablo-Dash Editor -->
-          <div id="dash-editor-panel" class="mode-panel">
-            <canvas id="dash-editor-canvas" width="640" height="360"></canvas>
-            <div id="dash-toolbar">
-              <div id="dash-left-controls">
-                <span class="label">Palette</span>
-                <div id="object-palette">
-                  <div class="palette-item active" data-type="block">Block</div>
-                  <div class="palette-item" data-type="spike">Spike</div>
-                  <div class="palette-item" data-type="pad">Pad</div>
-                  <div class="palette-item" data-type="portal-speed">Speed</div>
-                  <div class="palette-item" data-type="portal-gravity">Gravity</div>
-                  <div class="palette-item" data-type="decor">Decor</div>
-                  <div class="palette-item" data-type="spawn">Spawn</div>
-                  <div class="palette-item" data-type="erase">Erase</div>
-                </div>
-              </div>
-              <div id="dash-right-controls">
-                <button class="btn small" id="scroll-left-btn">&larr; Scroll Left</button>
-                <button class="btn small" id="scroll-right-btn">Scroll Right &rarr;</button>
-                <button class="btn small primary" id="dash-save">Save</button>
-                <button class="btn small" id="dash-load">Load</button>
-                <button class="btn small" id="dash-clear">Clear</button>
-                <button class="btn small primary" id="dash-play">Play (P)</button>
-              </div>
-            </div>
-            <div id="dash-status">
-              <span>Barrier: <code>X = 0</code> · Left scroll clamped</span>
-              <span>Spawn line: <code id="spawn-readout">X = 40</code> · Move with Spawn tool</span>
-              <span>Camera X: <code id="camera-x-readout">0</code></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: info / help panel -->
-      <div class="panel">
-        <div class="panel-header">
-          <h2>Mode Guide</h2>
-          <div class="pill">Shortcuts · 1 · 2 · 3 · E · P</div>
-        </div>
-        <div class="panel-body">
-          <div class="section">
-            <h3>Sandbox</h3>
-            <ul>
-              <li><code>1</code> — Switch to Sandbox</li>
-              <li>Draw Sand, Water, Stone, Fire</li>
-              <li>Lighter ignites flammable cells</li>
-              <li>Ruler shows coordinates</li>
-              <li>Random Fill for quick chaos</li>
-            </ul>
-          </div>
-          <div class="section">
-            <h3>Neon Snake</h3>
-            <ul>
-              <li><code>2</code> — Switch to Neon Snake</li>
-              <li>WASD / Arrows to move</li>
-              <li><code>Space</code> to start / pause</li>
-              <li>Classic wrap-around grid</li>
-            </ul>
-          </div>
-          <div class="section">
-            <h3>Pablo‑Dash</h3>
-            <ul>
-              <li><code>3</code> — Switch to Pablo‑Dash</li>
-              <li><code>E</code> — Open Dash Editor</li>
-              <li><code>P</code> — Play / stop level</li>
-              <li>Barrier & spawn at editor start</li>
-              <li>Left scroll clamped · Right infinite</li>
-            </ul>
-          </div>
-          <div class="section">
-            <h3>Editor Objects</h3>
-            <ul>
-              <li><strong>Block:</strong> Ground / platforms</li>
-              <li><strong>Spike:</strong> Hazard, resets run</li>
-              <li><strong>Pad:</strong> Jump boost</li>
-              <li><strong>Speed Portal:</strong> Change speed</li>
-              <li><strong>Gravity Portal:</strong> Flip gravity</li>
-              <li><strong>Decor:</strong> Visual only</li>
-              <li><strong>Spawn:</strong> Move spawn line</li>
-              <li><strong>Erase:</strong> Remove objects</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="footer">
-      <span>Pablo's Portal 2.0 — Geometry‑Dash‑Inspired Neon Shell</span>
-      <span>Barrier & spawn at editor start · Left clamped · Right infinite</span>
-    </div>
-  </div>
-
-  <script>
-    // ---------- MODE SWITCHING ----------
-    const modeButtons = document.querySelectorAll(".mode-btn");
-    const panels = {
-      sandbox: document.getElementById("sandbox-panel"),
-      snake: document.getElementById("snake-panel"),
-      dash: document.getElementById("dash-panel"),
-      "dash-editor": document.getElementById("dash-editor-panel"),
-    };
-    const mainTitle = document.getElementById("main-title");
-    const mainPill = document.getElementById("main-pill");
-
-    function setMode(mode) {
-      Object.values(panels).forEach((p) => p.classList.remove("active"));
-      if (panels[mode]) panels[mode].classList.add("active");
-      modeButtons.forEach((btn) =>
-        btn.classList.toggle("active", btn.dataset.mode === mode)
-      );
-      switch (mode) {
-        case "sandbox":
-          mainTitle.textContent = "Physics Sandbox";
-          mainPill.textContent = "Mode · Sandbox";
-          break;
-        case "snake":
-          mainTitle.textContent = "Neon Snake";
-          mainPill.textContent = "Mode · Neon Snake";
-          break;
-        case "dash":
-          mainTitle.textContent = "Pablo‑Dash";
-          mainPill.textContent = "Mode · Runner";
-          break;
-        case "dash-editor":
-          mainTitle.textContent = "Pablo‑Dash Editor";
-          mainPill.textContent = "Mode · GD‑Style Editor";
-          break;
-      }
-    }
-
-    modeButtons.forEach((btn) => {
-      btn.addEventListener("click", () => setMode(btn.dataset.mode));
-    });
-
-    window.addEventListener("keydown", (e) => {
-      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
-      if (e.key === "1") setMode("sandbox");
-      if (e.key === "2") setMode("snake");
-      if (e.key === "3") setMode("dash");
-      if (e.key.toLowerCase() === "e") setMode("dash-editor");
-    });
-
-    // ---------- SANDBOX ----------
-    const sbCanvas = document.getElementById("sandbox-canvas");
-    const sbCtx = sbCanvas.getContext("2d");
-    const materialSelect = document.getElementById("material-select");
-    const brushSizeInput = document.getElementById("brush-size");
-    const sbEraser = document.getElementById("sandbox-eraser");
-    const sbLighter = document.getElementById("sandbox-lighter");
-    const sbRuler = document.getElementById("sandbox-ruler");
-    const sbClear = document.getElementById("sandbox-clear");
-    const sbRandom = document.getElementById("sandbox-random");
-    const sbPause = document.getElementById("sandbox-pause");
-
-    const sbCols = 160;
-    const sbRows = 90;
-    const sbCellSize = 4;
-    const sbGrid = [];
-    let sbPaused = false;
-    let sbTool = "draw"; // draw, erase, lighter, ruler
-
-    for (let y = 0; y < sbRows; y++) {
-      const row = [];
-      for (let x = 0; x < sbCols; x++) {
-        row.push({ type: "empty", temp: 0 });
-      }
-      sbGrid.push(row);
-    }
-
-    function sbColorFor(type) {
-      switch (type) {
-        case "sand":
-          return "#f4d37b";
-        case "water":
-          return "#4fb7ff";
-        case "stone":
-          return "#9ea7c0";
-        case "fire":
-          return "#ff6b4b";
-        default:
-          return "transparent";
-      }
-    }
-
-    function sbInBounds(x, y) {
-      return x >= 0 && x < sbCols && y >= 0 && y < sbRows;
-    }
-
-    function sbSetCell(x, y, type) {
-      if (!sbInBounds(x, y)) return;
-      sbGrid[y][x].type = type;
-      sbGrid[y][x].temp = type === "fire" ? 10 : 0;
-    }
-
-    function sbRandomFill() {
-      for (let y = 0; y < sbRows; y++) {
-        for (let x = 0; x < sbCols; x++) {
-          const r = Math.random();
-          if (r < 0.02) sbSetCell(x, y, "sand");
-          else if (r < 0.03) sbSetCell(x, y, "water");
-          else if (r < 0.035) sbSetCell(x, y, "stone");
-          else sbSetCell(x, y, "empty");
-        }
-      }
-    }
-
-    function sbClearGrid() {
-      for (let y = 0; y < sbRows; y++) {
-        for (let x = 0; x < sbCols; x++) {
-          sbSetCell(x, y, "empty");
-        }
-      }
-    }
-
-    function sbUpdate() {
-      if (sbPaused) return;
-      for (let y = sbRows - 1; y >= 0; y--) {
-        for (let x = 0; x < sbCols; x++) {
-          const cell = sbGrid[y][x];
-          if (cell.type === "sand") {
-            const ny = y + 1;
-            if (sbInBounds(x, ny) && sbGrid[ny][x].type === "empty") {
-              sbGrid[ny][x].type = "sand";
-              sbGrid[y][x].type = "empty";
-            } else {
-              const dir = Math.random() < 0.5 ? -1 : 1;
-              const nx = x + dir;
-              if (sbInBounds(nx, ny) && sbGrid[ny][nx].type === "empty") {
-                sbGrid[ny][nx].type = "sand";
-                sbGrid[y][x].type = "empty";
-              }
-            }
-          } else if (cell.type === "water") {
-            const ny = y + 1;
-            if (sbInBounds(x, ny) && sbGrid[ny][x].type === "empty") {
-              sbGrid[ny][x].type = "water";
-              sbGrid[y][x].type = "empty";
-            } else {
-              const dir = Math.random() < 0.5 ? -1 : 1;
-              const nx = x + dir;
-              if (sbInBounds(nx, y) && sbGrid[y][nx].type === "empty") {
-                sbGrid[y][nx].type = "water";
-                sbGrid[y][x].type = "empty";
-              }
-            }
-          } else if (cell.type === "fire") {
-            cell.temp--;
-            if (cell.temp <= 0) {
-              cell.type = "empty";
-            } else {
-              const dirs = [
-                [1, 0],
-                [-1, 0],
-                [0, 1],
-                [0, -1],
-              ];
-              for (const [dx, dy] of dirs) {
-                const nx = x + dx;
-                const ny = y + dy;
-                if (!sbInBounds(nx, ny)) continue;
-                const ncell = sbGrid[ny][nx];
-                if (ncell.type === "sand" || ncell.type === "water") {
-                  if (Math.random() < 0.02) {
-                    ncell.type = "fire";
-                    ncell.temp = 8;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    function sbDraw() {
-      sbCtx.clearRect(0, 0, sbCanvas.width, sbCanvas.height);
-      for (let y = 0; y < sbRows; y++) {
-        for (let x = 0; x < sbCols; x++) {
-          const cell = sbGrid[y][x];
-          if (cell.type !== "empty") {
-            sbCtx.fillStyle = sbColorFor(cell.type);
-            sbCtx.fillRect(
-              x * sbCellSize,
-              y * sbCellSize,
-              sbCellSize,
-              sbCellSize
-            );
-          }
-        }
-      }
-    }
-
-    let sbMouseDown = false;
-
-    sbCanvas.addEventListener("mousedown", (e) => {
-      sbMouseDown = true;
-      sbHandleDraw(e);
-    });
-    window.addEventListener("mouseup", () => (sbMouseDown = false));
-    sbCanvas.addEventListener("mousemove", (e) => {
-      if (sbMouseDown) sbHandleDraw(e);
-    });
-
-    function sbHandleDraw(e) {
-      const rect = sbCanvas.getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      const cx = Math.floor(mx / sbCellSize);
-      const cy = Math.floor(my / sbCellSize);
-      const brush = parseInt(brushSizeInput.value, 10);
-
-      if (sbTool === "ruler") {
-        sbDraw();
-        sbCtx.strokeStyle = "rgba(255,255,255,0.4)";
-        sbCtx.beginPath();
-        sbCtx.moveTo(cx * sbCellSize + sbCellSize / 2, 0);
-        sbCtx.lineTo(cx * sbCellSize + sbCellSize / 2, sbCanvas.height);
-        sbCtx.moveTo(0, cy * sbCellSize + sbCellSize / 2);
-        sbCtx.lineTo(sbCanvas.width, cy * sbCellSize + sbCellSize / 2);
-        sbCtx.stroke();
-        sbCtx.fillStyle = "rgba(0,0,0,0.7)";
-        sbCtx.fillRect(4, 4, 110, 26);
-        sbCtx.fillStyle = "#ffffff";
-        sbCtx.font = "11px system-ui";
-        sbCtx.fillText(`(${cx}, ${cy})`, 10, 20);
-        return;
-      }
-
-      for (let dy = -brush; dy <= brush; dy++) {
-        for (let dx = -brush; dx <= brush; dx++) {
-          const nx = cx + dx;
-          const ny = cy + dy;
-          if (!sbInBounds(nx, ny)) continue;
-          if (dx * dx + dy * dy > brush * brush) continue;
-          if (sbTool === "erase") {
-            sbSetCell(nx, ny, "empty");
-          } else if (sbTool === "lighter") {
-            if (sbGrid[ny][nx].type !== "empty") {
-              sbSetCell(nx, ny, "fire");
-            }
-          } else {
-            sbSetCell(nx, ny, materialSelect.value);
-          }
-        }
-      }
-    }
-
-    sbEraser.addEventListener("click", () => (sbTool = "erase"));
-    sbLighter.addEventListener("click", () => (sbTool = "lighter"));
-    sbRuler.addEventListener("click", () => (sbTool = "ruler"));
-    sbClear.addEventListener("click", () => sbClearGrid());
-    sbRandom.addEventListener("click", () => sbRandomFill());
-    sbPause.addEventListener("click", () => (sbPaused = !sbPaused));
-
-    // ---------- NEON SNAKE ----------
-    const snCanvas = document.getElementById("snake-canvas");
-    const snCtx = snCanvas.getContext("2d");
-    const snScoreEl = document.getElementById("snake-score");
-
-    const snCols = 32;
-    const snRows = 18;
-    const snCellSize = 20;
-    let snSnake = [{ x: 5, y: 5 }];
-    let snDir = { x: 1, y: 0 };
-    let snFood = { x: 10, y: 8 };
-    let snScore = 0;
-    let snRunning = false;
-    let snTick = 0;
-
-    function snReset() {
-      snSnake = [{ x: 5, y: 5 }];
-      snDir = { x: 1, y: 0 };
-      snFood = {
-        x: Math.floor(Math.random() * snCols),
-        y: Math.floor(Math.random() * snRows),
-      };
-      snScore = 0;
-      snScoreEl.textContent = snScore;
-    }
-
-    function snUpdate() {
-      if (!snRunning) return;
-      snTick++;
-      if (snTick % 6 !== 0) return;
-      const head = snSnake[0];
-      const nx = (head.x + snDir.x + snCols) % snCols;
-      const ny = (head.y + snDir.y + snRows) % snRows;
-      if (snSnake.some((s) => s.x === nx && s.y === ny)) {
-        snReset();
-        return;
-      }
-      snSnake.unshift({ x: nx, y: ny });
-      if (nx === snFood.x && ny === snFood.y) {
-        snScore++;
-        snScoreEl.textContent = snScore;
-        snFood = {
-          x: Math.floor(Math.random() * snCols),
-          y: Math.floor(Math.random() * snRows),
-        };
-      } else {
-        snSnake.pop();
-      }
-    }
-
-    function snDraw() {
-      snCtx.clearRect(0, 0, snCanvas.width, snCanvas.height);
-      snCtx.strokeStyle = "rgba(255,255,255,0.06)";
-      snCtx.lineWidth = 1;
-      for (let x = 0; x <= snCols; x++) {
-        snCtx.beginPath();
-        snCtx.moveTo(x * snCellSize, 0);
-        snCtx.lineTo(x * snCellSize, snCanvas.height);
-        snCtx.stroke();
-      }
-      for (let y = 0; y <= snRows; y++) {
-        snCtx.beginPath();
-        snCtx.moveTo(0, y * snCellSize);
-        snCtx.lineTo(snCanvas.width, y * snCellSize);
-        snCtx.stroke();
-      }
-      snCtx.fillStyle = "#ff4b6e";
-      snCtx.fillRect(
-        snFood.x * snCellSize + 2,
-        snFood.y * snCellSize + 2,
-        snCellSize - 4,
-        snCellSize - 4
-      );
-      snSnake.forEach((seg, i) => {
-        snCtx.fillStyle = i === 0 ? "#4fd1ff" : "#00e0ff";
-        snCtx.fillRect(
-          seg.x * snCellSize + 2,
-          seg.y * snCellSize + 2,
-          snCellSize - 4,
-          snCellSize - 4
-        );
-      });
-    }
-
-    window.addEventListener("keydown", (e) => {
-      if (panels.snake.classList.contains("active")) {
-        if (e.key === " ") {
-          snRunning = !snRunning;
-        }
-        if (e.key === "ArrowUp" || e.key.toLowerCase() === "w") {
-          if (snDir.y !== 1) snDir = { x: 0, y: -1 };
-        }
-        if (e.key === "ArrowDown" || e.key.toLowerCase() === "s") {
-          if (snDir.y !== -1) snDir = { x: 0, y: 1 };
-        }
-        if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") {
-          if (snDir.x !== 1) snDir = { x: -1, y: 0 };
-        }
-        if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") {
-          if (snDir.x !== -1) snDir = { x: 1, y: 0 };
-        }
-      }
-    });
-
-    // ---------- PABLO-DASH + EDITOR ----------
-    const dashCanvas = document.getElementById("dash-canvas");
-    const dashCtx = dashCanvas.getContext("2d");
-    const dashEditorCanvas = document.getElementById("dash-editor-canvas");
-    const dashEditorCtx = dashEditorCanvas.getContext("2d");
-    const cameraXReadout = document.getElementById("camera-x-readout");
-    const spawnReadout = document.getElementById("spawn-readout");
-    const dashAttemptsEl = document.getElementById("dash-attempts");
-
-    const scrollLeftBtn = document.getElementById("scroll-left-btn");
-    const scrollRightBtn = document.getElementById("scroll-right-btn");
-    const dashSaveBtn = document.getElementById("dash-save");
-    const dashLoadBtn = document.getElementById("dash-load");
-    const dashClearBtn = document.getElementById("dash-clear");
-    const dashPlayBtn = document.getElementById("dash-play");
-
-    const paletteItems = document.querySelectorAll(".palette-item");
-
-    const gridSize = 20;
-    const barrierX = 0; // at start
-    let spawnX = 40;    // near start
-    let cameraX = 0;
-    let dashObjects = []; // {type, x, y}
-    let selectedType = "block";
-
-    let dashPlaying = false;
-    let dashPlayer = null;
-    let dashAttempts = 0;
-    let dashSpeed = 3;
-    let dashGravity = 0.5;
-    let dashPlayerVy = 0;
-    let dashOnGround = false;
-
-    function worldToScreenX(wx) {
-      return wx - cameraX;
-    }
-
-    function screenToWorldX(sx) {
-      return sx + cameraX;
-    }
-
-    function snapToGrid(value) {
-      return Math.round(value / gridSize) * gridSize;
-    }
-
-    function drawDashGrid(ctx) {
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      ctx.fillStyle = "#05060a";
-      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-      ctx.strokeStyle = "rgba(255,255,255,0.06)";
-      ctx.lineWidth = 1;
-      const leftWorld = screenToWorldX(0);
-      const rightWorld = screenToWorldX(ctx.canvas.width);
-
-      const startX = snapToGrid(leftWorld - 200);
-      const endX = snapToGrid(rightWorld + 200);
-
-      for (let x = startX; x <= endX; x += gridSize) {
-        const sx = worldToScreenX(x);
-        ctx.beginPath();
-        ctx.moveTo(sx, 0);
-        ctx.lineTo(sx, ctx.canvas.height);
-        ctx.stroke();
-      }
-
-      for (let y = 0; y <= ctx.canvas.height; y += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(ctx.canvas.width, y);
-        ctx.stroke();
-      }
-
-      // Barrier line at start
-      const barrierScreenX = worldToScreenX(barrierX);
-      ctx.strokeStyle = "rgba(255,80,120,0.9)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(barrierScreenX, 0);
-      ctx.lineTo(barrierScreenX, ctx.canvas.height);
-      ctx.stroke();
-
-      // Spawn line
-      const spawnScreenX = worldToScreenX(spawnX);
-      ctx.strokeStyle = "rgba(80,200,255,0.9)";
-      ctx.setLineDash([6, 4]);
-      ctx.beginPath();
-      ctx.moveTo(spawnScreenX, 0);
-      ctx.lineTo(spawnScreenX, ctx.canvas.height);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Ground baseline
-      const groundY = ctx.canvas.height - 60;
-      ctx.strokeStyle = "rgba(255,255,255,0.2)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(0, groundY);
-      ctx.lineTo(ctx.canvas.width, groundY);
-      ctx.stroke();
-    }
-
-    function drawDashObjects(ctx) {
-      const groundY = ctx.canvas.height - 60;
-      dashObjects.forEach((obj) => {
-        const sx = worldToScreenX(obj.x);
-        const sy = groundY - obj.y;
-        switch (obj.type) {
-          case "block":
-            ctx.fillStyle = "#3f8cff";
-            ctx.fillRect(sx - gridSize / 2, sy - gridSize / 2, gridSize, gridSize);
-            break;
-          case "spike":
-            ctx.fillStyle = "#ff4b6e";
-            ctx.beginPath();
-            ctx.moveTo(sx - gridSize / 2, sy + gridSize / 2);
-            ctx.lineTo(sx + gridSize / 2, sy + gridSize / 2);
-            ctx.lineTo(sx, sy - gridSize / 2);
-            ctx.closePath();
-            ctx.fill();
-            break;
-          case "pad":
-            ctx.fillStyle = "#4bff9c";
-            ctx.fillRect(sx - gridSize / 2, sy - gridSize / 4, gridSize, gridSize / 2);
-            break;
-          case "portal-speed":
-            ctx.strokeStyle = "#ffd54b";
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(sx, sy, gridSize / 2, 0, Math.PI * 2);
-            ctx.stroke();
-            break;
-          case "portal-gravity":
-            ctx.strokeStyle = "#b84bff";
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(sx, sy, gridSize / 2, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(sx, sy - gridSize / 2 + 4);
-            ctx.lineTo(sx, sy + gridSize / 2 - 4);
-            ctx.stroke();
-            break;
-          case "decor":
-            ctx.fillStyle = "rgba(255,255,255,0.2)";
-            ctx.fillRect(sx - gridSize / 4, sy - gridSize / 4, gridSize / 2, gridSize / 2);
-            break;
-        }
-      });
-    }
-
-    function redrawEditor() {
-      drawDashGrid(dashEditorCtx);
-      drawDashObjects(dashEditorCtx);
-      cameraXReadout.textContent = cameraX.toFixed(1);
-      spawnReadout.textContent = `X = ${spawnX.toFixed(0)}`;
-    }
-
-    dashEditorCanvas.addEventListener("mousedown", (e) => {
-      const rect = dashEditorCanvas.getBoundingClientRect();
-      const sx = e.clientX - rect.left;
-      const sy = e.clientY - rect.top;
-      const groundY = dashEditorCanvas.height - 60;
-
-      const wx = snapToGrid(screenToWorldX(sx));
-      const wy = snapToGrid(groundY - sy);
-
-      if (selectedType === "spawn") {
-        spawnX = Math.max(barrierX + gridSize, wx);
-      } else if (selectedType === "erase") {
-        dashObjects = dashObjects.filter(
-          (o) => !(Math.abs(o.x - wx) < gridSize / 2 && Math.abs(o.y - wy) < gridSize / 2)
-        );
-      } else {
-        dashObjects.push({ type: selectedType, x: wx, y: wy });
-      }
-      redrawEditor();
-    });
-
-    paletteItems.forEach((item) => {
-      item.addEventListener("click", () => {
-        paletteItems.forEach((p) => p.classList.remove("active"));
-        item.classList.add("active");
-        selectedType = item.dataset.type;
-      });
-    });
-
-    function scrollCamera(dx) {
-      cameraX += dx;
-      if (cameraX < barrierX) cameraX = barrierX; // clamp left at barrier
-      redrawEditor();
-    }
-
-    scrollLeftBtn.addEventListener("click", () => scrollCamera(-40));
-    scrollRightBtn.addEventListener("click", () => scrollCamera(40));
-
-    window.addEventListener("keydown", (e) => {
-      if (panels["dash-editor"].classList.contains("active")) {
-        if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") {
-          scrollCamera(-20);
-        }
-        if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") {
-          scrollCamera(20);
-        }
-        if (e.key.toLowerCase() === "p") {
-          toggleDashPlay();
-        }
-      }
-      if (panels.dash.classList.contains("active")) {
-        if (e.key.toLowerCase() === "p") {
-          toggleDashPlay();
-        }
-        if (e.key === " ") {
-          dashJump();
-        }
-      }
-    });
-
-    dashSaveBtn.addEventListener("click", () => {
-      localStorage.setItem("pabloDashLevel", JSON.stringify(dashObjects));
-      alert("Level saved to localStorage.");
-    });
-
-    dashLoadBtn.addEventListener("click", () => {
-      const data = localStorage.getItem("pabloDashLevel");
-      if (data) {
-        dashObjects = JSON.parse(data);
-        redrawEditor();
-      } else {
-        alert("No saved level found.");
-      }
-    });
-
-    dashClearBtn.addEventListener("click", () => {
-      dashObjects = [];
-      redrawEditor();
-    });
-
-    dashPlayBtn.addEventListener("click", () => toggleDashPlay());
-
-    function startDashRun() {
-      dashPlaying = true;
-      dashAttempts++;
-      dashAttemptsEl.textContent = dashAttempts;
-      dashPlayer = {
-        x: spawnX,
-        y: 40,
-      };
-      dashPlayerVy = 0;
-      dashOnGround = false;
-      cameraX = barrierX;
-    }
-
-    function stopDashRun() {
-      dashPlaying = false;
-    }
-
-    function toggleDashPlay() {
-      if (dashPlaying) {
-        stopDashRun();
-      } else {
-        setMode("dash");
-        startDashRun();
-      }
-    }
-
-    function dashJump() {
-      if (!dashPlaying) return;
-      if (dashOnGround) {
-        dashPlayerVy = -8;
-        dashOnGround = false;
-      }
-    }
-
-    function dashUpdate() {
-      if (!dashPlaying || !dashPlayer) return;
-      const groundY = 40;
-      dashPlayer.x += dashSpeed;
-      dashPlayerVy += dashGravity;
-      dashPlayer.y += dashPlayerVy;
-
-      if (dashPlayer.y <= groundY) {
-        dashPlayer.y = groundY;
-        dashPlayerVy = 0;
-        dashOnGround = true;
-      }
-
-      cameraX = Math.max(barrierX, dashPlayer.x - 100);
-
-      for (const obj of dashObjects) {
-        const dx = dashPlayer.x - obj.x;
-        const dy = dashPlayer.y - obj.y;
-        if (obj.type === "block") {
-          if (Math.abs(dx) < gridSize && Math.abs(dy) < gridSize) {
-            if (dashPlayer.y > obj.y) {
-              dashPlayer.y = obj.y;
-              dashPlayerVy = 0;
-              dashOnGround = true;
-            }
-          }
-        } else if (obj.type === "spike") {
-          if (Math.abs(dx) < gridSize * 0.7 && Math.abs(dy) < gridSize * 0.7) {
-            startDashRun();
-            return;
-          }
-        } else if (obj.type === "pad") {
-          if (Math.abs(dx) < gridSize && Math.abs(dy) < gridSize) {
-            dashPlayerVy = -10;
-          }
-        } else if (obj.type === "portal-speed") {
-          if (Math.abs(dx) < gridSize && Math.abs(dy) < gridSize) {
-            dashSpeed = dashSpeed === 3 ? 5 : 3;
-          }
-        } else if (obj.type === "portal-gravity") {
-          if (Math.abs(dx) < gridSize && Math.abs(dy) < gridSize) {
-            dashGravity = -dashGravity;
-          }
-        }
-      }
-    }
-
-    function dashDraw() {
-      dashCtx.clearRect(0, 0, dashCanvas.width, dashCanvas.height);
-      drawDashGrid(dashCtx);
-      drawDashObjects(dashCtx);
-
-      if (dashPlayer) {
-        const groundY = dashCanvas.height - 60;
-        const sx = worldToScreenX(dashPlayer.x);
-        const sy = groundY - dashPlayer.y;
-        dashCtx.fillStyle = "#ffffff";
-        dashCtx.fillRect(sx - gridSize / 2, sy - gridSize / 2, gridSize, gridSize);
-      }
-    }
-
-    // ---------- MAIN LOOP ----------
-    function loop() {
-      sbUpdate();
-      sbDraw();
-
-      snUpdate();
-      snDraw();
-
-      redrawEditor();
-      dashUpdate();
-      dashDraw();
-
-      requestAnimationFrame(loop);
-    }
-
-    sbClearGrid();
-    snReset();
-    redrawEditor();
-    loop();
-  </script>
-</body>
-</html>
+<div class="navbar">
+<div class="nav-title">Pablo's Portal 2.0</div>
+<button class="nav-btn active" data-view="menu">Menu</button>
+<button class="nav-btn" data-view="sandbox">Sandbox</button>
+<button class="nav-btn" data-view="snake">Neon Snake</button>
+<button class="nav-btn" data-view="credits">Credits</button>
+</div>
+
+<!-- MENU VIEW -->
+<div class="view active" id="view-menu">
+<div class="menu-bg"></div>
+<div class="menu-center">
+<div class="menu-title">
+<div class="menu-title-main">Pablo's Portal 2.0</div>
+<div class="menu-title-sub">Hyper‑Neon Physics Playground</div>
+</div>
+
+<button class="menu-btn" data-view="sandbox">Sandbox</button>
+<button class="menu-btn" data-view="snake">Neon Snake</button>
+<button class="menu-btn" data-view="credits">Credits</button>
+
+<!-- ✨ Pablo's Portal External Link Button -->
+<a href="https://whi0048.github.io/pablos-portal/" 
+   class="menu-btn"
+   style="
+      display:inline-block;
+      text-align:center;
+      text-decoration:none;
+      cursor:pointer;
+      box-shadow:
+         0 0 0 1px rgba(255,255,255,0.06),
+         0 0 30px rgba(0,255,255,0.9),
+         0 0 60px rgba(255,0,128,0.9),
+         0 0 120px rgba(0,255,255,1);
+   ">
+   Visit Pablo’s Portal
+</a>
+
+</div>
+</div>
+
+<!-- SANDBOX VIEW -->
+<div class="view" id="view-sandbox">
+<div class="sandbox-wrapper">
+
+<div class="tools">
+<div class="tool-section-title">Solids</div>
+<button class="tool-btn" data-material="sand">Sand</button>
+<button class="tool-btn" data-material="stone">Stone</button>
+<button class="tool-btn" data-material="wood">Wood</button>
+<button class="tool-btn" data-material="metal">Metal</button>
+<button class="tool-btn" data-material="slime">Slime</button>
+<button class="tool-btn" data-material="mirror">Mirror</button>
+
+<div class="tool-section-title">Liquids</div>
+<button class="tool-btn" data-material="water">Water</button>
+<button class="tool-btn" data-material="gasoline">Gasoline</button>
+<button class="tool-btn" data-material="acid">Acid</button>
+<button class="tool-btn" data-material="lava">Lava</button>
+
+<div class="tool-section-title">Gases</div>
+<button class="tool-btn" data-material="smoke">Smoke</button>
+<button class="tool-btn" data-material="steam">Steam</button>
+<button class="tool-btn" data-material="poison_gas">Poison Gas</button>
+<button class="tool-btn" data-material="explosive_gas">Explosive Gas</button>
+<button class="tool-btn" data-material="propane">Propane</button>
+<button class="tool-btn" data-material="sleep_gas">Sleep Gas</button>
+
+<div class="tool-section-title">Special</div>
+<button class="tool-btn" data-material="fire">Fire</button>
+<button class="tool-btn" id="lighterTool">Lighter</button>
+<button class="tool-btn" data-material="eraser">Eraser</button>
+
+<div class="tool-section-title">Brush Size</div>
+<div class="slider-row">
+<span>1</span>
+<input type="range" id="brushSlider" min="1" max="12" value="4" />
+<span>12</span>
+</div>
+
+<div class="tool-section-title">Ruler</div>
+<button class="tool-btn" id="rulerToggle">Ruler Mode</button>
+
+<div class="tool-section-title">World</div>
+<button class="tool-btn" id="clearWorld">Clear</button>
+<button class="tool-btn" id="randomWorld">Random</button>
+<button class="tool-btn" id="togglePause">Pause</button>
+</div>
+
+<div class="sandbox-canvas-box">
+<div class="sandbox-frame">
+<canvas id="sandboxCanvas"></canvas>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- SNAKE VIEW -->
+<div class="view" id="view-snake">
+<div class="snake-center">
+<div class="snake-frame">
+<canvas id="snakeCanvas"></canvas>
+</div>
+</div>
+<div class="snake-overlay" id="snakeOverlay">Press SPACE to Start</div>
+</div>
+
+<!-- CREDITS VIEW -->
+<div class="view" id="view-credits">
+<div class="credits-center">
+Designed by Rebecca — Hyper Neon Edition
+</div>
+</div>
+
+<script>
+/* VIEW SWITCHING */
+function showView(name) {
+document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+const view = document.getElementById("view-" + name);
+if (view) view.classList.add("active");
+document.querySelectorAll(".nav-btn").forEach(b =>
+b.classList.toggle("active", b.dataset.view === name)
+);
+if (name === "snake") {
+snCanvas.focus();
+}
+}
+
+document.querySelectorAll(".nav-btn, .menu-btn").forEach(btn => {
+btn.addEventListener("click", () => {
+const target = btn.dataset.view;
+if (target) showView(target);
+});
+});
+
+/* SANDBOX ENGINE */
+const sbCanvas = document.getElementById("sandboxCanvas");
+const sbCtx = sbCanvas.getContext("2d");
+let sbW = 500;
+let sbH = 300;
+sbCanvas.width = sbW;
+sbCanvas.height = sbH;
+
+const EMPTY=0, SAND=1, WATER=2, STONE=3, FIRE=4, WOOD=5, METAL=6, SLIME=7, MIRROR=8,
+GASOLINE=9, ACID=10, LAVA=11, SMOKE=12, STEAM=13, POISON_GAS=14, EXPLOSIVE_GAS=15,
+PROPANE=16, SLEEP_GAS=17;
+
+let grid = new Array(sbW*sbH).fill(0);
+let fireLife = new Array(sbW*sbH).fill(0);
+let tempGrid = new Array(sbW*sbH).fill(0);
+
+let currentMaterial=SAND;
+let brush=4;
+let paused=false;
+
+let rulerMode = false;
+let rulerStart = null;
+let rulerEnd = null;
+let isRulerDragging = false;
+
+let lighterMode = false;
+
+function idx(x,y){return y*sbW+x;}
+function inBounds(x,y){return x>=0&&x<sbW&&y>=0&&y<sbH;}
+
+function initGround(){
+for(let y=sbH-10;y<sbH;y++){
+for(let x=0;x<sbW;x++){
+grid[idx(x,y)]=STONE;
+}
+}
+}
+initGround();
+
+function isLiquid(m){
+return m===WATER||m===GASOLINE||m===ACID||m===LAVA||m===SLIME;
+}
+function isGas(m){
+return m===SMOKE||m===STEAM||m===POISON_GAS||m===EXPLOSIVE_GAS||m===PROPANE||m===SLEEP_GAS;
+}
+function isSolid(m){
+return m===SAND||m===STONE||m===WOOD||m===METAL||m===MIRROR;
+}
+function isFlammable(m){
+return m===WOOD||m===SLIME||m===GASOLINE||m===POISON
