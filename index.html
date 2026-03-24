@@ -376,7 +376,7 @@
             color: var(--text-soft);
         }
 
-        /* MENU VIEW (simple info) */
+        /* MENU VIEW */
         #view-menu .view-body {
             flex-direction: row;
         }
@@ -696,6 +696,46 @@
             border: 1px solid rgba(30, 64, 175, 0.7);
         }
 
+        .dash-scroll-btn {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            border: 1px solid rgba(56, 189, 248, 0.7);
+            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.25), rgba(15, 23, 42, 0.98));
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e0f2fe;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+            user-select: none;
+        }
+
+        .dash-scroll-btn-left {
+            left: 18px;
+            bottom: 24px;
+        }
+
+        .dash-scroll-btn-right {
+            right: 18px;
+            bottom: 24px;
+        }
+
+        .dash-scroll-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 22px rgba(56, 189, 248, 0.9);
+            border-color: rgba(56, 189, 248, 1);
+            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.35), rgba(15, 23, 42, 0.98));
+        }
+
+        .dash-scroll-btn:active {
+            transform: translateY(1px) scale(0.97);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
+        }
+
         .dash-footer {
             margin-top: 8px;
             font-size: 11px;
@@ -750,7 +790,7 @@
             border-top: 1px solid rgba(30, 64, 175, 0.7);
         }
 
-        /* Scrollbars (if any) */
+        /* Scrollbars */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -841,7 +881,7 @@
                                         <div>• <strong>Neon Snake:</strong> Classic snake with a neon twist.</div>
                                         <div>• <strong>Pablo Dash:</strong> Geometry‑Dash‑style infinite runner with an editor.</div>
                                         <div style="margin-top:8px;font-size:11px;color:var(--text-soft);">
-                                            Pablo Dash: Space to jump · Left‑click to place blocks · Right‑click to move spawn line.
+                                            Pablo Dash: Space to jump · Left‑click to place blocks · Right‑click to move spawn line · A/D or circles to scroll.
                                         </div>
                                     </div>
                                 </div>
@@ -856,7 +896,7 @@
                                         <div>Dash Mode: Geometry‑Dash‑style, infinite world, flat ground.</div>
                                         <div>Canvas: 960×540 · Auto‑run speed: fast.</div>
                                         <div style="margin-top:8px;font-size:11px;color:var(--text-soft);">
-                                            This menu is just a soft‑glass overview. The real fun lives in the other tabs.
+                                            Camera is fully manual in Pablo Dash: scroll with A/D or the circular buttons.
                                         </div>
                                     </div>
                                 </div>
@@ -1003,6 +1043,7 @@
                                 <div class="dash-sidebar-footer">
                                     <div>Left‑click: place block</div>
                                     <div>Right‑click: move <span class="key">spawn line</span></div>
+                                    <div>A/D or circles: scroll</div>
                                     <div>Space: jump (playtest)</div>
                                 </div>
                             </div>
@@ -1015,10 +1056,12 @@
                                     <div class="dash-overlay-status">
                                         <span id="dash-status-label">Ready</span>
                                     </div>
+                                    <div class="dash-scroll-btn dash-scroll-btn-left" id="dash-scroll-left">◀</div>
+                                    <div class="dash-scroll-btn dash-scroll-btn-right" id="dash-scroll-right">▶</div>
                                 </div>
                                 <div class="dash-footer">
                                     <span>Infinite world · Flat ground · Geometry‑Dash‑style physics.</span>
-                                    <span>Auto‑run speed: fast · Canvas: 960×540.</span>
+                                    <span>Manual camera: A/D or circular buttons · Canvas: 960×540.</span>
                                 </div>
                             </div>
                         </div>
@@ -1070,7 +1113,7 @@
                                     <div>• UI: soft‑glass, neon, pixel‑perfect layout.</div>
                                     <div>• Pablo Dash: infinite world, flat ground, fast auto‑run.</div>
                                     <div>• Editor: left‑click to place, right‑click to move spawn line.</div>
-                                    <div>• Playtest: space to jump, spikes/hazards kill, goal wins.</div>
+                                    <div>• Camera: manual A/D + circular buttons, clamped at barrier.</div>
                                 </div>
                             </div>
                         </div>
@@ -1107,7 +1150,7 @@
         showView('menu');
     })();
 
-    // Pablo Dash engine
+    // Pablo Dash engine (manual camera, barrier, spawn line, A/D + buttons)
     (function () {
         const canvas = document.getElementById('dash-canvas');
         const ctx = canvas.getContext('2d');
@@ -1119,6 +1162,9 @@
         const toolButtons = Array.from(document.querySelectorAll('.dash-tool-btn'));
         const modeButtons = Array.from(document.querySelectorAll('.dash-mode-btn'));
 
+        const scrollLeftBtn = document.getElementById('dash-scroll-left');
+        const scrollRightBtn = document.getElementById('dash-scroll-right');
+
         const TILE_SIZE = 30; // 960 / 32 = 30, 540 / 18 = 30
         const TILES_X = Math.floor(canvas.width / TILE_SIZE);
         const TILES_Y = Math.floor(canvas.height / TILE_SIZE);
@@ -1127,13 +1173,19 @@
         const GRAVITY = 0.9;
         const JUMP_VELOCITY = -14;
         const RUN_SPEED = 10; // fast
-
-        const TOOL_TYPES = ['solid', 'spike', 'jump', 'bounce', 'hazard', 'goal', 'erase'];
+        const SCROLL_SPEED = 20; // camera scroll speed (pixels per frame unit)
 
         let currentTool = 'solid';
         let currentMode = 'edit'; // 'edit' or 'play'
 
+        // Manual camera
         let cameraX = 0;
+        let scrollDir = 0; // -1 left, 1 right, 0 none
+
+        // Barrier at world x = 0
+        const BARRIER_X = 0;
+
+        // Spawn line
         let spawnX = TILE_SIZE * 4;
         let spawnY = TILE_SIZE * (TILES_Y - 4);
 
@@ -1155,6 +1207,9 @@
         }
 
         function setTile(tx, ty, type) {
+            const worldX = tx * TILE_SIZE;
+            if (worldX < BARRIER_X) return; // don't place behind barrier
+
             const key = keyFor(tx, ty);
             if (type === null) {
                 tiles.delete(key);
@@ -1171,13 +1226,15 @@
         function generateFlatGroundAround(xStart, xEnd) {
             const groundY = TILES_Y - 2;
             for (let tx = xStart; tx <= xEnd; tx++) {
+                const worldX = tx * TILE_SIZE;
+                if (worldX < BARRIER_X) continue;
                 if (!getTile(tx, groundY)) {
                     setTile(tx, groundY, 'solid');
                 }
             }
         }
 
-        generateFlatGroundAround(-50, 200);
+        generateFlatGroundAround(0, 200);
 
         function resetPlayer() {
             player.x = spawnX;
@@ -1255,10 +1312,24 @@
             if (e.code === 'Digit5') setTool('hazard');
             if (e.code === 'Digit6') setTool('goal');
             if (e.code === 'KeyE') setTool('erase');
+
+            if (e.code === 'KeyA') {
+                scrollDir = -1;
+            }
+            if (e.code === 'KeyD') {
+                scrollDir = 1;
+            }
         });
 
         window.addEventListener('keyup', (e) => {
             keys[e.code] = false;
+
+            if (e.code === 'KeyA' && scrollDir === -1) {
+                scrollDir = keys['KeyD'] ? 1 : 0;
+            }
+            if (e.code === 'KeyD' && scrollDir === 1) {
+                scrollDir = keys['KeyA'] ? -1 : 0;
+            }
         });
 
         // Mouse for editor
@@ -1297,11 +1368,14 @@
             const worldX = mx + cameraX;
             const worldY = my;
 
+            if (worldX < BARRIER_X) return; // can't edit behind barrier
+
             const tx = Math.floor(worldX / TILE_SIZE);
             const ty = Math.floor(worldY / TILE_SIZE);
 
             if (button === 2) {
                 // Right-click: move spawn line
+                if (worldX <= BARRIER_X) return;
                 spawnX = tx * TILE_SIZE + TILE_SIZE * 0.5;
                 spawnY = ty * TILE_SIZE + TILE_SIZE * 0.5;
                 resetPlayer();
@@ -1328,6 +1402,40 @@
             }
         }
 
+        // Scroll buttons (press-and-hold)
+        let mouseScrollDir = 0;
+
+        function updateScrollDir() {
+            if (mouseScrollDir !== 0) {
+                scrollDir = mouseScrollDir;
+            } else {
+                // if mouse not scrolling, keep keyboard scrollDir
+                if (!keys['KeyA'] && !keys['KeyD']) {
+                    scrollDir = 0;
+                } else if (keys['KeyA'] && !keys['KeyD']) {
+                    scrollDir = -1;
+                } else if (!keys['KeyA'] && keys['KeyD']) {
+                    scrollDir = 1;
+                } else {
+                    scrollDir = 0;
+                }
+            }
+        }
+
+        scrollLeftBtn.addEventListener('mousedown', () => {
+            mouseScrollDir = -1;
+            updateScrollDir();
+        });
+        scrollRightBtn.addEventListener('mousedown', () => {
+            mouseScrollDir = 1;
+            updateScrollDir();
+        });
+
+        window.addEventListener('mouseup', () => {
+            mouseScrollDir = 0;
+            updateScrollDir();
+        });
+
         // Physics helpers
         function rectIntersect(ax, ay, aw, ah, bx, by, bw, bh) {
             return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
@@ -1347,12 +1455,12 @@
             const py = player.y;
             const half = PLAYER_SIZE / 2;
 
-            const minTx = Math.floor((px - half + cameraX) / TILE_SIZE) - 2;
-            const maxTx = Math.floor((px + half + cameraX) / TILE_SIZE) + 2;
+            const minTx = Math.floor((px - half) / TILE_SIZE) - 2;
+            const maxTx = Math.floor((px + half) / TILE_SIZE) + 2;
             const minTy = Math.floor((py - half) / TILE_SIZE) - 2;
             const maxTy = Math.floor((py + half) / TILE_SIZE) + 2;
 
-            generateFlatGroundAround(minTx - 20, maxTx + 50);
+            generateFlatGroundAround(Math.max(0, minTx - 20), maxTx + 50);
 
             const tilesToCheck = [];
             for (let ty = minTy; ty <= maxTy; ty++) {
@@ -1370,7 +1478,7 @@
             };
 
             for (const t of tilesToCheck) {
-                const tx = t.x * TILE_SIZE - cameraX;
+                const tx = t.x * TILE_SIZE;
                 const ty = t.y * TILE_SIZE;
                 const tw = TILE_SIZE;
                 const th = TILE_SIZE;
@@ -1433,10 +1541,6 @@
                 player.alive = false;
                 statusLabel.textContent = 'You fell · Click Playtest to retry';
             }
-
-            const targetCameraX = player.x - canvas.width * 0.3;
-            cameraX += (targetCameraX - cameraX) * 0.08;
-            if (cameraX < 0) cameraX = 0;
         }
 
         function drawGrid() {
@@ -1542,16 +1646,18 @@
 
         function drawBarrierAndSpawn() {
             ctx.save();
-            const barrierX = -cameraX;
+            // Barrier at world x = 0
+            const barrierScreenX = BARRIER_X - cameraX;
             ctx.strokeStyle = 'rgba(248, 113, 113, 0.9)';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(barrierX, 0);
-            ctx.lineTo(barrierX, canvas.height);
+            ctx.moveTo(barrierScreenX, 0);
+            ctx.lineTo(barrierScreenX, canvas.height);
             ctx.stroke();
 
+            // Spawn line
             const spawnScreenX = spawnX - cameraX;
-            ctx.strokeStyle = 'rgba(56, 189, 248, 0.9)';
+            ctx.strokeStyle = 'rgba(248, 250, 252, 0.9)';
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(spawnScreenX, 0);
@@ -1566,6 +1672,15 @@
         function loop(now) {
             const dt = Math.min((now - lastTime) / 16.67, 2);
             lastTime = now;
+
+            // Update scroll direction from mouse/keys
+            updateScrollDir();
+
+            // Update camera
+            if (scrollDir !== 0) {
+                cameraX += scrollDir * SCROLL_SPEED * dt;
+                if (cameraX < 0) cameraX = 0; // clamp at barrier
+            }
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1584,10 +1699,6 @@
             if (currentMode === 'play') {
                 updatePlayer(dt);
                 drawPlayer();
-            } else {
-                const targetCameraX = cameraX + (RUN_SPEED * 0.2);
-                cameraX += (targetCameraX - cameraX) * 0.05;
-                if (cameraX < 0) cameraX = 0;
             }
 
             requestAnimationFrame(loop);
